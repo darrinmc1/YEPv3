@@ -29,14 +29,27 @@ export function AppverseFooter() {
               </a>
             </Button>
             <Button asChild variant="ghost" size="icon">
-              <a href="mailto:contact@yourexitplans.com" aria-label="Email">
+              <a href="mailto:info@yourexitplans.com" aria-label="Email">
                 <Mail className="h-5 w-5 text-neutral-400 hover:text-white" />
               </a>
             </Button>
           </div>
         </div>
-        <div className="mt-8 border-t border-white/10 pt-8 text-center text-sm text-neutral-500">
-          <p>&copy; {new Date().getFullYear()} YourExitPlans. All rights reserved.</p>
+        <div className="mt-8 border-t border-white/10 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-neutral-500">
+            <p>&copy; {new Date().getFullYear()} YourExitPlans. All rights reserved.</p>
+            <div className="flex flex-col md:flex-row items-center gap-4 text-neutral-400">
+              <a href="mailto:info@yourexitplans.com" className="hover:text-white transition-colors">
+                General: info@yourexitplans.com
+              </a>
+              <a href="mailto:help@yourexitplans.com" className="hover:text-white transition-colors">
+                Support: help@yourexitplans.com
+              </a>
+              <a href="mailto:admin@yourexitplans.com" className="hover:text-white transition-colors">
+                Business: admin@yourexitplans.com
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
