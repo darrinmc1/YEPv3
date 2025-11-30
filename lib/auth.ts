@@ -10,7 +10,7 @@ function createInMemoryAdapter(): Adapter {
   const verificationTokens = new Map<string, VerificationToken>()
 
   return {
-    async createUser(user) {
+    async createUser(user: Omit<AdapterUser, "id">) {
       const id = randomUUID()
       const record: AdapterUser = { ...user, id, emailVerified: user.emailVerified ?? null }
       users.set(id, record)
@@ -19,9 +19,9 @@ function createInMemoryAdapter(): Adapter {
     async getUser(id) {
       return users.get(id ?? "") ?? null
     },
-    async getUserByEmail(email) {
+    async getUserByEmail(email: string) {
       const lower = email?.toLowerCase()
-      for (const user of users.values()) {
+      for (const user of Array.from(users.values())) {
         if (user.email?.toLowerCase() === lower) return user
       }
       return null
@@ -40,10 +40,10 @@ function createInMemoryAdapter(): Adapter {
       users.set(updated.id, updated)
       return updated
     },
-    async deleteUser(userId) {
+    async deleteUser(userId: string) {
       if (!userId) return
       users.delete(userId)
-      for (const [token, session] of sessions.entries()) {
+      for (const [token, session] of Array.from(sessions.entries())) {
         if (session.userId === userId) sessions.delete(token)
       }
     },
@@ -57,9 +57,8 @@ function createInMemoryAdapter(): Adapter {
       accounts.delete(`${provider}:${providerAccountId}`)
     },
     async createSession(session) {
-      const stored = { ...session, id: session.id ?? randomUUID() }
-      sessions.set(stored.sessionToken, stored)
-      return stored
+      sessions.set(session.sessionToken, session)
+      return session
     },
     async getSessionAndUser(sessionToken) {
       const session = sessions.get(sessionToken)

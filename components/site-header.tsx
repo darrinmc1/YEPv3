@@ -1,17 +1,51 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Zap, DollarSign, HelpCircle, BookOpen, LogIn } from "lucide-react"
+import { Menu, Zap, DollarSign, HelpCircle, BookOpen, LogIn, Home, ChevronDown, Lightbulb, Rocket, TrendingUp, Target } from "lucide-react"
+import { ExitPlansLogo } from "@/components/exit-plans-logo"
 
 export function SiteHeader() {
+  const [isPricingOpen, setIsPricingOpen] = useState(false)
+
   const links = [
+    { href: "/", label: "Home", icon: Home },
     { href: "#features", label: "How It Works", icon: Zap },
-    { href: "#pricing", label: "Pricing", icon: DollarSign },
     { href: "/faq", label: "FAQ", icon: HelpCircle },
     { href: "/About", label: "About", icon: BookOpen },
     { href: "/login", label: "Login", icon: LogIn },
+  ]
+
+  const pricingOptions = [
+    {
+      title: "Free Idea Validation",
+      description: "Test your business idea with AI-powered analysis",
+      icon: Lightbulb,
+      href: "/validate-idea",
+      color: "text-green-400",
+      bgColor: "bg-green-400/10",
+      borderColor: "border-green-400/30",
+    },
+    {
+      title: "Ideas Stream",
+      description: "Get validated business ideas delivered to you",
+      icon: Rocket,
+      href: "#pricing",
+      color: "text-blue-400",
+      bgColor: "bg-blue-400/10",
+      borderColor: "border-blue-400/30",
+    },
+    {
+      title: "Implementation",
+      description: "Full business setup and launch support",
+      icon: Target,
+      href: "#pricing",
+      color: "text-purple-400",
+      bgColor: "bg-purple-400/10",
+      borderColor: "border-purple-400/30",
+    },
   ]
 
   return (
@@ -21,7 +55,7 @@ export function SiteHeader() {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-400/20">
-              <Zap className="h-5 w-5 text-blue-400" />
+              <ExitPlansLogo className="text-blue-400" size={20} />
             </div>
             <span className="font-bold tracking-tight text-white text-lg">
               YourExit<span className="text-blue-400">Plans</span>
@@ -30,7 +64,7 @@ export function SiteHeader() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-6 text-sm text-white/90 md:flex">
-            {links.map((l) => (
+            {links.filter(l => l.href !== "/login").map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
@@ -39,6 +73,50 @@ export function SiteHeader() {
                 {l.label}
               </Link>
             ))}
+
+            {/* Pricing Mega Menu */}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setIsPricingOpen(true)}
+                onMouseLeave={() => setIsPricingOpen(false)}
+                className="flex items-center gap-1 hover:text-blue-400 transition-colors font-medium"
+              >
+                Pricing
+                <ChevronDown className={`h-4 w-4 transition-transform ${isPricingOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Mega Menu Dropdown */}
+              {isPricingOpen && (
+                <div
+                  onMouseEnter={() => setIsPricingOpen(true)}
+                  onMouseLeave={() => setIsPricingOpen(false)}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[600px] bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl"
+                >
+                  <div className="grid grid-cols-1 gap-4">
+                    {pricingOptions.map((option) => (
+                      <Link
+                        key={option.href}
+                        href={option.href}
+                        className={`flex items-start gap-4 p-4 rounded-xl border ${option.borderColor} ${option.bgColor} hover:scale-[1.02] transition-all group`}
+                      >
+                        <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${option.bgColor} shrink-0`}>
+                          <option.icon className={`h-6 w-6 ${option.color}`} />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className={`font-semibold ${option.color} group-hover:text-white transition-colors`}>
+                            {option.title}
+                          </h3>
+                          <p className="text-sm text-neutral-400 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                        <ChevronDown className="h-5 w-5 text-neutral-500 -rotate-90 group-hover:text-blue-400 transition-colors" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Desktop CTA */}
@@ -52,7 +130,7 @@ export function SiteHeader() {
                          hover:bg-blue-400 hover:shadow-lg hover:scale-[1.02]
                          transition-all"
             >
-              <Link href="#pricing">Get Started Free</Link>
+              <Link href="/validate-idea">Get Started Free</Link>
             </Button>
           </div>
 
@@ -73,7 +151,7 @@ export function SiteHeader() {
                 {/* Brand Header */}
                 <div className="flex items-center gap-2 px-4 py-4 border-b border-white/10">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-400/20">
-                    <Zap className="h-5 w-5 text-blue-400" />
+                    <ExitPlansLogo className="text-blue-400" size={20} />
                   </div>
                   <span className="font-bold tracking-tight text-white text-lg">
                     YourExit<span className="text-blue-400">Plans</span>
@@ -94,6 +172,24 @@ export function SiteHeader() {
                       <span className="text-sm font-medium">{l.label}</span>
                     </Link>
                   ))}
+
+                  {/* Pricing Options in Mobile */}
+                  <div className="px-4 py-2">
+                    <p className="text-xs uppercase tracking-wider text-neutral-500 font-semibold mb-2">Pricing</p>
+                    {pricingOptions.map((option) => (
+                      <Link
+                        key={option.href}
+                        href={option.href}
+                        className="flex items-start gap-3 p-3 rounded-lg hover:bg-blue-400/10 transition-colors mb-2"
+                      >
+                        <option.icon className={`h-5 w-5 ${option.color} shrink-0 mt-0.5`} />
+                        <div>
+                          <p className={`text-sm font-medium ${option.color}`}>{option.title}</p>
+                          <p className="text-xs text-neutral-400 mt-0.5">{option.description}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </nav>
 
                 {/* CTA Button at Bottom */}
@@ -111,7 +207,7 @@ export function SiteHeader() {
                                hover:bg-blue-400 hover:shadow-lg hover:scale-[1.02]
                                transition-all"
                   >
-                    <Link href="#pricing">Get Started Free</Link>
+                    <Link href="/validate-idea">Get Started Free</Link>
                   </Button>
                 </div>
               </SheetContent>

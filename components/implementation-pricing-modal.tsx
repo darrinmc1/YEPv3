@@ -33,7 +33,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           Implementation Roadmap Pricing
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto mb-6">
-          120-day step-by-step business launch plans. Works with YOUR idea or one of OURS.
+          30/60/90 or 120-day plans with step-by-step business launch plans. Works with YOUR idea or one of OURS.
         </p>
 
         {/* Payment Toggle */}
@@ -56,7 +56,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
                 : "text-neutral-400 hover:text-white"
             }`}
           >
-            Monthly Drip
+            Monthly 
           </button>
         </div>
         {paymentType === "monthly" && (

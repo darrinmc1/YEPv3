@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Twitter, Linkedin, Mail, Zap } from "lucide-react"
+import { Twitter, Linkedin, Mail } from "lucide-react"
+import { ExitPlansLogo } from "@/components/exit-plans-logo"
 
 export function AppverseFooter() {
   return (
@@ -10,8 +11,11 @@ export function AppverseFooter() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
           <div className="text-center md:text-left">
-            <Link href="/" className="text-xl font-bold text-white">
-              YourExitPlans
+            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-400/20">
+                <ExitPlansLogo className="text-blue-400" size={20} />
+              </div>
+              <span>YourExitPlans</span>
             </Link>
             <p className="mt-2 text-sm text-neutral-400">
               AI-Powered Business Opportunities & Market Intelligence

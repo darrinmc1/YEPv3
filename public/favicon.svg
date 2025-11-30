@@ -1,0 +1,24 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blueprint grid background -->
+  <rect x="2" y="2" width="28" height="28" rx="3" fill="#3B82F6" fill-opacity="0.15"/>
+  <path d="M2 9h28M2 16h28M2 23h28M9 2v28M16 2v28M23 2v28" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.4"/>
+
+  <!-- Exit sign rectangle -->
+  <rect x="6" y="10" width="20" height="12" rx="1.5" fill="#1E293B" stroke="#3B82F6" stroke-width="2"/>
+
+  <!-- EXIT text -->
+  <g fill="#3B82F6">
+    <!-- E -->
+    <path d="M9 13h3v1.5h-1.5v1.5h1.5v1.5h-1.5v1.5h3v1.5H9v-7.5z"/>
+    <!-- X -->
+    <path d="M13.5 13h1.5l1 2 1-2h1.5l-1.75 3.75 1.75 3.75h-1.5l-1-2-1 2h-1.5l1.75-3.75-1.75-3.75z"/>
+    <!-- Arrow -->
+    <path d="M20 14v6l4-3-4-3z"/>
+  </g>
+
+  <!-- Blueprint corner marks -->
+  <path d="M3 3h3v1h-2v2h-1v-3z" fill="#3B82F6"/>
+  <path d="M29 3h-3v1h2v2h1v-3z" fill="#3B82F6"/>
+  <path d="M3 29h3v-1h-2v-2h-1v3z" fill="#3B82F6"/>
+  <path d="M29 29h-3v-1h2v-2h1v3z" fill="#3B82F6"/>
+</svg>

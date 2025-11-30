@@ -42,7 +42,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              Get AI-validated business opportunities with deep market research, competitor analysis, and revenue models.
+              1000+ AI-validated business opportunities with deep market research, competitor analysis, and revenue models.
             </p>
 
             {/* What You Get */}
@@ -51,7 +51,7 @@ export function TwoPathways() {
               <ul className="space-y-2">
                 <li className="flex items-start gap-2 text-sm text-neutral-300">
                   <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                  <span>Weekly validated business opportunities</span>
+                  <span>Daily validated business opportunities</span>
                 </li>
                 <li className="flex items-start gap-2 text-sm text-neutral-300">
                   <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
@@ -68,29 +68,31 @@ export function TwoPathways() {
               </ul>
             </div>
 
-            {/* Pricing Preview */}
-            <div className="mb-6 p-4 rounded-lg bg-black/40 border border-white/10">
-              <p className="text-xs text-neutral-400 mb-2">5 Tiers Available:</p>
-              <div className="flex items-center gap-2 text-sm text-white">
-                <span className="font-semibold">FREE</span>
-                <span className="text-neutral-500">•</span>
-                <span>$25</span>
-                <span className="text-neutral-500">•</span>
-                <span>$99/qtr</span>
-                <span className="text-neutral-500">•</span>
-                <span>$249/mo</span>
-                <span className="text-neutral-500">•</span>
-                <span>$999/mo</span>
-              </div>
+            {/* Free Validation CTA */}
+            <div className="mb-4 p-4 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/30">
+              <p className="text-sm font-semibold text-blue-400 mb-1">Start Free:</p>
+              <p className="text-xs text-neutral-300">Test your idea with AI validation - no credit card required</p>
             </div>
 
-            {/* CTA Button */}
-            <Dialog open={ideasOpen} onOpenChange={setIdeasOpen}>
+            {/* CTA Buttons */}
+            <div className="flex flex-col gap-3">
+              <Button
+                asChild
+                className="w-full rounded-full bg-green-500 px-6 py-6 text-base font-semibold text-black hover:bg-green-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(34,197,94,0.3)] group"
+              >
+                <a href="/validate-idea" className="flex items-center justify-center">
+                  <span>Try Free Validation</span>
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </Button>
+
+              <Dialog open={ideasOpen} onOpenChange={setIdeasOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className="w-full rounded-full bg-blue-500 px-6 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(59,130,246,0.3)] group"
+                  variant="outline"
+                  className="w-full rounded-full border-2 border-blue-400/50 bg-transparent px-6 py-6 text-base font-semibold text-white hover:bg-blue-400/10 hover:border-blue-400 transition-all group"
                 >
-                  <span>Explore Business Ideas</span>
+                  <span>View All Plans</span>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </DialogTrigger>
@@ -98,6 +100,7 @@ export function TwoPathways() {
                 <IdeasPricingModal onClose={() => setIdeasOpen(false)} />
               </DialogContent>
             </Dialog>
+            </div>
           </div>
         </div>
 
@@ -114,7 +117,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              Get step-by-step daily action plans to launch YOUR idea.
+              Get step-by-step daily action plans to launch YOUR idea, or one of ours.
             </p>
 
             {/* What You Get */}
@@ -123,7 +126,7 @@ export function TwoPathways() {
               <ul className="space-y-2">
                 <li className="flex items-start gap-2 text-sm text-neutral-300">
                   <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                  <span>Daily action plans for 30-120 days</span>
+                  <span>Daily action plans for 30/60/90/120 days</span>
                 </li>
                 <li className="flex items-start gap-2 text-sm text-neutral-300">
                   <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
@@ -135,7 +138,7 @@ export function TwoPathways() {
                 </li>
                 <li className="flex items-start gap-2 text-sm text-neutral-300">
                   <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                  <span>Works with YOUR idea OR our ideas</span>
+                  <span>Works with YOUR idea OR one of ours</span>
                 </li>
               </ul>
             </div>
@@ -160,7 +163,7 @@ export function TwoPathways() {
                 <Button
                   className="w-full rounded-full bg-blue-500 px-6 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(59,130,246,0.3)] group"
                 >
-                  <span>Get Launch Roadmap</span>
+                  <span>I'm ready to Launch !</span>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </DialogTrigger>

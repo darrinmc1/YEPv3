@@ -4,39 +4,68 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Bird,
-  Trophy,
+  Crown,
   Flag,
   CircleDollarSign,
-  TrendingUp,
+  Rocket,
   Clock,
   Briefcase,
   Flame,
-  Rocket,
-  Cog,
+  Lightbulb,
+  Anchor,
   type LucideProps,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Stat } from "./animated-stat"
 
 const rotatingWords = [
-  { text: "Freedom", icon: Bird, color: "text-orange-400" },
-  { text: "Success", icon: Trophy, color: "text-green-400" },
-  { text: "Balance", icon: Flag, color: "text-purple-400" },
-  { text: "Wealth", icon: CircleDollarSign, color: "text-yellow-400" },
-  { text: "Growth", icon: TrendingUp, color: "text-teal-400" },
+  { text: "Freedom", icon: Bird, color: "text-orange-400", emoji: "🐦" },
+  { text: "Owner", icon: Crown, color: "text-green-400", emoji: "👑" },
+  { text: "Balance", icon: Flag, color: "text-purple-400", emoji: "⚖️" },
+  { text: "Income", icon: CircleDollarSign, color: "text-yellow-400", emoji: "💰" },
+  { text: "Started", icon: Rocket, color: "text-teal-400", emoji: "🚀" },
 ]
 
 const rotatingPhrases = [
-  { text: "the 9-5", icon: Clock },
-  { text: "your job", icon: Briefcase },
-  { text: "burnout", icon: Flame },
-  { text: "the grind", icon: Cog },
-  { text: "side hustle", icon: Rocket },
+  { text: "the 9-5", icon: Clock, emoji: "⏰" },
+  { text: "Employee", icon: Briefcase, emoji: "💼" },
+  { text: "Burnout", icon: Flame, emoji: "🔥" },
+  { text: "Idea", icon: Lightbulb, emoji: "💡" },
+  { text: "Stuck", icon: Anchor, emoji: "⚓" },
 ]
 
-const IconWrapper = ({ icon: Icon, ...props }: { icon: React.ComponentType<LucideProps> } & LucideProps) => (
-  <Icon className="inline-block h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16" {...props} />
-)
+const IconWrapper = ({ icon: Icon, emoji, color, ...props }: { icon: React.ComponentType<LucideProps>, emoji?: string, color?: string } & LucideProps) => {
+  const [useEmoji, setUseEmoji] = useState(true)
+  const [emojiLoaded, setEmojiLoaded] = useState(false)
+
+  useEffect(() => {
+    // Test if emoji rendering is supported
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.fillText('🏆', 0, 0)
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const hasEmoji = imageData.data.some(channel => channel !== 0)
+      setEmojiLoaded(hasEmoji)
+      setUseEmoji(hasEmoji && !!emoji)
+    } else {
+      setUseEmoji(false)
+    }
+  }, [emoji])
+
+  if (useEmoji && emoji && emojiLoaded) {
+    return (
+      <span
+        className="inline-flex items-center justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-none shrink-0 min-w-[1.2em]"
+        style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+      >
+        {emoji}
+      </span>
+    )
+  }
+
+  return <Icon className={`inline-flex items-center justify-center shrink-0 h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 ${color || ''}`} {...props} />
+}
 
 export function Hero() {
   const [wordIndex, setWordIndex] = useState(0)
@@ -73,49 +102,53 @@ export function Hero() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="mt-3 max-w-5xl text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <span className="block text-blue-400 text-center w-full">YourExitPlans</span>
-              {/* Grid container for stable alignment */}
-              <div className="grid grid-cols-[1fr,auto,1fr] items-center justify-center w-full max-w-2xl mx-auto">
-                <span className="text-right text-white">from</span>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={phraseIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="col-start-2 inline-flex items-center gap-3 px-4 text-cyan-400"
-                  >
-                    {currentPhraseData.text} <IconWrapper icon={CurrentPhraseIcon} />
-                  </motion.div>
-                </AnimatePresence>
-                <div /> {/* Empty div to balance the grid */}
+          <h1 className="mt-3 max-w-5xl text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl px-4">
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="block text-blue-400 text-center w-full mb-1">YourExitPlans</span>
+              {/* From line */}
+              <div className="flex items-center justify-center gap-2 w-full">
+                <span className="text-white shrink-0 whitespace-nowrap">from</span>
+                <div className="relative inline-flex min-w-[160px] sm:min-w-[200px] md:min-w-[260px] lg:min-w-[320px] justify-center min-h-[2em]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={phraseIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0 flex items-center justify-center gap-2 text-cyan-400 whitespace-nowrap"
+                    >
+                      <span className="shrink-0">{currentPhraseData.text}</span>
+                      <IconWrapper icon={CurrentPhraseIcon} emoji={currentPhraseData.emoji} color="text-cyan-400" />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
-              <div className="grid grid-cols-[1fr,auto,1fr] items-center justify-center w-full max-w-2xl mx-auto">
-                <span className="text-right text-white">to</span>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={wordIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className={`col-start-2 inline-flex items-center gap-3 px-4 ${currentWordData.color}`}
-                  >
-                    {currentWordData.text} <IconWrapper icon={CurrentWordIcon} />
-                  </motion.div>
-                </AnimatePresence>
-                <div /> {/* Empty div to balance the grid */}
+              {/* To line */}
+              <div className="flex items-center justify-center gap-2 w-full">
+                <span className="text-white shrink-0 whitespace-nowrap">to</span>
+                <div className="relative inline-flex min-w-[160px] sm:min-w-[200px] md:min-w-[260px] lg:min-w-[320px] justify-center min-h-[2em]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={wordIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className={`absolute inset-0 flex items-center justify-center gap-2 ${currentWordData.color} whitespace-nowrap`}
+                    >
+                      <span className="shrink-0">{currentWordData.text}</span>
+                      <IconWrapper icon={CurrentWordIcon} emoji={currentWordData.emoji} color={currentWordData.color} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
           </h1>
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-center text-lg text-neutral-300 sm:text-xl">
-            Stop procrastinating. Get validated business opportunities with deep market analysis,
-            step-by-step guides, and AI-powered insights.
+            Stop procrastinating. Discover validated business ideas with market research, step-by-step guides, and AI insights — stop researching and start building.
           </p>
 
           {/* CTA Buttons */}
@@ -124,7 +157,7 @@ export function Hero() {
               asChild
               className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(198,255,58,0.3)]"
             >
-              <a href="#choose-your-path">Get Started Free</a>
+              <a href="/validate-idea">Validate Your Idea Free</a>
             </Button>
             <Button
               asChild
@@ -145,7 +178,7 @@ export function Hero() {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>200+ Ideas in database</span>
+              <span>2000+ Ideas in database</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">

@@ -49,10 +49,9 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
             </div>
             <Button
               asChild
-              className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all"
-              style={{ backgroundColor: "#262626", color: "#ffffff", border: "1px solid #404040" }}
+              className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all bg-green-500 text-black hover:bg-green-400 font-semibold"
             >
-              <a href="#signup">Get Started Free</a>
+              <a href="/validate-idea">Validate Your Idea</a>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">

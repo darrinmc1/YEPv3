@@ -7,12 +7,13 @@ import Plasma from "@/components/plasma"
 import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
-import { validateEnv } from "@/lib/env"
+import { ScrollProgress } from "@/components/scroll-progress"
+// import { validateEnv } from "@/lib/env"
 
 // Validate environment variables on server startup
-if (typeof window === 'undefined') {
-  validateEnv()
-}
+// if (typeof window === 'undefined') {
+//   validateEnv()
+// }
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -28,7 +29,13 @@ export const metadata: Metadata = {
   title: "YourExitPlans | AI-Powered Business Opportunities & Market Intelligence",
   description:
     "Transform market signals into validated, actionable business ideas with AI-powered analysis. Get deep market research and step-by-step implementation guides to build your freedom.",
-  generator: "v0.app",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
@@ -39,26 +46,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <head>
-        {/* Scripts must have unique keys to avoid server rendering errors */}
-        <Script id="dynamic-favicon" strategy="beforeInteractive" key="dynamic-favicon">
-          {`
-            function updateFavicon() {
-              const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              const faviconHref = darkMode ? '/icon.svg' : '/icon.svg';
-              let link = document.querySelector("link[rel~='icon']");
-              if (!link) {
-                link = document.createElement('link');
-                link.rel = 'icon';
-                document.getElementsByTagName('head')[0].appendChild(link);
-              }
-              link.href = faviconHref;
-            }
-            updateFavicon();
-            // Listen for changes in theme
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateFavicon);
-          `}
-        </Script>
-
         {/* Google Tag Manager - DISABLED: Replace GTM-XXXXXXX with your actual GTM ID */}
         {/* <Script id="gtm-script" strategy="lazyOnload" key="gtm-script">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -80,6 +67,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
+        <ScrollProgress />
         <Suspense fallback={null}>
           <div className="fixed inset-0 z-0 bg-black">
             <Plasma color="#001d3d" speed={0.7} scale={1.8} opacity={0.8} mouseInteractive={false} />
