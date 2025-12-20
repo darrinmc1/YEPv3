@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, Lightbulb } from "lucide-react"
+import { CharacterCounter } from "@/components/character-counter"
 import { IdeaFormData } from "./types"
 
 interface IdeaFormStep1Props {
@@ -32,8 +33,9 @@ export function IdeaFormStep1({ formData, setFormData, onNext, isValid }: IdeaFo
                     value={formData.ideaName}
                     onChange={(e) => setFormData({ ...formData, ideaName: e.target.value })}
                     className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500"
+                    maxLength={100}
                 />
-                <p className="text-xs text-neutral-500">Min 3 characters</p>
+                <CharacterCounter value={formData.ideaName} min={3} max={100} />
             </div>
 
             <div className="space-y-2">
@@ -46,8 +48,9 @@ export function IdeaFormStep1({ formData, setFormData, onNext, isValid }: IdeaFo
                     value={formData.oneLiner}
                     onChange={(e) => setFormData({ ...formData, oneLiner: e.target.value })}
                     className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500"
+                    maxLength={200}
                 />
-                <p className="text-xs text-neutral-500">Min 10 characters</p>
+                <CharacterCounter value={formData.oneLiner} min={10} max={200} />
             </div>
 
             <div className="space-y-2">
@@ -60,8 +63,9 @@ export function IdeaFormStep1({ formData, setFormData, onNext, isValid }: IdeaFo
                     value={formData.problemSolved}
                     onChange={(e) => setFormData({ ...formData, problemSolved: e.target.value })}
                     className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500 min-h-24"
+                    maxLength={500}
                 />
-                <p className="text-xs text-neutral-500">Min 20 characters</p>
+                <CharacterCounter value={formData.problemSolved} min={20} max={500} />
             </div>
 
             <div className="flex justify-end">
