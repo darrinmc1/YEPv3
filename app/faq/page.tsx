@@ -27,7 +27,7 @@ export default function FAQPage() {
                 </section>
 
                 <section className="space-y-3">
-                  <h2 className="text-2xl font-semibold text-white">2. What's the difference between the tiers?</h2>
+                  <h2 className="text-2xl font-semibold text-white">2. What&apos;s the difference between the tiers?</h2>
                   <p className="text-neutral-300">
                     <strong>Starter ($99 one-time or $25/mo):</strong> Basic action steps, self-guided<br/>
                     <strong>Silver ($198 one-time or $50/mo):</strong> Everything in Starter + templates, frameworks, weekly automated check-ins<br/>
@@ -64,12 +64,12 @@ export default function FAQPage() {
                     6. Do I need technical skills or coding knowledge?
                   </h2>
                   <p className="text-neutral-300">
-                    No. We focus on no-code and low-code tools like v0.dev, Lovable.dev, and Google Workspace. The program teaches you how to use these tools step-by-step, even if you're a complete beginner.
+                    No. We focus on no-code and low-code tools like v0.dev, Lovable.dev, and Google Workspace. The program teaches you how to use these tools step-by-step, even if you&apos;re a complete beginner.
                   </p>
                 </section>
 
                 <section className="space-y-3">
-                  <h2 className="text-2xl font-semibold text-white">7. What's the difference between one-time and monthly payments?</h2>
+                  <h2 className="text-2xl font-semibold text-white">7. What&apos;s the difference between one-time and monthly payments?</h2>
                   <p className="text-neutral-300">
                     One-time payments give you immediate access to all templates and resources upfront. Monthly payments provide the same content but templates unlock as you progress through the days (drip-fed). Both options include the full 120-day program.
                   </p>
@@ -89,14 +89,14 @@ export default function FAQPage() {
                     9. Can I upgrade my tier later?
                   </h2>
                   <p className="text-neutral-300">
-                    Yes! You can upgrade to a higher tier at the start of any new month. Simply pay the difference and you'll immediately get access to the enhanced content and support for that tier.
+                    Yes! You can upgrade to a higher tier at the start of any new month. Simply pay the difference and you&apos;ll immediately get access to the enhanced content and support for that tier.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">10. Is there a refund policy?</h2>
                   <p className="text-neutral-300">
-                    We offer a 7-day money-back guarantee. If you're not satisfied with the program within the first 7 days, contact us for a full refund. After 7 days, all sales are final as you have access to the complete 120-day roadmap.
+                    We offer a 7-day money-back guarantee. If you&apos;re not satisfied with the program within the first 7 days, contact us for a full refund. After 7 days, all sales are final as you have access to the complete 120-day roadmap.
                   </p>
                 </section>
 
@@ -132,7 +132,7 @@ export default function FAQPage() {
                     <a href="/pricing" className="text-blue-400 underline">
                       choose your tier
                     </a>
-                    , complete your purchase, and you'll receive immediate access to your Day 1 materials and the complete roadmap. Start building your business tomorrow!
+                    , complete your purchase, and you&apos;ll receive immediate access to your Day 1 materials and the complete roadmap. Start building your business tomorrow!
                   </p>
                 </section>
 
@@ -142,7 +142,7 @@ export default function FAQPage() {
                     <a href="/contact" className="text-blue-400 underline">
                       Contact us
                     </a>{" "}
-                    and we'll get back to you within 24 hours with answers to any questions not covered here.
+                    and we&apos;ll get back to you within 24 hours with answers to any questions not covered here.
                   </p>
                 </section>
               </div>

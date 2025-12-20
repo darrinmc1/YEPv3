@@ -47,42 +47,42 @@ function createInMemoryAdapter(): Adapter {
         if (session.userId === userId) sessions.delete(token)
       }
     },
-    async linkAccount(account) {
+    async linkAccount(account: AdapterAccount) {
       const key = `${account.provider}:${account.providerAccountId}`
       const stored = { ...account, id: account.id ?? randomUUID() }
       accounts.set(key, stored)
       return stored
     },
-    async unlinkAccount({ provider, providerAccountId }) {
+    async unlinkAccount({ provider, providerAccountId }: { provider: string; providerAccountId: string }) {
       accounts.delete(`${provider}:${providerAccountId}`)
     },
-    async createSession(session) {
+    async createSession(session: AdapterSession) {
       sessions.set(session.sessionToken, session)
       return session
     },
-    async getSessionAndUser(sessionToken) {
+    async getSessionAndUser(sessionToken: string) {
       const session = sessions.get(sessionToken)
       if (!session) return null
       const user = users.get(session.userId)
       if (!user) return null
       return { session, user }
     },
-    async updateSession(session) {
+    async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">) {
       const existing = sessions.get(session.sessionToken)
       if (!existing) return null
       const updated = { ...existing, ...session }
       sessions.set(updated.sessionToken, updated)
       return updated
     },
-    async deleteSession(sessionToken) {
+    async deleteSession(sessionToken: string) {
       sessions.delete(sessionToken)
     },
-    async createVerificationToken(token) {
+    async createVerificationToken(token: VerificationToken) {
       const key = `${token.identifier}:${token.token}`
       verificationTokens.set(key, token)
       return token
     },
-    async useVerificationToken(token) {
+    async useVerificationToken(token: { identifier: string; token: string }) {
       const key = `${token.identifier}:${token.token}`
       const stored = verificationTokens.get(key)
       if (!stored) return null

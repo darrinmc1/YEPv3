@@ -1,9 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Lightbulb, AlertCircle, Loader2 } from "lucide-react"
+import { useDebounce } from "@/lib/performance"
+import { getProgressAriaAttributes } from "@/lib/accessibility"
+import { interactiveButton } from "@/lib/animations"
 import { IdeaFormData, AnalysisResult, LimitReachedResponse, FormStatus } from "./idea-validation/types"
 import { IdeaFormStep1 } from "./idea-validation/step-one"
 import { IdeaFormStep2 } from "./idea-validation/step-two"
@@ -90,6 +94,7 @@ export function IdeaValidationForm() {
         setStatus("rate-limited")
         setErrorMessage(limitData.message)
         setResetTime(limitData.resetTime || "")
+        toast.error("Rate limit reached. Please try again later.")
         return
       }
 
@@ -100,13 +105,14 @@ export function IdeaValidationForm() {
       const result: AnalysisResult = await response.json()
       setAnalysisResult(result)
       setStatus("success")
+      toast.success("Your idea has been analyzed!")
     } catch (error) {
       setStatus("error")
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to analyze your idea. Please try again."
-      )
+      const message = error instanceof Error
+        ? error.message
+        : "Failed to analyze your idea. Please try again."
+      setErrorMessage(message)
+      toast.error(message)
     }
   }
 

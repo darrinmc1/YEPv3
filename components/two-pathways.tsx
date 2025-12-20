@@ -163,7 +163,7 @@ export function TwoPathways() {
                 <Button
                   className="w-full rounded-full bg-blue-500 px-6 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(59,130,246,0.3)] group"
                 >
-                  <span>I'm ready to Launch !</span>
+                  <span>I&apos;m ready to Launch !</span>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </DialogTrigger>

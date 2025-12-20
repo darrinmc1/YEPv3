@@ -8,6 +8,8 @@ import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { ScrollProgress } from "@/components/scroll-progress"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -56,17 +58,22 @@ export default function RootLayout({
         )}
       </head>
       <body>
-        <ScrollProgress />
-        <Suspense fallback={null}>
-          <div className="fixed inset-0 z-0 bg-black">
-            <Plasma color="#001d3d" speed={0.7} scale={1.8} opacity={0.8} mouseInteractive={false} />
-          </div>
-          <div className="relative z-10">{children}</div>
-        </Suspense>
+        <ErrorBoundary>
+          <ScrollProgress />
+          <Suspense fallback={null}>
+            <div className="fixed inset-0 z-0 bg-black">
+              <Plasma color="#001d3d" speed={0.7} scale={1.8} opacity={0.8} mouseInteractive={false} />
+            </div>
+            <div className="relative z-10">{children}</div>
+          </Suspense>
 
-        {/* Vercel Speed Insights and Analytics components */}
-        <SpeedInsights />
-        <Analytics />
+          {/* Vercel Speed Insights and Analytics components */}
+          <SpeedInsights />
+          <Analytics />
+
+          {/* Toast notifications */}
+          <Toaster position="top-right" richColors closeButton />
+        </ErrorBoundary>
       </body>
     </html>
   )
