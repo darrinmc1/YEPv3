@@ -1,106 +1,75 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lightbulb, Users, DollarSign, CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowLeft } from "lucide-react"
+import { Lightbulb, AlertCircle, Loader2, Clock, RefreshCw } from "lucide-react"
+import { useDebounce } from "@/lib/performance"
+import { getProgressAriaAttributes } from "@/lib/accessibility"
+import { interactiveButton } from "@/lib/animations"
+import { useFormAutoSave, useRateLimitTimer, useBeforeUnload } from "@/lib/form-utils"
+import { IdeaFormData, AnalysisResult, LimitReachedResponse, FormStatus } from "./idea-validation/types"
+import { IdeaFormStep1 } from "./idea-validation/step-one"
+import { IdeaFormStep2 } from "./idea-validation/step-two"
+import { IdeaFormStep3 } from "./idea-validation/step-three"
+import { AnalysisResultDisplay } from "./idea-validation/analysis-result"
 
-// TypeScript Interfaces
-interface IdeaFormData {
-  ideaName: string
-  oneLiner: string
-  problemSolved: string
-  targetCustomer: string
-  businessType: string
-  industry: string
-  priceRange: string
-  email: string
+const initialFormData: IdeaFormData = {
+  ideaName: "",
+  oneLiner: "",
+  problemSolved: "",
+  targetCustomer: "",
+  businessType: "",
+  industry: "",
+  priceRange: "",
+  email: ""
 }
-
-interface AnalysisResult {
-  marketValidation: {
-    score: number
-    summary: string
-    keyInsights: string[]
-  }
-  competitorLandscape: {
-    competition: string
-    opportunities: string[]
-  }
-  quickWins: string[]
-  redFlags: string[]
-  nextSteps: string[]
-}
-
-interface LimitReachedResponse {
-  error: string
-  message: string
-  resetTime?: string
-}
-
-type FormStatus = "idle" | "loading" | "success" | "error" | "rate-limited"
-
-const BUSINESS_TYPES = [
-  "SaaS (Software as a Service)",
-  "E-commerce Store",
-  "Marketplace Platform",
-  "Service Business",
-  "Content/Education",
-  "Agency",
-  "Mobile App",
-  "Physical Product",
-  "Other"
-]
-
-const INDUSTRIES = [
-  "Technology",
-  "Healthcare",
-  "Finance",
-  "Education",
-  "Real Estate",
-  "E-commerce/Retail",
-  "Food & Beverage",
-  "Marketing/Advertising",
-  "Entertainment",
-  "Professional Services",
-  "Other"
-]
-
-const PRICE_RANGES = [
-  "Free (ad-supported)",
-  "Under $10",
-  "$10-$50",
-  "$50-$100",
-  "$100-$500",
-  "$500-$1000",
-  "$1000+",
-  "Not sure yet"
-]
 
 export function IdeaValidationForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [status, setStatus] = useState<FormStatus>("idle")
-  const [formData, setFormData] = useState<IdeaFormData>({
-    ideaName: "",
-    oneLiner: "",
-    problemSolved: "",
-    targetCustomer: "",
-    businessType: "",
-    industry: "",
-    priceRange: "",
-    email: ""
-  })
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [resetTime, setResetTime] = useState("")
+  const [showRecoveryPrompt, setShowRecoveryPrompt] = useState(false)
+
+  // Auto-save with recovery
+  const {
+    formData,
+    setFormData,
+    clearForm,
+    hasUnsavedChanges,
+    hasSavedData,
+    lastSaved,
+  } = useFormAutoSave("idea-validation-form", initialFormData)
+
+  // Rate limit countdown
+  const rateLimitTimer = useRateLimitTimer(resetTime)
+
+  // Prevent navigation with unsaved changes
+  useBeforeUnload(hasUnsavedChanges && status === "idle")
 
   const totalSteps = 3
   const progress = (currentStep / totalSteps) * 100
+
+  // Check for saved data on mount
+  useEffect(() => {
+    if (hasSavedData()) {
+      setShowRecoveryPrompt(true)
+    }
+  }, [hasSavedData])
+
+  const handleRecoverData = () => {
+    toast.success("Form data recovered!")
+    setShowRecoveryPrompt(false)
+  }
+
+  const handleStartFresh = () => {
+    clearForm()
+    setShowRecoveryPrompt(false)
+    toast.info("Starting with a fresh form")
+  }
 
   // Field validation
   const validateStep = (step: number): boolean => {
@@ -143,9 +112,11 @@ export function IdeaValidationForm() {
     setErrorMessage("")
 
     try {
-      const webhookUrl = "/api/validate-idea"
+      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
 
-      // Webhook URL is handled by the API route
+      if (!webhookUrl) {
+        throw new Error("Webhook URL not configured")
+      }
 
       const response = await fetch(webhookUrl, {
         method: "POST",
@@ -160,6 +131,7 @@ export function IdeaValidationForm() {
         setStatus("rate-limited")
         setErrorMessage(limitData.message)
         setResetTime(limitData.resetTime || "")
+        toast.error("Rate limit reached. Please try again later.")
         return
       }
 
@@ -170,33 +142,26 @@ export function IdeaValidationForm() {
       const result: AnalysisResult = await response.json()
       setAnalysisResult(result)
       setStatus("success")
+      toast.success("Your idea has been analyzed!")
     } catch (error) {
       logger.error("Failed to submit idea validation form", { error })
       setStatus("error")
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to analyze your idea. Please try again."
-      )
+      const message = error instanceof Error
+        ? error.message
+        : "Failed to analyze your idea. Please try again."
+      setErrorMessage(message)
+      toast.error(message)
     }
   }
 
   const resetForm = () => {
     setCurrentStep(1)
     setStatus("idle")
-    setFormData({
-      ideaName: "",
-      oneLiner: "",
-      problemSolved: "",
-      targetCustomer: "",
-      businessType: "",
-      industry: "",
-      priceRange: "",
-      email: ""
-    })
+    clearForm()
     setAnalysisResult(null)
     setErrorMessage("")
     setResetTime("")
+    toast.success("Form reset successfully")
   }
 
   // Render loading state
@@ -235,139 +200,7 @@ export function IdeaValidationForm() {
   if (status === "success" && analysisResult) {
     return (
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-4xl mx-auto">
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-400/10 mb-4">
-            <CheckCircle2 className="h-8 w-8 text-green-400" />
-          </div>
-          <h3 className="text-3xl font-bold text-white mb-2">Analysis Complete!</h3>
-          <p className="text-neutral-400">Here&apos;s what we found about your idea</p>
-        </div>
-
-        <div className="space-y-6">
-          {/* Market Validation */}
-          <Card className="bg-black/40 border-blue-400/20">
-            <CardHeader>
-              <CardTitle className="text-white">Market Validation Score</CardTitle>
-              <div className="flex items-center gap-4 mt-2">
-                <Progress value={analysisResult.marketValidation.score} className="flex-1" />
-                <span className="text-2xl font-bold text-blue-400">
-                  {analysisResult.marketValidation.score}%
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-neutral-300 mb-4">{analysisResult.marketValidation.summary}</p>
-              <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">
-                Key Insights:
-              </h4>
-              <ul className="space-y-2">
-                {analysisResult.marketValidation.keyInsights.map((insight, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-neutral-300">
-                    <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                    <span>{insight}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Competitor Landscape */}
-          <Card className="bg-black/40 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Competitor Landscape</CardTitle>
-              <CardDescription className="text-neutral-400">
-                {analysisResult.competitorLandscape.competition}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">
-                Opportunities:
-              </h4>
-              <ul className="space-y-2">
-                {analysisResult.competitorLandscape.opportunities.map((opportunity, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-neutral-300">
-                    <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                    <span>{opportunity}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Quick Wins & Red Flags */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="bg-black/40 border-green-400/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-400" />
-                  Quick Wins
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {analysisResult.quickWins.map((win, index) => (
-                    <li key={index} className="text-sm text-neutral-300">
-                      • {win}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/40 border-red-400/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-red-400" />
-                  Red Flags
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {analysisResult.redFlags.map((flag, index) => (
-                    <li key={index} className="text-sm text-neutral-300">
-                      • {flag}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Next Steps */}
-          <Card className="bg-black/40 border-blue-400/20">
-            <CardHeader>
-              <CardTitle className="text-white">Recommended Next Steps</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="space-y-2">
-                {analysisResult.nextSteps.map((step, index) => (
-                  <li key={index} className="flex items-start gap-3 text-sm text-neutral-300">
-                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-400/10 text-blue-400 font-semibold shrink-0">
-                      {index + 1}
-                    </span>
-                    <span className="mt-0.5">{step}</span>
-                  </li>
-                ))}
-              </ol>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20">
-          <h4 className="text-xl font-bold text-white mb-2">Ready to Take Action?</h4>
-          <p className="text-neutral-300 mb-4">
-            Upgrade to get detailed implementation plans, market research reports, and ongoing support.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button className="bg-blue-500 text-black hover:bg-blue-400 font-semibold">
-              View Pricing Plans
-            </Button>
-            <Button variant="outline" onClick={resetForm} className="border-white/20 text-white hover:bg-white/10">
-              Validate Another Idea
-            </Button>
-          </div>
-        </div>
+        <AnalysisResultDisplay result={analysisResult} onReset={resetForm} />
       </div>
     )
   }
@@ -378,22 +211,42 @@ export function IdeaValidationForm() {
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-2xl mx-auto">
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-yellow-400/10 mb-4">
-            <AlertCircle className="h-8 w-8 text-yellow-400" />
+            <Clock className="h-8 w-8 text-yellow-400" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-2">Free Analysis Limit Reached</h3>
           <p className="text-neutral-400 mb-4">{errorMessage}</p>
-          {resetTime && (
-            <p className="text-sm text-neutral-500 mb-6">Reset time: {resetTime}</p>
+
+          {/* Countdown Timer */}
+          {rateLimitTimer.isActive && (
+            <div className="mb-6 w-full max-w-md">
+              <div className="p-4 rounded-lg bg-black/40 border border-yellow-400/20">
+                <div className="flex items-center justify-center gap-2 text-yellow-400 mb-2">
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                  <span className="text-lg font-semibold">
+                    Resets in {rateLimitTimer.formatTime()}
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-yellow-400 transition-all duration-1000"
+                    style={{ width: `${100 - rateLimitTimer.percentage}%` }}
+                  />
+                </div>
+              </div>
+            </div>
           )}
+
+          {/* Upgrade CTA */}
           <div className="p-6 rounded-xl bg-black/40 border border-blue-400/20 mb-6 w-full">
             <h4 className="text-lg font-semibold text-white mb-2">Want Unlimited Validations?</h4>
             <p className="text-neutral-300 mb-4">
               Upgrade to unlock unlimited idea validations, deeper analysis, and implementation plans.
             </p>
-            <Button className="w-full bg-blue-500 text-black hover:bg-blue-400 font-semibold">
+            <Button className={`w-full bg-blue-500 text-black hover:bg-blue-400 font-semibold ${interactiveButton}`}>
               View Pricing Plans
             </Button>
           </div>
+
           <Button variant="ghost" onClick={resetForm} className="text-neutral-400 hover:text-white">
             Go Back
           </Button>
@@ -428,6 +281,38 @@ export function IdeaValidationForm() {
   // Render form steps (idle state)
   return (
     <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-3xl mx-auto">
+      {/* Recovery Prompt */}
+      {showRecoveryPrompt && (
+        <div className="mb-6 p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 animate-in slide-in-from-top">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h4 className="text-white font-semibold mb-1">Continue where you left off?</h4>
+              <p className="text-sm text-neutral-300 mb-3">
+                We found your previously saved form data. Would you like to continue or start fresh?
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={handleRecoverData}
+                  className="bg-blue-500 text-black hover:bg-blue-400"
+                >
+                  Continue
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleStartFresh}
+                  className="text-neutral-300 hover:text-white"
+                >
+                  Start Fresh
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -436,7 +321,12 @@ export function IdeaValidationForm() {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">Validate Your Business Idea</h2>
-            <p className="text-sm text-neutral-400">Free AI-powered analysis in 60 seconds</p>
+            <p className="text-sm text-neutral-400">
+              Free AI-powered analysis in 60 seconds
+              {lastSaved && (
+                <span className="ml-2 text-green-400">• Auto-saved {new Date(lastSaved).toLocaleTimeString()}</span>
+              )}
+            </p>
           </div>
         </div>
 
@@ -450,234 +340,33 @@ export function IdeaValidationForm() {
         </div>
       </div>
 
-      {/* Step 1: Idea Details */}
       {currentStep === 1 && (
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Lightbulb className="h-5 w-5 text-blue-400" />
-            <h3 className="text-xl font-semibold text-white">Tell Us About Your Idea</h3>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ideaName" className="text-white">
-              Idea Name <span className="text-red-400">*</span>
-            </Label>
-            <Input
-              id="ideaName"
-              placeholder="e.g., AI-powered fitness coach for busy professionals"
-              value={formData.ideaName}
-              onChange={(e) => setFormData({ ...formData, ideaName: e.target.value })}
-              className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500"
-            />
-            <p className="text-xs text-neutral-500">Min 3 characters</p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="oneLiner" className="text-white">
-              One-Liner Description <span className="text-red-400">*</span>
-            </Label>
-            <Input
-              id="oneLiner"
-              placeholder="What is it in one sentence?"
-              value={formData.oneLiner}
-              onChange={(e) => setFormData({ ...formData, oneLiner: e.target.value })}
-              className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500"
-            />
-            <p className="text-xs text-neutral-500">Min 10 characters</p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="problemSolved" className="text-white">
-              What Problem Does It Solve? <span className="text-red-400">*</span>
-            </Label>
-            <Textarea
-              id="problemSolved"
-              placeholder="Describe the problem your idea addresses..."
-              value={formData.problemSolved}
-              onChange={(e) => setFormData({ ...formData, problemSolved: e.target.value })}
-              className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500 min-h-24"
-            />
-            <p className="text-xs text-neutral-500">Min 20 characters</p>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              onClick={handleNext}
-              disabled={!validateStep(1)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <IdeaFormStep1
+          formData={formData}
+          setFormData={setFormData}
+          onNext={handleNext}
+          isValid={validateStep(1)}
+        />
       )}
 
-      {/* Step 2: Context */}
       {currentStep === 2 && (
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Users className="h-5 w-5 text-blue-400" />
-            <h3 className="text-xl font-semibold text-white">Market Context</h3>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="targetCustomer" className="text-white">
-              Who Is Your Target Customer? <span className="text-red-400">*</span>
-            </Label>
-            <Textarea
-              id="targetCustomer"
-              placeholder="Describe your ideal customer..."
-              value={formData.targetCustomer}
-              onChange={(e) => setFormData({ ...formData, targetCustomer: e.target.value })}
-              className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500 min-h-20"
-            />
-            <p className="text-xs text-neutral-500">Min 10 characters</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="businessType" className="text-white">
-                Business Type <span className="text-red-400">*</span>
-              </Label>
-              <Select value={formData.businessType} onValueChange={(value) => setFormData({ ...formData, businessType: value })}>
-                <SelectTrigger id="businessType" className="bg-black/40 border-white/20 text-white w-full">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent className="bg-black/90 border-white/20">
-                  {BUSINESS_TYPES.map((type) => (
-                    <SelectItem key={type} value={type} className="text-white">
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="industry" className="text-white">
-                Industry <span className="text-red-400">*</span>
-              </Label>
-              <Select value={formData.industry} onValueChange={(value) => setFormData({ ...formData, industry: value })}>
-                <SelectTrigger id="industry" className="bg-black/40 border-white/20 text-white w-full">
-                  <SelectValue placeholder="Select industry" />
-                </SelectTrigger>
-                <SelectContent className="bg-black/90 border-white/20">
-                  {INDUSTRIES.map((industry) => (
-                    <SelectItem key={industry} value={industry} className="text-white">
-                      {industry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="priceRange" className="text-white">
-              Expected Price Range <span className="text-red-400">*</span>
-            </Label>
-            <Select value={formData.priceRange} onValueChange={(value) => setFormData({ ...formData, priceRange: value })}>
-              <SelectTrigger id="priceRange" className="bg-black/40 border-white/20 text-white w-full">
-                <SelectValue placeholder="Select price range" />
-              </SelectTrigger>
-              <SelectContent className="bg-black/90 border-white/20">
-                {PRICE_RANGES.map((range) => (
-                  <SelectItem key={range} value={range} className="text-white">
-                    {range}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex justify-between">
-            <Button
-              onClick={handleBack}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
-              onClick={handleNext}
-              disabled={!validateStep(2)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <IdeaFormStep2
+          formData={formData}
+          setFormData={setFormData}
+          onNext={handleNext}
+          onBack={handleBack}
+          isValid={validateStep(2)}
+        />
       )}
 
-      {/* Step 3: Email & Submit */}
       {currentStep === 3 && (
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <DollarSign className="h-5 w-5 text-blue-400" />
-            <h3 className="text-xl font-semibold text-white">Get Your Free Analysis</h3>
-          </div>
-
-          <div className="p-6 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20">
-            <h4 className="text-lg font-semibold text-white mb-3">What You&apos;ll Receive:</h4>
-            <ul className="space-y-2">
-              <li className="flex items-start gap-2 text-sm text-neutral-300">
-                <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Market validation score and analysis</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-neutral-300">
-                <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Competitor landscape overview</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-neutral-300">
-                <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Quick wins and red flags</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-neutral-300">
-                <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Recommended next steps</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">
-              Email Address <span className="text-red-400">*</span>
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="bg-black/40 border-white/20 text-white placeholder:text-neutral-500"
-            />
-            <p className="text-xs text-neutral-500">
-              We&apos;ll email you a copy of the analysis. No spam, ever.
-            </p>
-          </div>
-
-          <div className="flex justify-between">
-            <Button
-              onClick={handleBack}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={!validateStep(3)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed px-8"
-            >
-              Analyze My Idea
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <IdeaFormStep3
+          formData={formData}
+          setFormData={setFormData}
+          onSubmit={handleSubmit}
+          onBack={handleBack}
+          isValid={validateStep(3)}
+        />
       )}
     </div>
   )

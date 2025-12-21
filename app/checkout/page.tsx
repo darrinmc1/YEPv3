@@ -2,9 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { X, ArrowRight, ChevronLeft } from "lucide-react"
+import { interactiveButton, colorTransition } from "@/lib/animations"
+import { getProgressAriaAttributes } from "@/lib/accessibility"
+import { FormLoadingSkeleton } from "@/components/loading-skeleton"
 
 interface OrderState {
   package: {
@@ -97,7 +101,12 @@ export default function CheckoutPage() {
         const res = await fetch("/api/geo", { cache: "no-store" })
         if (!res.ok) throw new Error("geo failed")
         const data = await res.json()
-        if (!cancelled) setCurrency(data?.currency === "INR" ? "INR" : "USD")
+        if (!cancelled) {
+          setCurrency(data?.currency === "INR" ? "INR" : "USD")
+          if (data?.region === "OTHER") {
+            toast.info("Currency auto-detected based on your location")
+          }
+        }
       } catch {
         if (!cancelled) setCurrency(guessLocalCurrency())
       }
@@ -427,11 +436,7 @@ export default function CheckoutPage() {
 
   // Show loading state until initialized
   if (!isInitialized || !order.package) {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#3B82F6] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
+    return <FormLoadingSkeleton />
   }
 
   const stepContent = getStepContent()
@@ -465,6 +470,7 @@ export default function CheckoutPage() {
           {/* Refined Progress Bar */}
           <div className="h-0.5 bg-neutral-800 rounded-full overflow-hidden sm:h-1">
             <div
+              {...getProgressAriaAttributes(getProgressPercentage(), 100, `Checkout progress: Step ${currentStep} of ${totalSteps}`)}
               className="h-full bg-[#3B82F6] rounded-full transition-all duration-500 ease-out"
               style={{ width: `${getProgressPercentage()}%` }}
             />
@@ -557,13 +563,13 @@ export default function CheckoutPage() {
                           <div className="font-semibold text-white text-base group-hover:text-[#3B82F6] transition-colors sm:text-lg">
                             {option.title}
                           </div>
-                          {option.price && (
+                          {"price" in option && option.price && (
                             <div className="text-[#3B82F6] font-bold text-sm sm:text-base">{option.price}</div>
                           )}
                         </div>
-                        {option.subtitle && (
-                          <div className="text-neutral-400 text-sm mt-1 sm:text-base">{option.subtitle}</div>
-                        )}
+                        {("subtitle" in option && option.subtitle) ? (
+                          <div className="text-neutral-400 text-sm mt-1 sm:text-base">{String(option.subtitle)}</div>
+                        ) : null}
                       </div>
                       <ArrowRight className="h-5 w-5 text-neutral-600 group-hover:text-[#3B82F6] transition-colors flex-shrink-0 sm:h-6 sm:w-6 sm:ml-3" />
                     </div>
@@ -590,7 +596,7 @@ export default function CheckoutPage() {
 
             <Button
               onClick={handleConfirmOrder}
-              className="w-full h-12 text-base font-semibold bg-[#3B82F6] text-black hover:bg-[#3B82F6]/90 rounded-xl shadow-lg shadow-[#3B82F6]/20 sm:h-16 sm:text-xl sm:rounded-2xl"
+              className={`w-full h-12 text-base font-semibold bg-[#3B82F6] text-black hover:bg-[#3B82F6]/90 rounded-xl shadow-lg shadow-[#3B82F6]/20 sm:h-16 sm:text-xl sm:rounded-2xl ${interactiveButton}`}
             >
               Send Order via WhatsApp
               <ArrowRight className="h-4 w-4 ml-2 sm:h-6 sm:w-6 sm:ml-3" />

@@ -13,8 +13,12 @@ import {
   Flame,
   Lightbulb,
   Anchor,
+  Database,
+  Sparkles,
+  BookOpen,
   type LucideProps,
 } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Stat } from "./animated-stat"
 
@@ -159,7 +163,7 @@ export function Hero() {
               asChild
               className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(198,255,58,0.3)]"
             >
-              <a href="/validate-idea">Validate Your Idea Free</a>
+              <Link href="/validate-idea">Validate Your Idea Free</Link>
             </Button>
             <Button
               asChild
@@ -173,33 +177,15 @@ export function Hero() {
           {/* Trust Signals */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-neutral-400">
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Database className="h-5 w-5 text-blue-400" />
               <span>2000+ Ideas in database</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Sparkles className="h-5 w-5 text-blue-400" />
               <span>AI-Validated Opportunities</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <BookOpen className="h-5 w-5 text-blue-400" />
               <span>Step-by-Step Guides</span>
             </div>
           </div>
