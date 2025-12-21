@@ -3,11 +3,16 @@ import "./globals.css"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import Script from "next/script"
-import Plasma from "@/components/plasma"
 import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { ScrollProgress } from "@/components/scroll-progress"
+import dynamic from "next/dynamic"
+
+const Plasma = dynamic(() => import("@/components/plasma"), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 bg-[#000d1d] -z-50" />
+})
 // import { validateEnv } from "@/lib/env"
 
 // Validate environment variables on server startup

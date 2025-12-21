@@ -171,6 +171,7 @@ export function IdeaValidationForm() {
       setAnalysisResult(result)
       setStatus("success")
     } catch (error) {
+      logger.error("Failed to submit idea validation form", { error })
       setStatus("error")
       setErrorMessage(
         error instanceof Error

@@ -96,7 +96,7 @@ void main() {
   fragColor = vec4(finalColor, intensity * uOpacity);
 }`
 
-const Plasma: React.FC<PlasmaProps> = ({ // This line was changed from 'export const Plasma' to 'const Plasma'
+const Plasma: React.FC<PlasmaProps> = ({
   color = "#ffffff",
   speed = 1,
   direction = "forward",
@@ -107,23 +107,27 @@ const Plasma: React.FC<PlasmaProps> = ({ // This line was changed from 'export c
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mousePos = useRef({ x: 0, y: 0 })
 
+  const prefersReducedMotion = typeof window !== 'undefined' ?
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches : false
+  const saveData = typeof navigator !== 'undefined' ? (navigator as any)?.connection?.saveData === true : false
+
+  // Static Fallback Logic moved up to prevent hook execution
+  // Note: Hooks must be called unconditionally, so we can't return early before useEffect if useEffect is used.
+  // But we CAN use the variables inside useEffect to skip heavy lifting.
+
   useEffect(() => {
     if (!containerRef.current) return
-    const containerEl = containerRef.current
+    if (prefersReducedMotion || saveData) return // Skip WebGL init if fallback is active
 
+    const containerEl = containerRef.current
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
     const isMobile = window.innerWidth < 768
-    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
-    const saveData = (navigator as any)?.connection?.saveData === true
 
-    // If user prefers reduced motion or is on data saver, don't mount the animation at all.
-    if (prefersReducedMotion || saveData) {
-      return
-    }
+    // ... rest of init logic ...
 
-    const useCustomColor = color ? 1.0 : 0.0
-    const customColorRgb = color ? hexToRgb(color) : [1, 1, 1]
-    const directionMultiplier = direction === "reverse" ? -1.0 : 1.0
+    const customColorRgb = hexToRgb(color)
+    const useCustomColor = color === "#ffffff" ? 0.0 : 1.0
+    const directionMultiplier = direction === "reverse" ? -1 : 1
 
     const renderer = new Renderer({
       webgl: 2,
@@ -191,12 +195,35 @@ const Plasma: React.FC<PlasmaProps> = ({ // This line was changed from 'export c
     ro.observe(containerEl)
     setSize()
 
+    // Intersection Observer to pause when off-screen
+    let isIntersecting = true
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isIntersecting = entries[0].isIntersecting
+        checkRunning()
+      },
+      { threshold: 0 }
+    )
+    observer.observe(containerEl)
+
     // Animation loop with FPS throttle and visibility pause
     let raf = 0
     let lastTime = 0
     let running = true
     const targetDelta = isMobile ? 50 : 33 // ~20fps mobile, ~30fps desktop
     const t0 = performance.now()
+
+    const checkRunning = () => {
+      const shouldRun = !document.hidden && isIntersecting
+      if (shouldRun && !running) {
+        running = true
+        lastTime = 0
+        raf = requestAnimationFrame(loop)
+      } else if (!shouldRun && running) {
+        running = false
+        cancelAnimationFrame(raf)
+      }
+    }
 
     const loop = (t: number) => {
       if (!running) return
@@ -205,44 +232,55 @@ const Plasma: React.FC<PlasmaProps> = ({ // This line was changed from 'export c
         const timeValue = (t - t0) * 0.001
         if (direction === "pingpong") {
           const cycle = Math.sin(timeValue * 0.5) * directionMultiplier
-          ;(program.uniforms.uDirection as any).value = cycle
+            ; (program.uniforms.uDirection as any).value = cycle
         }
-        ;(program.uniforms.iTime as any).value = timeValue
+        ; (program.uniforms.iTime as any).value = timeValue
         renderer.render({ scene: mesh })
         lastTime = t
       }
       raf = requestAnimationFrame(loop)
     }
-    raf = requestAnimationFrame(loop)
+
+    // Start loop if visible
+    checkRunning()
 
     const onVisibility = () => {
-      const hidden = document.visibilityState === "hidden"
-      // Pause rendering entirely while hidden
-      if (hidden && running) {
-        running = false
-        cancelAnimationFrame(raf)
-      } else if (!hidden && !running) {
-        running = true
-        lastTime = 0
-        raf = requestAnimationFrame(loop)
-      }
+      checkRunning()
     }
     document.addEventListener("visibilitychange", onVisibility)
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibility)
+      observer.disconnect()
       running = false
       cancelAnimationFrame(raf)
       ro.disconnect()
       clearTimeout(resizeTimer)
-      if (!isIOS && mouseInteractive && containerEl) {
-        containerEl.removeEventListener("mousemove", handleMouseMove)
+      if (containerEl) {
+        if (!isIOS && mouseInteractive) {
+          containerEl.removeEventListener("mousemove", handleMouseMove)
+        }
+        try {
+          if (gl && gl.canvas) {
+            containerEl.removeChild(gl.canvas as Node)
+          }
+        } catch { }
       }
-      try {
-        containerEl.removeChild(canvas)
-      } catch {}
     }
-  }, [color, speed, direction, scale, opacity, mouseInteractive])
+  }, [color, speed, direction, scale, opacity, mouseInteractive, prefersReducedMotion, saveData])
+
+  if (prefersReducedMotion || saveData) {
+    return (
+      <div
+        ref={containerRef}
+        className="plasma-container relative w-full h-full pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${color} 0%, transparent 70%)`,
+          opacity: opacity * 0.5
+        }}
+      />
+    )
+  }
 
   return <div ref={containerRef} className="plasma-container relative w-full h-full pointer-events-none" />
 }

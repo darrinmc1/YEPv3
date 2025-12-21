@@ -87,19 +87,19 @@ export function TwoPathways() {
               </Button>
 
               <Dialog open={ideasOpen} onOpenChange={setIdeasOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full rounded-full border-2 border-blue-400/50 bg-transparent px-6 py-6 text-base font-semibold text-white hover:bg-blue-400/10 hover:border-blue-400 transition-all group"
-                >
-                  <span>View All Plans</span>
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-6xl sm:max-w-6xl lg:max-w-7xl max-h-[90vh] overflow-y-auto liquid-glass border-blue-400/30">
-                <IdeasPricingModal onClose={() => setIdeasOpen(false)} />
-              </DialogContent>
-            </Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-full border-2 border-blue-400/50 bg-transparent px-6 py-6 text-base font-semibold text-white hover:bg-blue-400/10 hover:border-blue-400 transition-all group"
+                  >
+                    <span>View All Plans</span>
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-6xl sm:max-w-6xl lg:max-w-7xl max-h-[90vh] overflow-y-auto liquid-glass border-blue-400/30">
+                  <IdeasPricingModal onClose={() => setIdeasOpen(false)} />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@ export function TwoPathways() {
                 <Button
                   className="w-full rounded-full bg-blue-500 px-6 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(59,130,246,0.3)] group"
                 >
-                  <span>I'm ready to Launch !</span>
+                  <span>I&apos;m ready to Launch !</span>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </DialogTrigger>
@@ -178,7 +178,7 @@ export function TwoPathways() {
       {/* Bottom Note */}
       <div className="mt-12 text-center">
         <p className="text-neutral-400 text-sm max-w-2xl mx-auto">
-          <span className="font-semibold text-blue-400">Not sure which path?</span> Start with our FREE weekly business ideas to explore opportunities, 
+          <span className="font-semibold text-blue-400">Not sure which path?</span> Start with our FREE weekly business ideas to explore opportunities,
           then upgrade to implementation when you&apos;re ready to launch.
         </p>
       </div>

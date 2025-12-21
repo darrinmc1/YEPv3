@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,28 +18,29 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
 
-    // Simple client-side authentication
-    setTimeout(() => {
-      // Default credentials
-      if (
-        (email === "admin@YourExitPlans.com" && password === "1234") ||
-        (email === "support@YourExitPlans.com" && password === "1234")
-      ) {
-        // Set a cookie that expires in 24 hours
-        const expiryDate = new Date()
-        expiryDate.setTime(expiryDate.getTime() + 24 * 60 * 60 * 1000)
-        document.cookie = `admin-session=authenticated; path=/; expires=${expiryDate.toUTCString()}`
-        router.push("/admin")
-      } else {
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      })
+
+      if (result?.error) {
         setError("Invalid email or password")
+      } else {
+        router.push("/admin")
+        router.refresh()
       }
+    } catch (error) {
+      setError("An unexpected error occurred")
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -64,6 +66,7 @@ export default function AdminLogin() {
             width={500}
             height={300}
             className="rounded-xl shadow-lg"
+            priority
           />
         </div>
       </div>

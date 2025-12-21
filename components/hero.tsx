@@ -67,6 +67,8 @@ const IconWrapper = ({ icon: Icon, emoji, color, ...props }: { icon: React.Compo
   return <Icon className={`inline-flex items-center justify-center shrink-0 h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 ${color || ''}`} {...props} />
 }
 
+const ROTATION_INTERVAL_MS = 2500
+
 export function Hero() {
   const [wordIndex, setWordIndex] = useState(0)
   const [phraseIndex, setPhraseIndex] = useState(0)
@@ -74,11 +76,11 @@ export function Hero() {
   useEffect(() => {
     const wordInterval = setInterval(() => {
       setWordIndex(prevIndex => (prevIndex + 1) % rotatingWords.length)
-    }, 2500)
+    }, ROTATION_INTERVAL_MS)
 
     const phraseInterval = setInterval(() => {
       setPhraseIndex(prevIndex => (prevIndex + 1) % rotatingPhrases.length)
-    }, 2500)
+    }, ROTATION_INTERVAL_MS)
 
     return () => {
       clearInterval(wordInterval)
