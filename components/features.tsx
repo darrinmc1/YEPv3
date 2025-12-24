@@ -17,28 +17,27 @@ export function Features() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-16">
         {/* Feature 1: AI Market Analysis */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <Brain className="h-6 w-6 text-blue-400" />
             </div>
             <CardTitle className="text-xl text-white">AI-Powered Analysis</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Deep market research powered by AI analyzing Reddit, Google Trends, G2 reviews, and social signals to
-              find opportunities
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Deep market research powered by AI analyzing Reddit, Google Trends, G2 reviews, and social signals.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Sentiment analysis from 10+ data sources</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Competitor gap identification</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Market timing validation</span>
               </li>
@@ -47,27 +46,27 @@ export function Features() {
         </Card>
 
         {/* Feature 2: Validated Opportunities */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <TrendingUp className="h-6 w-6 text-blue-400" />
             </div>
             <CardTitle className="text-xl text-white">Pre-Validated Ideas</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Every opportunity scored on market potential, execution difficulty, pain intensity, and perfect timing
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Every opportunity scored on market potential, execution difficulty, pain intensity, and perfect timing.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Market size & growth data</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Revenue potential projections</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Difficulty ratings for founders</span>
               </li>
@@ -76,27 +75,27 @@ export function Features() {
         </Card>
 
         {/* Feature 3: Implementation Guides */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <Rocket className="h-6 w-6 text-blue-400" />
             </div>
             <CardTitle className="text-xl text-white">Step-by-Step Roadmaps</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Complete implementation guides with tech stacks, step-by-step plans, and 52-week execution roadmaps
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Complete implementation guides with tech stacks, step-by-step plans, and 52-week execution roadmaps.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>No-code to custom build paths</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Week-by-week action plans</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Legal & compliance checklists</span>
               </li>
@@ -105,27 +104,27 @@ export function Features() {
         </Card>
 
         {/* Feature 4: Market Timing */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <Target className="h-6 w-6 text-blue-400" />
             </div>
             <CardTitle className="text-xl text-white">Perfect Timing Signals</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Catch opportunities at the perfect moment with trend analysis and market catalyst identification
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Catch opportunities at the perfect moment with trend analysis and market catalyst identification.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>90-day trend momentum tracking</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Regulatory & tech catalysts</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Saturation risk assessment</span>
               </li>
@@ -134,27 +133,27 @@ export function Features() {
         </Card>
 
         {/* Feature 5: Data Sources */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <Database className="h-6 w-6 text-blue-400" />
             </div>
             <CardTitle className="text-xl text-white">Multi-Source Intelligence</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Aggregate insights from Reddit, Twitter, Google Trends, G2, Facebook Groups, and more
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Aggregate insights from Reddit, Twitter, Google Trends, G2, Facebook Groups, and more.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Real user pain points & sentiment</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Community size & engagement</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Keyword search volume data</span>
               </li>
@@ -163,9 +162,9 @@ export function Features() {
         </Card>
 
         {/* Feature 6: Business Frameworks */}
-        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300">
+        <Card className="liquid-glass border border-white/20 hover:border-blue-400/40 transition-all duration-300 backdrop-blur-xl">
           <CardHeader>
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-400/10">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/10 border border-blue-400/20">
               <svg
                 className="h-6 w-6 text-blue-400"
                 fill="none"
@@ -183,19 +182,19 @@ export function Features() {
             <CardTitle className="text-xl text-white">Proven Frameworks</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-300">
-              Apply battle-tested frameworks: Value Equation, A.C.P., Market Matrix, Value Ladder
+            <p className="text-sm text-neutral-300 leading-relaxed min-h-[3em]">
+              Apply battle-tested frameworks: Value Equation, A.C.P., Market Matrix, Value Ladder.
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+            <ul className="mt-6 space-y-3">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Audience/Community/Product fit</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Revenue progression models</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-neutral-400">
+              <li className="flex items-start gap-3 text-xs text-neutral-400">
                 <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
                 <span>Competitive positioning</span>
               </li>

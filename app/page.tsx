@@ -11,14 +11,14 @@ import Script from "next/script"
 export const dynamic = "force-static"
 
 export default function Page() {
-  // Structured data for both pathways
+  // Structured data for three routes
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": "https://yourexitplans.com/",
-    name: "YourExitPlans | AI-Powered Business Opportunities & Implementation",
+    name: "YourExitPlans | Free AI Business Validation - Start Risk-Free",
     description:
-      "Two pathways to business success: Get validated business ideas with AI analysis, OR get step-by-step implementation plans to launch your idea in 120 days.",
+      "All routes start FREE. Explore ideas, validate your business, or preview your 120-day roadmap. No credit card required. Upgrade only if you want the full report.",
     url: "https://yourexitplans.com/",
     mainEntity: {
       "@type": "Organization",
@@ -28,24 +28,34 @@ export default function Page() {
     hasPart: [
       {
         "@type": "Product",
-        name: "Business Ideas Stream",
-        description: "AI-powered business opportunity analysis with validated market research",
+        name: "Explore Ideas",
+        description: "Free AI-generated sample business idea with market overview and opportunity score - email required to receive",
         offers: {
-          "@type": "AggregateOffer",
+          "@type": "Offer",
           priceCurrency: "USD",
-          lowPrice: "0",
-          highPrice: "999",
+          price: "0",
         },
       },
       {
         "@type": "Product",
-        name: "Implementation Stream",
-        description: "120-day step-by-step business launch roadmap with daily action plans",
+        name: "Validate Your Idea",
+        description: "Free opportunity score and market viability check. Upgrade to $29 for full validation report with competitor analysis and revenue projections.",
         offers: {
           "@type": "AggregateOffer",
           priceCurrency: "USD",
-          lowPrice: "25",
-          highPrice: "999",
+          lowPrice: "0",
+          highPrice: "29",
+        },
+      },
+      {
+        "@type": "Product",
+        name: "Build Your Business",
+        description: "Free roadmap outline with week-by-week milestones. Unlock full 120-day action plan for $29-$49.",
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: "0",
+          highPrice: "49",
         },
       },
     ],

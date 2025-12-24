@@ -26,9 +26,9 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "YourExitPlans | AI-Powered Business Opportunities & Market Intelligence",
+  title: "YourExitPlans | Free AI Business Validation - Start Risk-Free",
   description:
-    "Transform market signals into validated, actionable business ideas with AI-powered analysis. Get deep market research and step-by-step implementation guides to build your freedom.",
+    "All routes start FREE. Explore business ideas, validate your concept, or preview your 120-day roadmap. No credit card required. Only pay if you want the full report.",
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -46,15 +46,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <head>
-        {/* Google Tag Manager - DISABLED: Replace GTM-XXXXXXX with your actual GTM ID */}
-        {/* <Script id="gtm-script" strategy="lazyOnload" key="gtm-script">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-XXXXXXX');`}
-        </Script> */}
-
         {/* Google Analytics - Replace with your GA ID */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-4YSQPT6D0J" strategy="lazyOnload" key="gtag-src" />
         <Script id="gtag-init" strategy="lazyOnload" key="gtag-init">

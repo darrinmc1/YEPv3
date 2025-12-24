@@ -121,11 +121,11 @@ export function IdeaTeaser() {
           )}
 
           {isLoading && (
-             <Button disabled size="lg" className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black">
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Generating...
-                </>
+            <Button disabled size="lg" className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black">
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Generating...
+              </>
             </Button>
           )}
 
@@ -176,6 +176,7 @@ export function IdeaTeaser() {
               onChange={e => setUserIdea(e.target.value)}
               placeholder="e.g., 'A subscription box for dog toys'"
               className="w-full rounded-full border border-white/20 bg-black/30 px-6 py-4 text-white placeholder:text-neutral-400 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              suppressHydrationWarning
             />
             <Button type="submit" size="lg" className="rounded-full font-semibold">
               <Search className="mr-2 h-5 w-5" />
