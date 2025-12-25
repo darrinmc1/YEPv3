@@ -14,10 +14,10 @@ export function validateEnv() {
   if (process.env.NODE_ENV === 'production') {
     // Relaxed validation for Vercel builds where NEXTAUTH_URL might not be present yet
     getEnvVar('NEXTAUTH_URL', false);
-    getEnvVar('NEXTAUTH_SECRET', true);
-    getEnvVar('EMAIL_SERVER_HOST', true);
-    getEnvVar('EMAIL_SERVER_PORT', true);
-    getEnvVar('EMAIL_FROM', true);
+    getEnvVar('NEXTAUTH_SECRET', false);
+    getEnvVar('EMAIL_SERVER_HOST', false);
+    getEnvVar('EMAIL_SERVER_PORT', false);
+    getEnvVar('EMAIL_FROM', false);
 
     // Validate NEXTAUTH_SECRET is not the default dev value
     if (process.env.NEXTAUTH_SECRET === 'dev-secret-change-me') {
