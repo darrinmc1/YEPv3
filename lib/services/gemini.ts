@@ -16,7 +16,7 @@ interface ExploreInput {
   avoidTopics: string
 }
 
-interface IdeaMatch {
+export interface IdeaMatch {
   id: string
   title: string
   oneLiner: string
@@ -53,7 +53,7 @@ export async function findIdeasWithGemini(
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
 
     const prompt = buildExplorePrompt(input, ideasLibrary)
-    
+
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
@@ -65,7 +65,7 @@ export async function findIdeasWithGemini(
 
     const response = result.response.text()
     const matches = parseGeminiResponse(response, ideasLibrary)
-    
+
     const processingTime = Date.now() - startTime
     console.log(`Gemini matching completed in ${processingTime}ms`)
 
@@ -82,7 +82,7 @@ export async function findIdeasWithGemini(
  */
 function buildExplorePrompt(input: ExploreInput, ideasLibrary: any[]): string {
   // Prepare ideas summary
-  const ideasSummary = ideasLibrary.slice(0, 20).map(idea => 
+  const ideasSummary = ideasLibrary.slice(0, 20).map(idea =>
     `ID: ${idea.ideaId}
 Title: ${idea.title}
 Industry: ${idea.industry}
@@ -148,7 +148,7 @@ function parseGeminiResponse(response: string, ideasLibrary: any[]): IdeaMatch[]
     }
 
     const matches = JSON.parse(jsonMatch[0])
-    
+
     // Enrich with full idea data
     return matches.map((match: any) => {
       const idea = ideasLibrary.find(i => i.ideaId === match.ideaId)
@@ -267,7 +267,7 @@ function generateFallbackMatches(
 
 function matchesBudgetConstraint(ideaCost: string, filterBudget: string): boolean {
   if (filterBudget === 'any') return true
-  
+
   const budgetMap: { [key: string]: number } = {
     'bootstrap': 0,
     'low': 500,
@@ -290,8 +290,8 @@ function extractMaxBudget(budgetString: string): number {
 function generateMatchReason(idea: any, input: ExploreInput): string {
   const reasons = []
 
-  if (input.industry && input.industry !== 'any' && 
-      idea.industry.toLowerCase().includes(input.industry.toLowerCase())) {
+  if (input.industry && input.industry !== 'any' &&
+    idea.industry.toLowerCase().includes(input.industry.toLowerCase())) {
     reasons.push(`matches your ${input.industry} industry interest`)
   }
 
@@ -319,11 +319,11 @@ export async function checkGeminiHealth(): Promise<boolean> {
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
-    
+
     await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: 'Test' }] }],
     })
-    
+
     return true
   } catch {
     return false

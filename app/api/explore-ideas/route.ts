@@ -4,9 +4,28 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { findIdeasWithGemini } from '@/lib/services/gemini'
-import { searchIdeas, saveExploreRequest, checkRateLimit } from '@/lib/services/google-sheets'
+import { findIdeasWithGemini, IdeaMatch } from '@/lib/services/gemini'
+import { searchIdeas, saveExploreRequest, checkRateLimit, IdeaLibraryItem } from '@/lib/services/google-sheets'
 import { z } from 'zod'
+
+// Helper to convert LibraryItem to Match (fallback)
+function mapToIdeaMatch(item: IdeaLibraryItem): IdeaMatch {
+  return {
+    id: item.ideaId,
+    title: item.title,
+    oneLiner: item.oneLiner,
+    industry: item.industry,
+    score: item.score,
+    marketSize: item.marketSize,
+    growthRate: item.growthRate,
+    difficulty: item.difficulty,
+    timeToFirstSale: item.timeToFirstSale,
+    startupCost: item.startupCost,
+    whyNow: item.whyNow,
+    quickInsights: JSON.parse(item.quickInsights || '[]'),
+    matchReason: 'Top rated opportunity based on your criteria'
+  }
+}
 
 // Validation schema
 const ExploreIdeasSchema = z.object({
@@ -31,7 +50,7 @@ export async function POST(req: NextRequest) {
     // Check rate limit (free tier: 5 per day)
     if (process.env.ENABLE_RATE_LIMITING === 'true') {
       const rateLimit = await checkRateLimit(validatedData.email, 'explore')
-      
+
       if (!rateLimit.allowed) {
         return NextResponse.json(
           {
@@ -57,8 +76,8 @@ export async function POST(req: NextRequest) {
     console.log(`Found ${allIdeas.length} ideas from library`)
 
     // Step 2: Use Gemini to find best matches (if interests provided)
-    let matchedIdeas = allIdeas
-    
+    let matchedIdeas: IdeaMatch[] = []
+
     if (validatedData.interests && process.env.GOOGLE_GEMINI_API_KEY) {
       console.log('🤖 Using Gemini to find best matches...')
       try {
@@ -77,11 +96,11 @@ export async function POST(req: NextRequest) {
       } catch (error) {
         console.error('Gemini matching failed, using fallback:', error)
         // Continue with filtered results
-        matchedIdeas = allIdeas.slice(0, 5)
+        matchedIdeas = allIdeas.slice(0, 5).map(mapToIdeaMatch)
       }
     } else {
       // No Gemini or no interests - just return top scored ideas
-      matchedIdeas = allIdeas.slice(0, 5)
+      matchedIdeas = allIdeas.slice(0, 5).map(mapToIdeaMatch)
     }
 
     // Step 3: Save explore request to Google Sheets
@@ -171,7 +190,7 @@ export async function GET(req: NextRequest) {
   // Return library stats
   try {
     const allIdeas = await searchIdeas({})
-    
+
     return NextResponse.json({
       librarySize: allIdeas.length,
       topIndustries: getTopIndustries(allIdeas),
@@ -188,9 +207,9 @@ function getTopIndustries(ideas: any[]): string[] {
     acc[ind] = (acc[ind] || 0) + 1
     return acc
   }, {})
-  
+
   return Object.entries(counts)
-    .sort(([,a]: any, [,b]: any) => b - a)
+    .sort(([, a]: any, [, b]: any) => b - a)
     .slice(0, 5)
     .map(([ind]) => ind)
 }
