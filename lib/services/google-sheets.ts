@@ -224,35 +224,37 @@ export async function searchIdeas(filters: {
   difficulty?: string
   skills?: string[]
   searchTerm?: string
-}): Promise<IdeaLibraryItem[]> {
+}): Promise<any[]> {
   const sheets = getSheets()
   const sheetId = process.env.GOOGLE_SHEET_ID_LIBRARY
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'Sheet1!A2:Q', // Skip header
+    range: 'Sheet1!A2:R', // Skip header, get all 18 columns
   })
 
   const rows = response.data.values || []
   
+  // Map to our new structure
   let ideas = rows.map(row => ({
-    ideaId: row[0],
-    title: row[1],
-    oneLiner: row[2],
-    industry: row[3],
-    score: Number(row[4]),
-    marketSize: row[5],
-    growthRate: row[6],
-    difficulty: row[7],
-    timeToFirstSale: row[8],
-    startupCost: row[9],
-    whyNow: row[10],
-    quickInsights: row[11],
-    fullContentJson: row[12],
-    tags: row[13],
-    targetBudget: row[14],
-    requiredSkills: row[15],
-    createdAt: row[16],
+    id: row[0] || '',              // A: Idea ID
+    title: row[1] || '',           // B: Idea Name
+    industry: row[2] || '',        // C: Category
+    subcategory: row[3] || '',     // D: Subcategory
+    score: parseFloat(row[4]) || 7.0,  // E: Score
+    marketSize: row[5] || 'TBD',   // F: Market Size
+    growthRate: row[6] || 'TBD',   // G: Growth Rate
+    difficulty: row[7] || 'Intermediate',  // H: Difficulty
+    timeToFirstSale: row[8] || '4-8 weeks',  // I: Time to First Sale
+    startupCost: row[9] || 'TBD',  // J: Startup Cost
+    oneLiner: row[10] || '',       // K: One-liner
+    whyNow: row[11] || '',         // L: Why Now
+    quickInsights: row[12] || '[]',  // M: Quick Insights (JSON)
+    lockedContent: row[13] || '[]',  // N: Locked Content (JSON)
+    dateAdded: row[14] || '',      // O: Date Added
+    status: row[15] || '',         // P: Status
+    fullDescription: row[16] || '', // Q: Full Description
+    pricingModel: row[17] || 'N/A', // R: Pricing Model
   }))
 
   // Apply filters
@@ -270,7 +272,7 @@ export async function searchIdeas(filters: {
 
   if (filters.budget && filters.budget !== 'any') {
     ideas = ideas.filter(idea => 
-      matchesBudget(idea.targetBudget, filters.budget!)
+      matchesBudget(idea.startupCost, filters.budget!)
     )
   }
 
@@ -279,14 +281,15 @@ export async function searchIdeas(filters: {
     ideas = ideas.filter(idea =>
       idea.title.toLowerCase().includes(term) ||
       idea.oneLiner.toLowerCase().includes(term) ||
-      idea.tags.toLowerCase().includes(term)
+      idea.industry.toLowerCase().includes(term) ||
+      idea.fullDescription.toLowerCase().includes(term)
     )
   }
 
-  // Sort by score
+  // Sort by score (highest first)
   ideas.sort((a, b) => b.score - a.score)
 
-  return ideas.slice(0, 10) // Return top 10
+  return ideas.slice(0, 10) // Return top 10 matches
 }
 
 function matchesBudget(ideaBudget: string, filterBudget: string): boolean {

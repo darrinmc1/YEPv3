@@ -36,6 +36,50 @@ const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
 
 /**
+ * Generate content for a specific template
+ */
+export async function generateTemplateContent(
+  templateName: string,
+  templateDescription: string,
+  businessContext?: string
+): Promise<string> {
+  if (!GEMINI_API_KEY) {
+    throw new Error('Google Gemini API key not configured')
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
+
+    const prompt = `You are a professional business consultant and expert content creator.
+    
+    TASK: Create a comprehensive entry for the following business template: "${templateName}".
+    
+    DESCRIPTION: ${templateDescription}
+    
+    ${businessContext ? `BUSINESS CONTEXT: ${businessContext}` : 'CONTEXT: Create a generic, high-quality template that can be used by any business.'}
+    
+    REQUIREMENTS:
+    - distinct sections with clear headings
+    - Professional tone
+    - Actionable content
+    - If it's a spreadsheet/roadmap, use Markdown tables
+    - If it's a document/plan, use Markdown headers and bullet points
+    
+    OUTPUT FORMAT: Markdown only.`
+
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    })
+
+    return result.response.text()
+  } catch (error) {
+    console.error('Gemini template generation error:', error)
+    throw new Error('Failed to generate template content')
+  }
+}
+
+/**
  * Find matching ideas using Gemini
  */
 export async function findIdeasWithGemini(

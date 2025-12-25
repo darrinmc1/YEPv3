@@ -4,26 +4,53 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { findIdeasWithGemini, IdeaMatch } from '@/lib/services/gemini'
-import { searchIdeas, saveExploreRequest, checkRateLimit, IdeaLibraryItem } from '@/lib/services/google-sheets'
+import { searchIdeas, saveExploreRequest, checkRateLimit } from '@/lib/services/google-sheets'
 import { z } from 'zod'
 
-// Helper to convert LibraryItem to Match (fallback)
-function mapToIdeaMatch(item: IdeaLibraryItem): IdeaMatch {
+// Helper to format idea for frontend
+function formatIdeaForFrontend(item: any) {
+  // Parse JSON fields safely
+  let quickInsights = []
+  let lockedContent = []
+  
+  try {
+    quickInsights = item.quickInsights ? JSON.parse(item.quickInsights) : []
+  } catch (e) {
+    quickInsights = []
+  }
+  
+  try {
+    lockedContent = item.lockedContent ? JSON.parse(item.lockedContent) : []
+  } catch (e) {
+    lockedContent = []
+  }
+  
   return {
-    id: item.ideaId,
+    id: item.id,
     title: item.title,
     oneLiner: item.oneLiner,
     industry: item.industry,
     score: item.score,
-    marketSize: item.marketSize,
-    growthRate: item.growthRate,
+    marketSize: item.marketSize || 'TBD',
+    growthRate: item.growthRate || 'TBD',
     difficulty: item.difficulty,
     timeToFirstSale: item.timeToFirstSale,
     startupCost: item.startupCost,
-    whyNow: item.whyNow,
-    quickInsights: JSON.parse(item.quickInsights || '[]'),
-    matchReason: 'Top rated opportunity based on your criteria'
+    whyNow: item.whyNow || `${item.industry} is growing rapidly with new opportunities emerging.`,
+    quickInsights: quickInsights.length > 0 ? quickInsights : [
+      `Target market in ${item.industry} sector`,
+      `Estimated startup cost: ${item.startupCost}`,
+      `Time to first sale: ${item.timeToFirstSale}`,
+      `Difficulty level: ${item.difficulty}`
+    ],
+    lockedContent: lockedContent.length > 0 ? lockedContent : [
+      'Full competitor analysis',
+      'Revenue model breakdown with pricing tiers',
+      '90-day launch roadmap with milestones',
+      'Tech stack recommendations',
+      'Marketing channels ranked by ROI',
+      'Customer acquisition cost benchmarks'
+    ]
   }
 }
 
@@ -75,35 +102,10 @@ export async function POST(req: NextRequest) {
 
     console.log(`Found ${allIdeas.length} ideas from library`)
 
-    // Step 2: Use Gemini to find best matches (if interests provided)
-    let matchedIdeas: IdeaMatch[] = []
+    // Format for frontend
+    const formattedIdeas = allIdeas.map(formatIdeaForFrontend)
 
-    if (validatedData.interests && process.env.GOOGLE_GEMINI_API_KEY) {
-      console.log('🤖 Using Gemini to find best matches...')
-      try {
-        matchedIdeas = await findIdeasWithGemini(
-          {
-            interests: validatedData.interests,
-            industry: validatedData.industry,
-            budget: validatedData.budget,
-            timeCommitment: validatedData.timeCommitment,
-            difficulty: validatedData.difficulty,
-            skills: validatedData.skills,
-            avoidTopics: validatedData.avoidTopics,
-          },
-          allIdeas
-        )
-      } catch (error) {
-        console.error('Gemini matching failed, using fallback:', error)
-        // Continue with filtered results
-        matchedIdeas = allIdeas.slice(0, 5).map(mapToIdeaMatch)
-      }
-    } else {
-      // No Gemini or no interests - just return top scored ideas
-      matchedIdeas = allIdeas.slice(0, 5).map(mapToIdeaMatch)
-    }
-
-    // Step 3: Save explore request to Google Sheets
+    // Step 2: Save explore request to Google Sheets
     console.log('💾 Saving explore request...')
     await saveExploreRequest({
       timestamp: new Date().toISOString(),
@@ -115,16 +117,16 @@ export async function POST(req: NextRequest) {
       difficulty: validatedData.difficulty,
       skills: JSON.stringify(validatedData.skills),
       avoidTopics: validatedData.avoidTopics,
-      matchedIdeasCount: matchedIdeas.length,
-      ideasDelivered: JSON.stringify(matchedIdeas.map(i => i.id)),
+      matchedIdeasCount: formattedIdeas.length,
+      ideasDelivered: JSON.stringify(formattedIdeas.map(i => i.id)),
       status: 'completed',
     })
 
-    // Step 4: Return matched ideas
+    // Step 3: Return matched ideas
     const response = {
       success: true,
-      ideas: matchedIdeas,
-      totalMatches: matchedIdeas.length,
+      ideas: formattedIdeas,
+      totalMatches: formattedIdeas.length,
       filters: {
         industry: validatedData.industry,
         budget: validatedData.budget,
@@ -133,7 +135,6 @@ export async function POST(req: NextRequest) {
       },
       metadata: {
         processingTime: Date.now() - startTime,
-        aiModel: process.env.GOOGLE_GEMINI_API_KEY ? 'Gemini' : 'Basic Filter',
         librarySize: allIdeas.length,
       }
     }
@@ -173,10 +174,7 @@ export async function GET(req: NextRequest) {
   const check = searchParams.get('check')
 
   if (check === 'health') {
-    const { checkGeminiHealth } = await import('@/lib/services/gemini')
-
     const services = {
-      gemini: process.env.GOOGLE_GEMINI_API_KEY ? await checkGeminiHealth() : false,
       sheets: !!(process.env.GOOGLE_SHEETS_CLIENT_EMAIL && process.env.GOOGLE_SHEETS_PRIVATE_KEY),
     }
 
