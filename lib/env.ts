@@ -12,7 +12,8 @@ function getEnvVar(key: string, required: boolean = false): string | undefined {
 // Validate required environment variables for NextAuth
 export function validateEnv() {
   if (process.env.NODE_ENV === 'production') {
-    getEnvVar('NEXTAUTH_URL', true);
+    // Relaxed validation for Vercel builds where NEXTAUTH_URL might not be present yet
+    getEnvVar('NEXTAUTH_URL', false);
     getEnvVar('NEXTAUTH_SECRET', true);
     getEnvVar('EMAIL_SERVER_HOST', true);
     getEnvVar('EMAIL_SERVER_PORT', true);
