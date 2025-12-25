@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PricingModal } from "@/components/pricing-modals"
 import { 
   Lightbulb, 
   Users, 
@@ -113,9 +114,11 @@ export function IdeaValidationForm() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [resetTime, setResetTime] = useState("")
+  const [activePricingModal, setActivePricingModal] = useState<"quick-start" | "launch-system" | "complete-build" | null>(null)
 
   const totalSteps = 3
-  const progress = (currentStep / totalSteps) * 100
+  // Progress: Step 1 = 0%, Step 2 = 33%, Step 3 = 67%, Analysis complete = 100%
+  const progress = ((currentStep - 1) / totalSteps) * 100
 
   const validateStep = (step: number): boolean => {
     switch (step) {
@@ -431,10 +434,8 @@ export function IdeaValidationForm() {
                     3 essential templates
                   </li>
                 </ul>
-                <Button asChild className="w-full bg-white/10 hover:bg-white/20 text-white">
-                  <a href={`/checkout?plan=quick-start&idea=${encodeURIComponent(formData.ideaName)}`}>
-                    Get Quick Start
-                  </a>
+                <Button onClick={() => setActivePricingModal('quick-start')} className="w-full bg-white/10 hover:bg-white/20 text-white">
+                  Get Quick Start
                 </Button>
               </div>
 
@@ -467,11 +468,9 @@ export function IdeaValidationForm() {
                     Marketing playbook
                   </li>
                 </ul>
-                <Button asChild className="w-full bg-green-500 hover:bg-green-400 text-white">
-                  <a href={`/checkout?plan=launch-system&idea=${encodeURIComponent(formData.ideaName)}`}>
-                    Get Launch System
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
+                <Button onClick={() => setActivePricingModal('launch-system')} className="w-full bg-green-500 hover:bg-green-400 text-white">
+                  Get Launch System
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -483,10 +482,8 @@ export function IdeaValidationForm() {
                   <h4 className="font-semibold text-white">Complete Build — $99</h4>
                   <p className="text-xs text-neutral-400">120-day system + email sequences + scaling playbook</p>
                 </div>
-                <Button asChild variant="outline" className="border-blue-400/30 text-blue-400 hover:bg-blue-500/10 whitespace-nowrap">
-                  <a href={`/checkout?plan=complete-build&idea=${encodeURIComponent(formData.ideaName)}`}>
-                    View Complete Build
-                  </a>
+                <Button onClick={() => setActivePricingModal('complete-build')} variant="outline" className="border-blue-400/30 text-blue-400 hover:bg-blue-500/10 whitespace-nowrap">
+                  View Complete Build
                 </Button>
               </div>
             </div>
@@ -501,7 +498,7 @@ export function IdeaValidationForm() {
             We&apos;ve sent a copy of this validation to <span className="text-white">{formData.email}</span>
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={resetForm} variant="outline" className="border-white/20 text-white hover:bg-white/10">
+            <Button onClick={resetForm} className="bg-blue-500 hover:bg-blue-400 text-white">
               Validate Another Idea
             </Button>
             <Button asChild variant="link" className="text-purple-400">
@@ -509,6 +506,16 @@ export function IdeaValidationForm() {
             </Button>
           </div>
         </div>
+
+        {/* Pricing Modals */}
+        {activePricingModal && (
+          <PricingModal
+            isOpen={true}
+            onClose={() => setActivePricingModal(null)}
+            plan={activePricingModal}
+            ideaName={formData.ideaName}
+          />
+        )}
       </div>
     )
   }
@@ -591,7 +598,7 @@ export function IdeaValidationForm() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-neutral-400">
             <span>Step {currentStep} of {totalSteps}</span>
-            <span>{Math.round(progress)}% complete</span>
+            {currentStep > 1 && <span>{Math.round(progress)}% complete</span>}
           </div>
           <Progress value={progress} className="h-2" />
         </div>
@@ -741,8 +748,8 @@ export function IdeaValidationForm() {
           <div className="flex justify-between">
             <Button
               onClick={handleBack}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              variant="ghost"
+              className="text-white hover:bg-white/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
@@ -809,8 +816,8 @@ export function IdeaValidationForm() {
           <div className="flex justify-between">
             <Button
               onClick={handleBack}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              variant="ghost"
+              className="text-white hover:bg-white/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back

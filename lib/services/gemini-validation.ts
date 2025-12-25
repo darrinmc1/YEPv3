@@ -32,7 +32,7 @@ interface ValidationResult {
 }
 
 const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest'
 
 /**
  * Validate business idea using Gemini

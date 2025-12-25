@@ -9,6 +9,7 @@ import { validateIdeaWithGemini } from '@/lib/services/gemini-validation'
 import { validateIdeaWithOllama, checkOllamaHealth } from '@/lib/services/ollama'
 import { researchMarketWithPerplexity } from '@/lib/services/perplexity'
 import { saveValidatedIdea, checkRateLimit } from '@/lib/services/google-sheets'
+import { sendValidationEmail } from '@/lib/services/email'
 import { z } from 'zod'
 
 // Validation schema
@@ -123,7 +124,25 @@ export async function POST(req: NextRequest) {
       status: 'completed',
     })
 
-    // Step 4: Return results
+    // Step 4: Send email with results
+    console.log('📧 Sending validation email...')
+    try {
+      await sendValidationEmail({
+        email: validatedData.email,
+        ideaName: validatedData.ideaName,
+        score: validation.marketValidation.score,
+        marketSummary: validation.marketValidation.summary,
+        quickWins: validation.quickWins,
+        redFlags: validation.redFlags,
+        keyInsights: validation.marketValidation.keyInsights,
+      })
+      console.log('✅ Email sent successfully')
+    } catch (emailError) {
+      console.error('⚠️ Email failed (non-critical):', emailError)
+      // Continue even if email fails - user still sees results
+    }
+
+    // Step 5: Return results
     const response = {
       success: true,
       marketValidation: {

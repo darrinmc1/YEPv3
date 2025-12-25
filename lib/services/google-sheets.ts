@@ -71,7 +71,7 @@ export async function saveValidatedIdea(data: ValidatedIdea) {
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: 'validated_ideas!A:P',
+    range: 'Sheet1!A:P',
     valueInputOption: 'RAW',
     requestBody: {
       values: [row],
@@ -85,7 +85,7 @@ export async function getValidatedIdeasByEmail(email: string): Promise<Validated
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'validated_ideas!A2:P', // Skip header
+    range: 'Sheet1!A2:P', // Skip header
   })
 
   const rows = response.data.values || []
@@ -152,7 +152,7 @@ export async function saveExploreRequest(data: ExploreRequest) {
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: 'explore_requests!A:L',
+    range: 'Sheet1!A:L',
     valueInputOption: 'RAW',
     requestBody: {
       values: [row],
@@ -210,7 +210,7 @@ export async function addIdeaToLibrary(idea: IdeaLibraryItem) {
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: 'ideas_library!A:Q',
+    range: 'Sheet1!A:Q',
     valueInputOption: 'RAW',
     requestBody: {
       values: [row],
@@ -230,7 +230,7 @@ export async function searchIdeas(filters: {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'ideas_library!A2:Q', // Skip header
+    range: 'Sheet1!A2:Q', // Skip header
   })
 
   const rows = response.data.values || []
@@ -333,7 +333,7 @@ export async function checkRateLimit(email: string, type: 'validate' | 'explore'
   
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: type === 'validate' ? 'validated_ideas!A2:B' : 'explore_requests!A2:B',
+    range: 'Sheet1!A2:B',
   })
 
   const rows = response.data.values || []

@@ -37,7 +37,7 @@ export default function ValidateIdeaPage() {
               <p className="text-sm text-neutral-400">No credit card required</p>
             </div>
             <div className="p-4">
-              <div className="text-3xl font-bold text-blue-400 mb-2">&lt;60s</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">{'<'}60s</div>
               <p className="text-sm text-neutral-400">Get results instantly</p>
             </div>
             <div className="p-4">
