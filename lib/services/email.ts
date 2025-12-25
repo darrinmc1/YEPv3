@@ -5,8 +5,6 @@
 
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 interface ValidationEmailData {
   email: string
   ideaName: string
@@ -26,9 +24,11 @@ export async function sendValidationEmail(data: ValidationEmailData) {
     return { success: false, error: 'Email service not configured' }
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
   try {
     const emailHtml = buildValidationEmailHtml(data)
-    
+
     const result = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'YourExitPlans <onboarding@resend.dev>',
       to: data.email,
