@@ -14,10 +14,8 @@ import {
   Lightbulb,
   Anchor,
   Zap,
-  type LucideProps,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Stat } from "./animated-stat"
 
 const rotatingWords = [
   { text: "Freedom", icon: Bird, color: "text-emerald-400" },
@@ -34,8 +32,6 @@ const rotatingPhrases = [
   { text: "Corporate Grind", icon: Briefcase },
   { text: "Just an Idea", icon: Lightbulb },
 ]
-
-
 
 export function Hero() {
   const [wordIndex, setWordIndex] = useState(0)
@@ -73,41 +69,45 @@ export function Hero() {
 
           {/* Main Headline */}
           <h1 className="max-w-5xl text-center px-4">
-            <div className="flex flex-col items-center justify-center gap-2">
+            <div className="flex flex-col items-center justify-center gap-6">
               {/* First line: from [problem] */}
-              <div className="flex items-center justify-center gap-4 w-full text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
-                <span className="text-neutral-500 text-right w-[40%] sm:w-[35%] md:w-[30%]">from</span>
-                <div className="relative flex-1 max-w-[500px] h-[1.3em] text-left">
+              <div className="flex items-baseline justify-center gap-4 w-full text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
+                <span className="text-neutral-500">from</span>
+                <div className="relative inline-block" style={{ minWidth: '300px' }}>
+                  <span className="invisible">&nbsp;</span>
                   <AnimatePresence mode="wait">
-                    <motion.div
+                    <motion.span
                       key={phraseIndex}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute inset-0 flex items-center justify-start text-red-500"
+                      className="absolute left-0 top-0 text-red-500 whitespace-nowrap inline-flex items-center gap-3"
                     >
-                      <span className="whitespace-nowrap">{currentPhraseData.text}</span>
-                    </motion.div>
+                      <span>{currentPhraseData.text}</span>
+                      <CurrentPhraseIcon className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14" />
+                    </motion.span>
                   </AnimatePresence>
                 </div>
               </div>
 
               {/* Second line: to [goal] */}
-              <div className="flex items-center justify-center gap-4 w-full text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
-                <span className="text-white text-right w-[40%] sm:w-[35%] md:w-[30%]">to</span>
-                <div className="relative flex-1 max-w-[500px] h-[1.3em] text-left">
+              <div className="flex items-baseline justify-center gap-4 w-full text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
+                <span className="text-white">to</span>
+                <div className="relative inline-block" style={{ minWidth: '300px' }}>
+                  <span className="invisible">&nbsp;</span>
                   <AnimatePresence mode="wait">
-                    <motion.div
+                    <motion.span
                       key={wordIndex}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className={`absolute inset-0 flex items-center justify-start ${currentWordData.color}`}
+                      className={`absolute left-0 top-0 whitespace-nowrap inline-flex items-center gap-3 ${currentWordData.color}`}
                     >
-                      <span className="whitespace-nowrap">{currentWordData.text}</span>
-                    </motion.div>
+                      <span>{currentWordData.text}</span>
+                      <CurrentWordIcon className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14" />
+                    </motion.span>
                   </AnimatePresence>
                 </div>
               </div>
@@ -116,40 +116,21 @@ export function Hero() {
 
           {/* Subheadline */}
           <p className="mt-8 max-w-3xl text-center text-base sm:text-lg md:text-xl text-neutral-300 px-4 leading-relaxed">
-            Stop procrastinating. Discover validated business ideas with market research, step-by-step guides, and AI insights — stop researching and start building.
+            Validated business ideas with market research, competitor analysis, and step-by-step launch guides. Stop researching. Start building.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col items-center gap-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-lg bg-blue-500 px-10 py-7 text-lg font-semibold text-white hover:bg-blue-400 transition-all shadow-lg hover:shadow-xl"
-              >
-                <a href="#choose-your-path" className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5" />
-                  <span>Choose Your Path</span>
-                </a>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="rounded-lg border-2 border-white/20 bg-white/5 backdrop-blur-sm px-10 py-7 text-lg font-semibold text-white hover:bg-white/10 hover:border-white/30 transition-all"
-              >
-                <a href="#features" className="flex items-center gap-2">
-                  <Rocket className="h-5 w-5" />
-                  <span>See How It Works</span>
-                </a>
-              </Button>
-            </div>
-
-            {/* FREE badge */}
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-green-400/30 bg-green-400/10 px-6 py-2">
-              <Zap className="h-4 w-4 text-green-400" />
-              <span className="text-sm font-bold text-green-400 uppercase tracking-wider">All Routes Start FREE</span>
-            </div>
+          {/* CTA Button */}
+          <div className="mt-12 flex flex-col items-center gap-4">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-full bg-blue-500 px-12 py-8 text-xl font-bold text-white hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+            >
+              <a href="#choose-your-path">Start for Free</a>
+            </Button>
+            <p className="text-sm text-neutral-400 font-medium">
+              First two are free • No credit card required
+            </p>
           </div>
         </div>
       </div>

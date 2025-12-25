@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -17,28 +16,41 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
 
-    // Simple client-side authentication
-    setTimeout(() => {
-      // Default credentials
-      if (
-        (email === "admin@YourExitPlans.com" && password === "1234") ||
-        (email === "support@YourExitPlans.com" && password === "1234")
-      ) {
-        // Set a cookie that expires in 24 hours
-        const expiryDate = new Date()
-        expiryDate.setTime(expiryDate.getTime() + 24 * 60 * 60 * 1000)
-        document.cookie = `admin-session=authenticated; path=/; expires=${expiryDate.toUTCString()}`
-        router.push("/admin")
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // Successful login - cookie is set by the server
+        router.push('/admin')
+        router.refresh()
       } else {
-        setError("Invalid email or password")
+        // Handle different error cases
+        if (response.status === 429) {
+          const resetTime = data.resetTime ? new Date(data.resetTime).toLocaleTimeString() : 'later'
+          setError(`Too many login attempts. Please try again after ${resetTime}`)
+        } else {
+          setError(data.error || 'Login failed. Please try again.')
+        }
       }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Network error. Please check your connection and try again.')
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -48,7 +60,7 @@ export default function AdminLogin() {
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-lg">SK</span>
+              <span className="text-black font-bold text-lg">YEP</span>
             </div>
             <span className="text-2xl font-semibold text-white">YourExitPlans</span>
           </div>
@@ -58,13 +70,11 @@ export default function AdminLogin() {
           </p>
         </div>
         <div className="mt-auto">
-          <Image
-            src="/images/admin-cover.png"
-            alt="Admin Dashboard"
-            width={500}
-            height={300}
-            className="rounded-xl shadow-lg"
-          />
+          <div className="rounded-xl bg-white/10 backdrop-blur-sm p-8 border border-white/20">
+            <p className="text-white/80 text-sm">
+              🔒 Your admin panel is protected with secure authentication, rate limiting, and encrypted tokens.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -73,7 +83,7 @@ export default function AdminLogin() {
         {/* Mobile header - only visible on mobile */}
         <div className="flex md:hidden items-center gap-3 mb-8 w-full">
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-black font-bold text-lg">SK</span>
+            <span className="text-black font-bold text-lg">YEP</span>
           </div>
           <span className="text-2xl font-semibold text-white">YourExitPlans</span>
         </div>
@@ -87,8 +97,8 @@ export default function AdminLogin() {
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-lg flex items-center gap-3">
-                <AlertCircle className="h-5 w-5" />
-                <span>{error}</span>
+                <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                <span className="text-sm">{error}</span>
               </div>
             )}
 
@@ -101,9 +111,11 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@theYourExitPlans.com"
+                placeholder="admin@yourexitplans.com"
                 className="bg-[#1a1a1a] border-neutral-800 text-white"
                 required
+                disabled={isLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -112,9 +124,6 @@ export default function AdminLogin() {
                 <Label htmlFor="password" className="text-neutral-200">
                   Password
                 </Label>
-                <button type="button" className="text-sm text-[#3B82F6] hover:underline">
-                  Forgot password?
-                </button>
               </div>
               <Input
                 id="password"
@@ -124,10 +133,16 @@ export default function AdminLogin() {
                 placeholder="••••••••"
                 className="bg-[#1a1a1a] border-neutral-800 text-white"
                 required
+                disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full bg-[#3B82F6] text-black hover:bg-[#3B82F6]/90">
+            <Button 
+              type="submit" 
+              disabled={isLoading} 
+              className="w-full bg-[#3B82F6] text-black hover:bg-[#3B82F6]/90 font-semibold"
+            >
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -141,10 +156,7 @@ export default function AdminLogin() {
 
           <div className="mt-8 text-center">
             <p className="text-neutral-400 text-sm">
-              Need help? Contact{" "}
-              <a href="mailto:support@theYourExitPlans.com" className="text-[#3B82F6] hover:underline">
-                support@theYourExitPlans.com
-              </a>
+              🔒 Protected by rate limiting and secure authentication
             </p>
           </div>
         </div>

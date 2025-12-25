@@ -8,12 +8,12 @@ import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { ScrollProgress } from "@/components/scroll-progress"
-// import { validateEnv } from "@/lib/env"
+import { validateEnv } from "@/lib/env"
 
 // Validate environment variables on server startup
-// if (typeof window === 'undefined') {
-//   validateEnv()
-// }
+if (typeof window === 'undefined') {
+  validateEnv()
+}
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -28,13 +28,34 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "YourExitPlans | Free AI Business Validation - Start Risk-Free",
   description:
-    "All routes start FREE. Explore business ideas, validate your concept, or preview your 120-day roadmap. No credit card required. Only pay if you want the full report.",
+    "Start FREE. Explore business ideas or validate your own—no credit card required. Get your opportunity score, then unlock your personalized 120-day roadmap.",
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
     shortcut: '/favicon.svg',
     apple: '/favicon.svg',
+  },
+  openGraph: {
+    title: "YourExitPlans | AI-Powered Business Ideas & Exit Plans",
+    description: "Start FREE. Explore business ideas or validate your own—no credit card required.",
+    url: "https://yourexitplans.com",
+    siteName: "YourExitPlans",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "YourExitPlans - AI Business Validation"
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "YourExitPlans | AI-Powered Business Ideas",
+    description: "Start FREE. Explore business ideas or validate your own.",
+    images: ["/og-image.png"],
   },
 }
 
@@ -46,7 +67,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <head>
-        {/* Google Analytics - Replace with your GA ID */}
+        {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-4YSQPT6D0J" strategy="lazyOnload" key="gtag-src" />
         <Script id="gtag-init" strategy="lazyOnload" key="gtag-init">
           {`

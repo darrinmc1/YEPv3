@@ -95,7 +95,7 @@ export function SiteHeader() {
                   <div className="grid grid-cols-1 gap-4">
                     {pricingOptions.map((option) => (
                       <Link
-                        key={option.href}
+                        key={option.title}
                         href={option.href}
                         className={`flex items-start gap-4 p-4 rounded-xl border ${option.borderColor} ${option.bgColor} hover:scale-[1.02] transition-all group`}
                       >
@@ -178,7 +178,7 @@ export function SiteHeader() {
                     <p className="text-xs uppercase tracking-wider text-neutral-500 font-semibold mb-2">Pricing</p>
                     {pricingOptions.map((option) => (
                       <Link
-                        key={option.href}
+                        key={option.title}
                         href={option.href}
                         className="flex items-start gap-3 p-3 rounded-lg hover:bg-blue-400/10 transition-colors mb-2"
                       >

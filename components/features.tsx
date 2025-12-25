@@ -208,7 +208,7 @@ export function Features() {
         <h3 className="text-center text-3xl font-bold text-white mb-12">
           How It <span className="text-blue-400">Works</span>
         </h3>
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3 mb-12">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-400/10 text-2xl font-bold text-blue-400">
               1
@@ -238,6 +238,17 @@ export function Features() {
               Get step-by-step roadmaps, tech stacks, and implementation guides to go from idea to revenue in weeks
             </p>
           </div>
+        </div>
+
+        {/* CTA to Get Started */}
+        <div className="text-center">
+          <a
+            href="#choose-your-path"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-400 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Rocket className="h-5 w-5" />
+            <span>Get Started FREE</span>
+          </a>
         </div>
       </div>
     </section>

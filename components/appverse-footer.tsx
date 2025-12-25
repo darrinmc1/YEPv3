@@ -46,8 +46,8 @@ export function AppverseFooter() {
               <a href="mailto:info@yourexitplans.com" className="hover:text-white transition-colors">
                 General: info@yourexitplans.com
               </a>
-              <a href="mailto:help@yourexitplans.com" className="hover:text-white transition-colors">
-                Support: help@yourexitplans.com
+              <a href="mailto:support@YourExitPlans.com" className="hover:text-white transition-colors">
+                Support: support@YourExitPlans.com
               </a>
               <a href="mailto:admin@yourexitplans.com" className="hover:text-white transition-colors">
                 Business: admin@yourexitplans.com

@@ -7,8 +7,23 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lightbulb, Users, DollarSign, CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowLeft } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+  Lightbulb, 
+  Users, 
+  DollarSign, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2, 
+  ArrowRight, 
+  ArrowLeft,
+  Lock,
+  TrendingUp,
+  Target,
+  Clock,
+  Mail,
+  Sparkles
+} from "lucide-react"
 
 // TypeScript Interfaces
 interface IdeaFormData {
@@ -102,7 +117,6 @@ export function IdeaValidationForm() {
   const totalSteps = 3
   const progress = (currentStep / totalSteps) * 100
 
-  // Field validation
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
@@ -143,17 +157,12 @@ export function IdeaValidationForm() {
     setErrorMessage("")
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
-
-      if (!webhookUrl) {
-        throw new Error("Webhook URL not configured")
-      }
+      // Use the new API route for validation
+      const webhookUrl = '/api/validate-idea'
 
       const response = await fetch(webhookUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       })
 
@@ -200,7 +209,9 @@ export function IdeaValidationForm() {
     setResetTime("")
   }
 
-  // Render loading state
+  // ============================================
+  // LOADING STATE
+  // ============================================
   if (status === "loading") {
     return (
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-3xl mx-auto">
@@ -232,140 +243,269 @@ export function IdeaValidationForm() {
     )
   }
 
-  // Render success state
+  // ============================================
+  // SUCCESS STATE WITH UPSELLS
+  // ============================================
   if (status === "success" && analysisResult) {
+    const scoreColor = analysisResult.marketValidation.score >= 70 
+      ? "text-green-400" 
+      : analysisResult.marketValidation.score >= 50 
+        ? "text-yellow-400" 
+        : "text-red-400"
+    
+    const scoreBg = analysisResult.marketValidation.score >= 70 
+      ? "bg-green-400/10 border-green-400/20" 
+      : analysisResult.marketValidation.score >= 50 
+        ? "bg-yellow-400/10 border-yellow-400/20" 
+        : "bg-red-400/10 border-red-400/20"
+
+    const verdict = analysisResult.marketValidation.score >= 70 
+      ? "Strong Opportunity" 
+      : analysisResult.marketValidation.score >= 50 
+        ? "Worth Exploring" 
+        : "Needs More Work"
+
     return (
-      <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-4xl mx-auto">
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-400/10 mb-4">
-            <CheckCircle2 className="h-8 w-8 text-green-400" />
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header with Score */}
+        <div className="text-center">
+          <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 mb-4 ${scoreBg}`}>
+            <CheckCircle2 className={`h-4 w-4 ${scoreColor}`} />
+            <span className={`text-sm font-medium ${scoreColor}`}>{verdict}</span>
           </div>
-          <h3 className="text-3xl font-bold text-white mb-2">Analysis Complete!</h3>
-          <p className="text-neutral-400">Here&apos;s what we found about your idea</p>
+          
+          <h2 className="text-3xl font-bold text-white mb-2">{formData.ideaName}</h2>
+          <p className="text-neutral-400">{analysisResult.marketValidation.summary}</p>
         </div>
 
-        <div className="space-y-6">
-          {/* Market Validation */}
-          <Card className="bg-black/40 border-blue-400/20">
-            <CardHeader>
-              <CardTitle className="text-white">Market Validation Score</CardTitle>
-              <div className="flex items-center gap-4 mt-2">
-                <Progress value={analysisResult.marketValidation.score} className="flex-1" />
-                <span className="text-2xl font-bold text-blue-400">
-                  {analysisResult.marketValidation.score}%
-                </span>
+        {/* Main Score Card */}
+        <Card className="bg-black/40 border-white/10">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-white">Opportunity Score</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center">
+              <div className={`text-6xl font-bold mb-2 ${scoreColor}`}>
+                {analysisResult.marketValidation.score}<span className="text-2xl text-neutral-500">/100</span>
               </div>
+              <Progress value={analysisResult.marketValidation.score} className="w-full max-w-md h-3 mb-4" />
+              
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4">
+                <div className="text-center p-3 rounded-lg bg-white/5">
+                  <Target className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+                  <div className="text-sm text-neutral-400">Validation</div>
+                  <div className="font-semibold text-white">Complete</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-white/5">
+                  <TrendingUp className="h-5 w-5 text-green-400 mx-auto mb-1" />
+                  <div className="text-sm text-neutral-400">Market Fit</div>
+                  <div className="font-semibold text-white">{analysisResult.marketValidation.score >= 70 ? "Strong" : analysisResult.marketValidation.score >= 50 ? "Moderate" : "Weak"}</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-white/5">
+                  <Users className="h-5 w-5 text-purple-400 mx-auto mb-1" />
+                  <div className="text-sm text-neutral-400">Competition</div>
+                  <div className="font-semibold text-white">Medium</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-white/5">
+                  <Clock className="h-5 w-5 text-amber-400 mx-auto mb-1" />
+                  <div className="text-sm text-neutral-400">Timing</div>
+                  <div className="font-semibold text-white">Good</div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Insights - FREE */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="bg-black/40 border-green-400/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-white flex items-center gap-2 text-lg">
+                <Sparkles className="h-5 w-5 text-green-400" />
+                Quick Wins
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-300 mb-4">{analysisResult.marketValidation.summary}</p>
-              <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">
-                Key Insights:
-              </h4>
               <ul className="space-y-2">
-                {analysisResult.marketValidation.keyInsights.map((insight, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-neutral-300">
-                    <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                    <span>{insight}</span>
+                {analysisResult.quickWins.map((win, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-neutral-300">
+                    <CheckCircle2 className="h-4 w-4 text-green-400 mt-0.5 shrink-0" />
+                    {win}
                   </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
 
-          {/* Competitor Landscape */}
-          <Card className="bg-black/40 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Competitor Landscape</CardTitle>
-              <CardDescription className="text-neutral-400">
-                {analysisResult.competitorLandscape.competition}
-              </CardDescription>
+          <Card className="bg-black/40 border-amber-400/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-white flex items-center gap-2 text-lg">
+                <AlertCircle className="h-5 w-5 text-amber-400" />
+                Things to Consider
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">
-                Opportunities:
-              </h4>
               <ul className="space-y-2">
-                {analysisResult.competitorLandscape.opportunities.map((opportunity, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-neutral-300">
-                    <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                    <span>{opportunity}</span>
+                {analysisResult.redFlags.map((flag, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-neutral-300">
+                    <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+                    {flag}
                   </li>
                 ))}
               </ul>
-            </CardContent>
-          </Card>
-
-          {/* Quick Wins & Red Flags */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="bg-black/40 border-green-400/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-400" />
-                  Quick Wins
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {analysisResult.quickWins.map((win, index) => (
-                    <li key={index} className="text-sm text-neutral-300">
-                      • {win}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/40 border-red-400/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-red-400" />
-                  Red Flags
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {analysisResult.redFlags.map((flag, index) => (
-                    <li key={index} className="text-sm text-neutral-300">
-                      • {flag}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Next Steps */}
-          <Card className="bg-black/40 border-blue-400/20">
-            <CardHeader>
-              <CardTitle className="text-white">Recommended Next Steps</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="space-y-2">
-                {analysisResult.nextSteps.map((step, index) => (
-                  <li key={index} className="flex items-start gap-3 text-sm text-neutral-300">
-                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-400/10 text-blue-400 font-semibold shrink-0">
-                      {index + 1}
-                    </span>
-                    <span className="mt-0.5">{step}</span>
-                  </li>
-                ))}
-              </ol>
             </CardContent>
           </Card>
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20">
-          <h4 className="text-xl font-bold text-white mb-2">Ready to Take Action?</h4>
-          <p className="text-neutral-300 mb-4">
-            Upgrade to get detailed implementation plans, market research reports, and ongoing support.
+        {/* Key Insights */}
+        <Card className="bg-black/40 border-blue-400/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white">Key Market Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {analysisResult.marketValidation.keyInsights.map((insight, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-neutral-300">
+                  <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
+                  {insight}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* LOCKED CONTENT - Upsell */}
+        <Card className="bg-gradient-to-br from-green-500/10 to-blue-500/10 border-green-400/30">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Lock className="h-5 w-5 text-green-400" />
+              Ready to Launch? Get Your Implementation Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-neutral-300 mb-6">
+              You&apos;ve validated your idea. Now get everything you need to build and launch it.
+            </p>
+            
+            {/* What's Locked */}
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 rounded-lg bg-black/40 border border-white/10 text-center">
+                <div className="text-2xl font-bold text-green-400 mb-1">90</div>
+                <div className="text-sm text-neutral-400">Day Roadmap</div>
+                <div className="text-xs text-neutral-500">step-by-step plan</div>
+              </div>
+              <div className="p-4 rounded-lg bg-black/40 border border-white/10 text-center">
+                <div className="text-2xl font-bold text-green-400 mb-1">25+</div>
+                <div className="text-sm text-neutral-400">AI Prompts</div>
+                <div className="text-xs text-neutral-500">for your business</div>
+              </div>
+              <div className="p-4 rounded-lg bg-black/40 border border-white/10 text-center">
+                <div className="text-2xl font-bold text-green-400 mb-1">6</div>
+                <div className="text-sm text-neutral-400">Templates</div>
+                <div className="text-xs text-neutral-500">ready to use</div>
+              </div>
+            </div>
+
+            {/* Upsell Options */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border border-white/10 bg-black/20">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-white">Quick Start</h4>
+                    <p className="text-xs text-neutral-400">30-day action plan</p>
+                  </div>
+                  <div className="text-xl font-bold text-white">$29</div>
+                </div>
+                <ul className="space-y-1 mb-4">
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    Personalized 30-day roadmap
+                  </li>
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    Daily task checklists
+                  </li>
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    3 essential templates
+                  </li>
+                </ul>
+                <Button asChild className="w-full bg-white/10 hover:bg-white/20 text-white">
+                  <a href={`/checkout?plan=quick-start&idea=${encodeURIComponent(formData.ideaName)}`}>
+                    Get Quick Start
+                  </a>
+                </Button>
+              </div>
+
+              <div className="p-4 rounded-xl border-2 border-green-400/50 bg-green-500/5 relative">
+                <div className="absolute -top-2 right-4 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  RECOMMENDED
+                </div>
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-white">Launch System</h4>
+                    <p className="text-xs text-neutral-400">90-day complete toolkit</p>
+                  </div>
+                  <div className="text-xl font-bold text-green-400">$49</div>
+                </div>
+                <ul className="space-y-1 mb-4">
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    90-day implementation roadmap
+                  </li>
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    Full competitor analysis
+                  </li>
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    25 AI prompts + 6 templates
+                  </li>
+                  <li className="text-xs text-neutral-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-green-400" />
+                    Marketing playbook
+                  </li>
+                </ul>
+                <Button asChild className="w-full bg-green-500 hover:bg-green-400 text-white">
+                  <a href={`/checkout?plan=launch-system&idea=${encodeURIComponent(formData.ideaName)}`}>
+                    Get Launch System
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Complete Build Option */}
+            <div className="mt-4 p-4 rounded-xl border border-blue-400/30 bg-blue-500/5">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h4 className="font-semibold text-white">Complete Build — $99</h4>
+                  <p className="text-xs text-neutral-400">120-day system + email sequences + scaling playbook</p>
+                </div>
+                <Button asChild variant="outline" className="border-blue-400/30 text-blue-400 hover:bg-blue-500/10 whitespace-nowrap">
+                  <a href={`/checkout?plan=complete-build&idea=${encodeURIComponent(formData.ideaName)}`}>
+                    View Complete Build
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Email Confirmation */}
+        <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10">
+          <Mail className="h-8 w-8 text-blue-400 mx-auto mb-3" />
+          <h4 className="font-semibold text-white mb-2">Results Sent to Your Email</h4>
+          <p className="text-sm text-neutral-400 mb-4">
+            We&apos;ve sent a copy of this validation to <span className="text-white">{formData.email}</span>
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button className="bg-blue-500 text-black hover:bg-blue-400 font-semibold">
-              View Pricing Plans
-            </Button>
-            <Button variant="outline" onClick={resetForm} className="border-white/20 text-white hover:bg-white/10">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={resetForm} variant="outline" className="border-white/20 text-white hover:bg-white/10">
               Validate Another Idea
+            </Button>
+            <Button asChild variant="link" className="text-purple-400">
+              <a href="/explore-ideas">Or explore our pre-researched ideas →</a>
             </Button>
           </div>
         </div>
@@ -373,7 +513,9 @@ export function IdeaValidationForm() {
     )
   }
 
-  // Render rate limit state
+  // ============================================
+  // RATE LIMITED STATE
+  // ============================================
   if (status === "rate-limited") {
     return (
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-2xl mx-auto">
@@ -391,8 +533,8 @@ export function IdeaValidationForm() {
             <p className="text-neutral-300 mb-4">
               Upgrade to unlock unlimited idea validations, deeper analysis, and implementation plans.
             </p>
-            <Button className="w-full bg-blue-500 text-black hover:bg-blue-400 font-semibold">
-              View Pricing Plans
+            <Button asChild className="w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold">
+              <a href="/#pricing">View Pricing Plans</a>
             </Button>
           </div>
           <Button variant="ghost" onClick={resetForm} className="text-neutral-400 hover:text-white">
@@ -403,7 +545,9 @@ export function IdeaValidationForm() {
     )
   }
 
-  // Render error state
+  // ============================================
+  // ERROR STATE
+  // ============================================
   if (status === "error") {
     return (
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-2xl mx-auto">
@@ -414,7 +558,7 @@ export function IdeaValidationForm() {
           <h3 className="text-2xl font-bold text-white mb-2">Something Went Wrong</h3>
           <p className="text-neutral-400 mb-6">{errorMessage}</p>
           <div className="flex gap-3">
-            <Button onClick={handleSubmit} className="bg-blue-500 text-black hover:bg-blue-400 font-semibold">
+            <Button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-400 text-white font-semibold">
               Try Again
             </Button>
             <Button variant="outline" onClick={resetForm} className="border-white/20 text-white hover:bg-white/10">
@@ -426,7 +570,9 @@ export function IdeaValidationForm() {
     )
   }
 
-  // Render form steps (idle state)
+  // ============================================
+  // FORM STEPS (IDLE STATE)
+  // ============================================
   return (
     <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-3xl mx-auto">
       {/* Header */}
@@ -505,7 +651,7 @@ export function IdeaValidationForm() {
             <Button
               onClick={handleNext}
               disabled={!validateStep(1)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-500 hover:bg-blue-400 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -604,7 +750,7 @@ export function IdeaValidationForm() {
             <Button
               onClick={handleNext}
               disabled={!validateStep(2)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-500 hover:bg-blue-400 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -626,19 +772,19 @@ export function IdeaValidationForm() {
             <ul className="space-y-2">
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Market validation score and analysis</span>
+                <span>Market validation score (1-100)</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Competitor landscape overview</span>
+                <span>Quick wins and opportunities</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Quick wins and red flags</span>
+                <span>Red flags to watch out for</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>Recommended next steps</span>
+                <span>Key market insights</span>
               </li>
             </ul>
           </div>
@@ -672,7 +818,7 @@ export function IdeaValidationForm() {
             <Button
               onClick={handleSubmit}
               disabled={!validateStep(3)}
-              className="bg-blue-500 text-black hover:bg-blue-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed px-8"
+              className="bg-blue-500 hover:bg-blue-400 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed px-8"
             >
               Analyze My Idea
               <ArrowRight className="ml-2 h-4 w-4" />
