@@ -100,9 +100,8 @@ export function Hero() {
                     <motion.span
                       key={wordIndex}
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.25 } }}
+                      exit={{ opacity: 0, transition: { duration: 0.3 } }}
                       className={`absolute left-0 top-0 whitespace-nowrap inline-flex items-center gap-3 ${currentWordData.color}`}
                     >
                       <span>{currentWordData.text}</span>

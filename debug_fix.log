@@ -1,0 +1,81 @@
+[dotenv@17.2.3] injecting env (18) from .env.local -- tip: ⚙️  override existing env vars with { override: true }
+------------------------------------------------
+✅ GOOGLE_GEMINI_API_KEY found (AIza...)
+------------------------------------------------
+
+📊 Current ideas in library: 436
+🎯 Need to generate: 564 more ideas
+
+Generating ~41 ideas per category...
+
+🤖 Generating ideas for: AI & Automation...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Creator Economy & Marketing...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: SaaS & B2B Tools...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: E-commerce & Retail...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Health, Wellness & Fitness...
+   ✅ Generated 40 ideas
+🤖 Generating ideas for: FinTech & LegalTech...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Education & EdTech...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Real Estate & Construction...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Niche Marketplaces & Services...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Food & Beverage...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Gaming & Entertainment...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Climate & Sustainability...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Remote Work & Productivity...
+   ✅ Generated 41 ideas
+🤖 Generating ideas for: Travel & Hospitality...
+   ✅ Generated 40 ideas
+
+✅ Generated 564 total new ideas
+
+📝 Formatting for database...
+
+📤 Appending 564 ideas to database...
+
+   ✅ Appended batch 1 (50 ideas)
+   ✅ Appended batch 2 (50 ideas)
+   ✅ Appended batch 3 (50 ideas)
+   ✅ Appended batch 4 (50 ideas)
+   ✅ Appended batch 5 (50 ideas)
+   ✅ Appended batch 6 (50 ideas)
+   ✅ Appended batch 7 (50 ideas)
+   ✅ Appended batch 8 (50 ideas)
+   ✅ Appended batch 9 (50 ideas)
+   ✅ Appended batch 10 (50 ideas)
+   ✅ Appended batch 11 (50 ideas)
+   ✅ Appended batch 12 (14 ideas)
+
+🎉 Success! Library Stats:
+   • Previous: 436 ideas
+   • Added: 564 ideas
+   • Total: 1000 ideas
+
+📑 New Ideas by Category:
+   • AI & Automation: 41 ideas
+   • Creator Economy & Marketing: 41 ideas
+   • SaaS & B2B Tools: 41 ideas
+   • E-commerce & Retail: 41 ideas
+   • FinTech & LegalTech: 41 ideas
+   • Education & EdTech: 41 ideas
+   • Real Estate & Construction: 41 ideas
+   • Niche Marketplaces & Services: 41 ideas
+   • Food & Beverage: 41 ideas
+   • Gaming & Entertainment: 41 ideas
+   • Climate & Sustainability: 41 ideas
+   • Remote Work & Productivity: 41 ideas
+   • Health, Wellness & Fitness: 40 ideas
+   • Travel & Hospitality: 32 ideas
+
+💡 View all 1000 ideas at:
+   https://docs.google.com/spreadsheets/d/1aKxrwa9pAL6qhltvqd1eJERFZsxqWlHWQg2e9Gj3QZ8

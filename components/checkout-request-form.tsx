@@ -11,6 +11,37 @@ import { CheckCircle2, Loader2, Mail, ShoppingCart, AlertCircle } from "lucide-r
 
 // Product details mapping
 const PRODUCTS = {
+  "research": {
+    name: "Full Idea Research Report",
+    price: 9,
+    description: "Complete market analysis, competitor breakdown, and revenue potential for one idea"
+  },
+  "implementation": {
+    name: "Research + Implementation Plan",
+    price: 29,
+    description: "Research report + 90-day roadmap, tech stack, marketing strategy, and templates"
+  },
+  "idea-bundle": {
+    name: "7 Ideas Bundle",
+    price: 49,
+    description: "Full research reports for 7 pre-researched ideas + 10% off next purchase"
+  },
+  "premium-bundle": {
+    name: "10 Ideas + Implementation Plan",
+    price: 99,
+    description: "10 research reports + generic implementation plan + 10% off next purchase"
+  },
+  "implementation-addon": {
+    name: "Implementation Plan Add-on",
+    price: 29,
+    description: "90-day roadmap and resources to implement any idea from your bundle"
+  },
+  // Legacy support
+  "single-idea": {
+    name: "Single Idea Research",
+    price: 9,
+    description: "Full research report for one business idea"
+  },
   "quick-start": {
     name: "Quick Start",
     price: 29,
@@ -25,16 +56,6 @@ const PRODUCTS = {
     name: "Complete Build",
     price: 99,
     description: "120-day system with email sequences, scaling playbook, and coaching calls"
-  },
-  "single-idea": {
-    name: "Single Idea Full Exit Plan",
-    price: 29,
-    description: "Complete business plan, competitor analysis, and 90-day roadmap for one idea"
-  },
-  "idea-bundle": {
-    name: "Idea Bundle",
-    price: 49,
-    description: "Multiple pre-researched Exit Plans with implementation guides"
   }
 }
 

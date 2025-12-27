@@ -230,7 +230,7 @@ export async function searchIdeas(filters: {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'Sheet1!A2:R', // Skip header, get all 18 columns
+    range: 'Sheet1!A2:S', // Include cost breakdown column
   })
 
   const rows = response.data.values || []
@@ -255,6 +255,7 @@ export async function searchIdeas(filters: {
     status: row[15] || '',         // P: Status
     fullDescription: row[16] || '', // Q: Full Description
     pricingModel: row[17] || 'N/A', // R: Pricing Model
+    costBreakdown: row[18] || '',  // S: Cost Breakdown
   }))
 
   // Apply filters
@@ -277,13 +278,19 @@ export async function searchIdeas(filters: {
   }
 
   if (filters.searchTerm) {
-    const term = filters.searchTerm.toLowerCase()
-    ideas = ideas.filter(idea =>
-      idea.title.toLowerCase().includes(term) ||
-      idea.oneLiner.toLowerCase().includes(term) ||
-      idea.industry.toLowerCase().includes(term) ||
-      idea.fullDescription.toLowerCase().includes(term)
-    )
+    const searchTerms = filters.searchTerm.toLowerCase().split(/\s+/).filter(t => t.length > 2) // Split by spaces, ignore short words
+    ideas = ideas.filter(idea => {
+      const searchableText = [
+        idea.title,
+        idea.oneLiner,
+        idea.industry,
+        idea.subcategory,
+        idea.fullDescription
+      ].join(' ').toLowerCase()
+      
+      // Match if ANY search term appears
+      return searchTerms.some(term => searchableText.includes(term))
+    })
   }
 
   // Sort by score (highest first)

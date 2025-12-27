@@ -51,10 +51,12 @@ async function generateIdeasForCategory(category, count) {
   const models = ['gemini-flash-latest', 'gemini-2.0-flash', 'gemini-2.0-flash-exp'];
 
   for (const modelName of models) {
-    try {
-      const model = genAI.getGenerativeModel({ model: modelName });
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
 
-      const prompt = `Generate ${count} unique, profitable business ideas in the "${category}" category.
+        const prompt = `Generate ${count} unique, profitable business ideas in the "${category}" category.
 
 For each idea, provide:
 1. Idea Name (concise, clear)
@@ -85,25 +87,32 @@ Format as JSON array like this:
 
 Return ONLY the JSON array, no other text.`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
 
-      // Extract JSON from response (sometimes it's wrapped in markdown)
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (!jsonMatch) {
-        console.error(`Failed to extract JSON from response for ${category} using ${modelName}`);
-        continue; // Try next model
+        // Extract JSON from response (sometimes it's wrapped in markdown)
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+        if (!jsonMatch) {
+          console.error(`Failed to extract JSON from response for ${category} using ${modelName}`);
+          break; // Try next model
+        }
+
+        const ideas = JSON.parse(jsonMatch[0]);
+        return ideas.map(idea => ({
+          ...idea,
+          category
+        }));
+
+      } catch (error) {
+        if (error.message.includes('429') || error.message.includes('quota')) {
+          console.log(`⏳ Rate limit hit for ${modelName}. Waiting 60s before retry... (${retries} retries left)`);
+          await new Promise(resolve => setTimeout(resolve, 60000));
+          retries--;
+        } else {
+          console.warn(`Warning: Failed with ${modelName}:`, error.message);
+          break; // Try next model
+        }
       }
-
-      const ideas = JSON.parse(jsonMatch[0]);
-      return ideas.map(idea => ({
-        ...idea,
-        category
-      }));
-
-    } catch (error) {
-      console.warn(`Warning: Failed with ${modelName}:`, error.message);
-      continue; // Try next model
     }
   }
 
@@ -134,104 +143,76 @@ async function generateMoreIdeas(targetCount = 1000) {
     const perCategory = Math.ceil(needed / CATEGORIES.length);
     console.log(`Generating ~${perCategory} ideas per category...\n`);
 
-    let allNewIdeas = [];
+    // Helper to save batch
+    const saveBatchToSheet = async (newIdeas, startIndex) => {
+      if (newIdeas.length === 0) return;
 
-    for (const category of CATEGORIES) {
-      console.log(`🤖 Generating ideas for: ${category}...`);
-      const ideas = await generateIdeasForCategory(category, perCategory);
-      allNewIdeas = allNewIdeas.concat(ideas);
-      console.log(`   ✅ Generated ${ideas.length} ideas`);
+      console.log(`   📝 Formatting ${newIdeas.length} ideas...`);
 
-      // Rate limiting - wait 2 seconds between API calls
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const mappedData = newIdeas.map((idea, index) => {
+        const ideaId = `idea-${String(startIndex + index + 1).padStart(4, '0')}`;
 
-      // Stop if we have enough
-      if (allNewIdeas.length >= needed) {
-        break;
-      }
-    }
+        let score = 7.5;
+        if (idea.difficulty === 'Beginner') score = 8.0;
+        if (idea.startupCost === '$0-$500') score += 0.5;
 
-    // Trim to exact count needed
-    allNewIdeas = allNewIdeas.slice(0, needed);
+        return [
+          ideaId,
+          idea.name?.trim() || '',
+          idea.category || 'Uncategorized',
+          idea.subcategory?.trim() || '',
+          score,
+          '', // Market Size
+          '', // Growth Rate
+          idea.difficulty || 'Intermediate',
+          '3-6 weeks',
+          idea.startupCost || '$1,000-$5,000',
+          idea.oneLiner?.trim() || '',
+          idea.whyNow?.trim() || '',
+          '', // Quick Insights
+          '', // Locked Content
+          new Date().toISOString(),
+          'ai-generated',
+          idea.oneLiner?.trim() || '',
+          'TBD',
+        ];
+      });
 
-    console.log(`\n✅ Generated ${allNewIdeas.length} total new ideas`);
-    console.log(`\n📝 Formatting for database...\n`);
-
-    // Format for database
-    const mappedData = allNewIdeas.map((idea, index) => {
-      const ideaId = `idea-${String(currentCount + index + 1).padStart(4, '0')}`;
-
-      // Parse difficulty
-      const difficulty = idea.difficulty || 'Intermediate';
-
-      // Parse score based on viability
-      let score = 7.5;
-      if (difficulty === 'Beginner') score = 8.0;
-      if (idea.startupCost === '$0-$500') score += 0.5;
-
-      return [
-        ideaId,
-        idea.name?.trim() || '',
-        idea.category || 'Uncategorized',
-        idea.subcategory?.trim() || '',
-        score,
-        '',  // Market Size (TBD)
-        '',  // Growth Rate (TBD)
-        difficulty,
-        '3-6 weeks',
-        idea.startupCost || '$1,000-$5,000',
-        idea.oneLiner?.trim() || '',
-        idea.whyNow?.trim() || '',
-        '',  // Quick Insights (JSON)
-        '',  // Locked Content (JSON)
-        new Date().toISOString(),
-        'ai-generated',
-        idea.oneLiner?.trim() || '',  // Full Description
-        'TBD',  // Pricing Model
-      ];
-    });
-
-    console.log(`📤 Appending ${mappedData.length} ideas to database...\n`);
-
-    // Append in batches of 50 to avoid timeout
-    const batchSize = 50;
-    for (let i = 0; i < mappedData.length; i += batchSize) {
-      const batch = mappedData.slice(i, i + batchSize);
-
+      console.log(`   📤 Appending to sheet...`);
       await sheets.spreadsheets.values.append({
         spreadsheetId: TARGET_SHEET_ID,
         range: 'Sheet1!A:R',
         valueInputOption: 'RAW',
-        requestBody: {
-          values: batch,
-        },
+        requestBody: { values: mappedData },
       });
+      console.log(`   💾 Saved!`);
+    };
 
-      console.log(`   ✅ Appended batch ${Math.floor(i / batchSize) + 1} (${batch.length} ideas)`);
+    let totalGenerated = 0;
+    let currentIdIndex = currentCount;
+
+    for (const category of CATEGORIES) {
+      // Check if we still need more
+      if (totalGenerated >= needed) break;
+
+      console.log(`🤖 Generating ideas for: ${category}...`);
+      const ideas = await generateIdeasForCategory(category, perCategory);
+
+      if (ideas.length > 0) {
+        await saveBatchToSheet(ideas, currentIdIndex);
+        totalGenerated += ideas.length;
+        currentIdIndex += ideas.length;
+        console.log(`   ✅ Progress: ${totalGenerated}/${needed} new ideas saved.`);
+      }
+
+      // Rate limiting - wait 10 seconds between API calls
+      if (totalGenerated < needed) {
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      }
     }
 
-    const finalCount = currentCount + mappedData.length;
-
-    console.log(`\n🎉 Success! Library Stats:`);
-    console.log(`   • Previous: ${currentCount} ideas`);
-    console.log(`   • Added: ${mappedData.length} ideas`);
-    console.log(`   • Total: ${finalCount} ideas`);
-
-    // Category breakdown
-    const catBreakdown = {};
-    mappedData.forEach(row => {
-      const cat = row[2];
-      catBreakdown[cat] = (catBreakdown[cat] || 0) + 1;
-    });
-
-    console.log(`\n📑 New Ideas by Category:`);
-    Object.entries(catBreakdown)
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([cat, count]) => {
-        console.log(`   • ${cat}: ${count} ideas`);
-      });
-
-    console.log(`\n💡 View all ${finalCount} ideas at:`);
+    console.log(`\n🎉 Success! Added ${totalGenerated} new ideas.`);
+    console.log(`\n💡 View them at:`);
     console.log(`   https://docs.google.com/spreadsheets/d/${TARGET_SHEET_ID}`);
 
   } catch (error) {

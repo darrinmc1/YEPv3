@@ -26,8 +26,10 @@ import {
   CheckCircle2,
   Zap,
   Mail,
-  BookOpen
+  BookOpen,
+  Info
 } from "lucide-react"
+import { WhatsIncludedModal } from "@/components/whats-included-modal"
 
 // ============================================
 // CONSTANTS
@@ -354,29 +356,89 @@ export function ExploreIdeasForm() {
           ))}
         </div>
 
-        {/* Bundle Upsell */}
-        <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-400/30">
-          <CardContent className="p-8 text-center">
-            <Zap className="h-10 w-10 text-purple-400 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-white mb-2">Want All {matchedIdeas.length}?</h3>
-            <p className="text-neutral-300 mb-6">
-              Get the Idea Bundle — {matchedIdeas.length} complete Exit Plans for the price of 2
-            </p>
+        {/* Bundle Upsells */}
+        <div className="space-y-6">
+          {/* $49 - 7 Ideas Bundle */}
+          <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-400/30">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-2xl font-bold text-white mb-2">7 Ideas Bundle</h3>
+              <p className="text-neutral-300 mb-6">
+                7 research reports — save $14 + get 10% off next purchase
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-              <Button asChild size="lg" className="bg-purple-500 hover:bg-purple-400 text-white">
-                <a href="/checkout?plan=idea-bundle">
-                  Get Idea Bundle — $49
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              </Button>
-            </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4 items-center">
+                <Button asChild size="lg" className="bg-blue-500 hover:bg-blue-400 text-white">
+                  <a href="/checkout?plan=idea-bundle">
+                    Get 7 Ideas — $49
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                </Button>
+                
+                <WhatsIncludedModal 
+                  productType="idea-bundle"
+                  trigger={
+                    <Button
+                      variant="outline"
+                      className="bg-transparent border-blue-400/30 text-blue-400 hover:bg-blue-400/10"
+                    >
+                      <Info className="mr-2 h-4 w-4" />
+                      What's Included?
+                    </Button>
+                  }
+                />
+              </div>
 
-            <p className="text-xs text-neutral-500">
-              Save ${(matchedIdeas.length * 29) - 49} vs buying separately
-            </p>
-          </CardContent>
-        </Card>
+              <p className="text-xs text-neutral-500">
+                7 research reports ($63 value) • Save $14
+              </p>
+              <p className="text-xs text-blue-400 mt-2">
+                Plus 10% off your next 7-idea bundle ($44.10)
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* $99 - Premium Bundle */}
+          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-400/30">
+            <CardContent className="p-8 text-center">
+              <div className="inline-block px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full mb-4">
+                BEST VALUE
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">10 Ideas + Implementation</h3>
+              <p className="text-neutral-300 mb-6">
+                10 research reports + generic roadmap — save $20 + get 10% off next
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4 items-center">
+                <Button asChild size="lg" className="bg-purple-500 hover:bg-purple-400 text-white">
+                  <a href="/checkout?plan=premium-bundle">
+                    Get Premium Bundle — $99
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                </Button>
+                
+                <WhatsIncludedModal 
+                  productType="premium-bundle"
+                  trigger={
+                    <Button
+                      variant="outline"
+                      className="bg-transparent border-purple-400/30 text-purple-400 hover:bg-purple-400/10"
+                    >
+                      <Info className="mr-2 h-4 w-4" />
+                      What's Included?
+                    </Button>
+                  }
+                />
+              </div>
+
+              <p className="text-xs text-neutral-500">
+                10 research reports ($90) + implementation ($29) = $119 value
+              </p>
+              <p className="text-xs text-purple-400 mt-2">
+                Plus 10% off your next premium bundle ($89.10)
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Email Confirmation */}
         <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10">
@@ -386,7 +448,7 @@ export function ExploreIdeasForm() {
             We&apos;ve sent these matches to <span className="text-white">{formData.email}</span>
             <br />Plus, you&apos;ll get new ideas weekly (unsubscribe anytime).
           </p>
-          <Button onClick={resetForm} variant="outline" className="border-white/20 text-white hover:bg-white/10">
+          <Button onClick={resetForm} variant="outline" className="bg-transparent border-white/20 text-white hover:bg-white/10">
             Search Again with Different Filters
           </Button>
         </div>
@@ -634,7 +696,7 @@ export function ExploreIdeasForm() {
             <ul className="space-y-2">
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-purple-400 mt-0.5 shrink-0" />
-                <span>3-5 pre-researched ideas matched to your interests</span>
+                <span>Up to 10 pre-researched ideas matched to your interests</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-purple-400 mt-0.5 shrink-0" />
@@ -642,7 +704,7 @@ export function ExploreIdeasForm() {
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-purple-400 mt-0.5 shrink-0" />
-                <span>Preview of implementation roadmaps</span>
+                <span>Preview of locked research and implementation roadmaps</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-neutral-300">
                 <CheckCircle2 className="h-4 w-4 text-purple-400 mt-0.5 shrink-0" />
@@ -672,7 +734,7 @@ export function ExploreIdeasForm() {
             <Button
               onClick={handleBack}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="bg-transparent border-white/20 text-white hover:bg-white/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
@@ -794,23 +856,62 @@ function IdeaResultCard({ idea, isFirst = false }: IdeaResultCardProps) {
           </div>
 
           {/* CTA Buttons */}
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
-            <Button
-              asChild
-              className="flex-1 bg-purple-500 hover:bg-purple-400 text-white"
-            >
-              <a href={`/checkout?plan=single-idea&id=${idea.id}`}>
-                Get Full Exit Plan — $29
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 border-white/20 text-white hover:bg-white/10"
-            >
-              <BookOpen className="mr-2 h-4 w-4" />
-              Save for Later
-            </Button>
+          <div className="mt-6 space-y-3">
+            {/* Research Report - $9 */}
+            <div className="flex items-center gap-3">
+              <Button
+                asChild
+                className="flex-1 bg-blue-500 hover:bg-blue-400 text-white"
+              >
+                <a href={`/checkout?plan=research&id=${idea.id}&idea=${encodeURIComponent(idea.title)}`}>
+                  Get Research Report — $9
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <WhatsIncludedModal 
+                productType="research" 
+                ideaName={idea.title}
+                trigger={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-transparent border-blue-400/30 text-blue-400 hover:bg-blue-400/10"
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                }
+              />
+            </div>
+
+            {/* Implementation Plan - $29 */}
+            <div className="flex items-center gap-3">
+              <Button
+                asChild
+                className="flex-1 bg-purple-500 hover:bg-purple-400 text-white"
+              >
+                <a href={`/checkout?plan=implementation&id=${idea.id}&idea=${encodeURIComponent(idea.title)}`}>
+                  Get Research + Implementation — $29
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <WhatsIncludedModal 
+                productType="implementation" 
+                ideaName={idea.title}
+                trigger={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-transparent border-purple-400/30 text-purple-400 hover:bg-purple-400/10"
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                }
+              />
+            </div>
+            
+            <p className="text-xs text-center text-neutral-500 mt-2">
+              Save $9: Implementation includes research + 90-day roadmap
+            </p>
           </div>
         </div>
       )}

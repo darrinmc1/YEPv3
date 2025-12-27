@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { searchIdeas, saveExploreRequest, checkRateLimit } from '@/lib/services/google-sheets'
+import { sendExploreIdeasEmail } from '@/lib/services/email'
 import { z } from 'zod'
 
 // Helper to format idea for frontend
@@ -36,6 +37,7 @@ function formatIdeaForFrontend(item: any) {
     difficulty: item.difficulty,
     timeToFirstSale: item.timeToFirstSale,
     startupCost: item.startupCost,
+    costBreakdown: item.costBreakdown || '',
     whyNow: item.whyNow || `${item.industry} is growing rapidly with new opportunities emerging.`,
     quickInsights: quickInsights.length > 0 ? quickInsights : [
       `Target market in ${item.industry} sector`,
@@ -122,7 +124,30 @@ export async function POST(req: NextRequest) {
       status: 'completed',
     })
 
-    // Step 3: Return matched ideas
+    // Step 3: Send email with matched ideas
+    console.log('📧 Sending email with matched ideas...')
+    try {
+      await sendExploreIdeasEmail({
+        email: validatedData.email,
+        interests: validatedData.interests,
+        matchedIdeas: formattedIdeas.map(idea => ({
+          id: idea.id,
+          title: idea.title,
+          oneLiner: idea.oneLiner,
+          industry: idea.industry,
+          score: idea.score,
+          difficulty: idea.difficulty,
+          timeToFirstSale: idea.timeToFirstSale,
+          startupCost: idea.startupCost,
+        }))
+      })
+      console.log('✅ Email sent successfully')
+    } catch (emailError) {
+      console.error('⚠️ Email failed but continuing:', emailError)
+      // Don't fail the whole request if email fails
+    }
+
+    // Step 4: Return matched ideas
     const response = {
       success: true,
       ideas: formattedIdeas,
