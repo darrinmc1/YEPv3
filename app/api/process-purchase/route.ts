@@ -15,17 +15,64 @@ import { sendPurchaseDeliveryEmail } from '@/lib/services/email'
 import { validatePDFQuality, sendValidationAlert } from '@/lib/services/pdf-validator'
 
 /**
- * Helper function to get idea by ID
+ * Helper function to get idea by ID directly from sheet
  */
 async function getIdeaById(ideaId: string) {
-  // Search for the idea using searchTerm
-  const ideas = await searchIdeas({ searchTerm: ideaId })
+  const { google } = require('googleapis')
   
-  // Find exact match by ID
-  const idea = ideas.find(i => i.id === ideaId || i.id.includes(ideaId))
+  const auth = new google.auth.GoogleAuth({
+    credentials: {
+      client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+      private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    },
+    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+  })
+
+  const sheets = google.sheets({ version: 'v4', auth })
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID_LIBRARY
+
+  // Try different sheet names
+  let response
+  try {
+    // Try YEP_IdeasLibrary first
+    response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'YEP_IdeasLibrary!A2:T1000', // Get all columns up to row 1000
+    })
+  } catch (e) {
+    // Fallback to Sheet1
+    response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Sheet1!A2:T1000',
+    })
+  }
+
+  const rows = response.data.values || []
   
-  if (!idea) {
+  // Find the row with matching ID in column A
+  const ideaRow = rows.find(row => row[0] === ideaId)
+  
+  if (!ideaRow) {
     throw new Error(`Idea ${ideaId} not found`)
+  }
+
+  // Map row to idea object (based on your sheet columns)
+  const idea = {
+    id: ideaRow[0] || '',
+    title: ideaRow[1] || '',
+    category: ideaRow[2] || '',
+    subcategory: ideaRow[3] || '',
+    score: ideaRow[4] || '7',
+    marketSize: ideaRow[5] || '',
+    growthRate: ideaRow[6] || '',
+    difficulty: ideaRow[7] || '',
+    timeToFirstSale: ideaRow[8] || '',
+    startupCost: ideaRow[9] || '',
+    oneLiner: ideaRow[10] || '',
+    whyNow: ideaRow[11] || '',
+    quickInsights: ideaRow[12] || '[]',
+    lockedContent: ideaRow[13] || '{}',
+    costBreakdown: ideaRow[18] || '' // Column S
   }
   
   return idea
