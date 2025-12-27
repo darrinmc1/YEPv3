@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
-import { getIdeasFromSheet } from '@/lib/services/google-sheets'
+
 
 export async function GET() {
   try {
     console.log('🔍 Fetching ideas from Google Sheets...')
-    
+
     // Get first 50 ideas from sheet
     const ideas = await getIdeasFromSheet(50)
-    
+
     console.log(`✅ Found ${ideas.length} ideas`)
-    
+
     return NextResponse.json({
       success: true,
       count: ideas.length,
@@ -32,7 +32,7 @@ export async function GET() {
 
 async function getIdeasFromSheet(limit: number = 50) {
   const { google } = require('googleapis')
-  
+
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
@@ -61,7 +61,7 @@ async function getIdeasFromSheet(limit: number = 50) {
   }
 
   const rows = response.data.values || []
-  
+
   return rows.map((row: any[]) => ({
     id: row[0] || '',
     title: row[1] || '',
