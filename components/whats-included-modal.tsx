@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { CheckCircle2, X, Sparkles } from "lucide-react"
 
 interface WhatsIncludedModalProps {
-  productType: "research" | "implementation" | "idea-bundle" | "implementation-addon"
+  productType: "research" | "implementation" | "idea-bundle" | "implementation-addon" | "premium-bundle"
   ideaName?: string
   trigger?: React.ReactNode
 }

@@ -9,7 +9,9 @@ import { generateResearchReport, generateImplementationPlan } from '@/lib/servic
 // Sample idea data for testing
 const sampleIdea = {
   id: 'TEST001',
+  ideaTitle: 'AI-Powered Resume Builder for Remote Workers',
   title: 'AI-Powered Resume Builder for Remote Workers',
+
   oneLiner: 'Help remote workers create ATS-optimized resumes that get noticed',
   industry: 'HR Tech / Career Services',
   score: 85,
@@ -27,17 +29,15 @@ Key features:
 - Cover letter generator
 
 Target market: Remote workers looking to switch jobs or advance their careers in the remote work economy.`,
-  
-  marketSize: 'The global online recruitment market is valued at $28.68B and growing at 7.1% annually. The remote work segment is growing even faster.',
-  
+
   competitors: [
     'Resume.io - $2.95/month, basic templates',
     'Zety - $5.99/month, AI suggestions',
     'Novoresume - $16/month, premium features'
   ],
-  
+
   revenueModel: 'Freemium SaaS - Free basic version, $9.99/month for premium features, $29.99 for one-time professional review',
-  
+
   customerProfile: `Primary: Remote workers aged 25-45
 - Tech-savvy professionals
 - Currently employed but looking to advance
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
     console.log(`✅ PDF generated successfully! Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`)
 
     // Return PDF for download
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as any, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ PDF generation failed:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'PDF generation failed',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
