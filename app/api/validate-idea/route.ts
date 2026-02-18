@@ -5,17 +5,20 @@ import {
   checkRateLimit,
   createRateLimitResponse,
 } from "@/lib/rate-limit"
+import { validateIdeaWithGemini } from "@/lib/services/gemini-validation"
 
 /**
  * POST /api/validate-idea
  *
  * Validates a business idea by forwarding to n8n webhook with AI analysis.
  * Implements Redis-based rate limiting: 1 request per day per IP (free tier).
+ * 
+ * Falls back to direct Gemini AI analysis if n8n webhook fails.
  *
  * Rate Limit: 1 request per 24 hours per IP address
  * Returns: 429 if rate limit exceeded, 200 with analysis on success
  */
-export async function POST(request: Request) {
+export export async function POST(request: Request) {
   try {
     // 1. Rate Limiting with Redis (production-ready)
     const ip = getClientIp(request)
@@ -33,63 +36,69 @@ export async function POST(request: Request) {
       })
     }
 
-    // 2. Validate Configuration
-    const webhookUrl = process.env.N8N_WEBHOOK_URL
-    if (!webhookUrl) {
-      console.error("Missing N8N_WEBHOOK_URL environment variable")
-      return NextResponse.json(
-        { error: "Configuration Error", message: "Server configuration invalid." },
-        { status: 500 }
-      )
-    }
-
-    // 3. Parse and validate request body
+    // 2. Parse request body
     const body = await request.json()
 
-    // Optional: Add Zod schema validation here for extra security
-    // const validatedBody = ideaValidationSchema.parse(body)
-
-    // 4. Forward to n8n webhook for AI analysis
-    const webhookResponse = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Add secret header if n8n webhook requires authentication
-        // "X-Webhook-Secret": process.env.N8N_WEBHOOK_SECRET || "",
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!webhookResponse.ok) {
-      console.error(`n8n webhook error: ${webhookResponse.status}`)
-
-      // Check if it's a rate limit from n8n side
-      if (webhookResponse.status === 429) {
-        return NextResponse.json(
-          {
-            error: "rate_limit_exceeded",
-            message: "Analysis service is currently busy. Please try again in a few minutes.",
+    // 3. Try n8n webhook for AI analysis
+    const webhookUrl = process.env.N8N_WEBHOOK_URL
+    
+    if (webhookUrl) {
+      try {
+        console.log("Attempting n8n validation...")
+        const webhookResponse = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          { status: 429 }
-        )
-      }
+          body: JSON.stringify(body),
+          // Short timeout for n8n to avoid hanging
+          signal: AbortSignal.timeout(10000),
+        })
 
-      return NextResponse.json(
-        { error: "External API Error", message: "Failed to process analysis." },
-        { status: webhookResponse.status }
-      )
+        if (webhookResponse.ok) {
+          const data = await webhookResponse.json()
+          console.log("n8n validation successful")
+          return NextResponse.json(data, {
+            headers: {
+              "X-RateLimit-Limit": rateLimit.limit.toString(),
+              "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+              "X-RateLimit-Reset": rateLimit.reset.toString(),
+            },
+          })
+        }
+        console.warn(`n8n webhook returned error: ${webhookResponse.status}`)
+      } catch (webhookError) {
+        console.error("n8n webhook connection failed, falling back to Gemini", webhookError)
+      }
+    } else {
+      console.warn("Missing N8N_WEBHOOK_URL, using Gemini fallback directly")
     }
 
-    // 5. Return analysis results
-    const data = await webhookResponse.json()
+    // 4. Fallback to direct Gemini AI for validation
+    console.log("Running Gemini validation fallback...")
+    try {
+      const geminiResult = await validateIdeaWithGemini({
+        ideaName: body.ideaName,
+        oneLiner: body.oneLiner,
+        problemSolved: body.problemSolved,
+        targetCustomer: body.targetCustomer,
+        businessType: body.businessType,
+        industry: body.industry,
+        priceRange: body.priceRange,
+      })
 
-    return NextResponse.json(data, {
-      headers: {
-        "X-RateLimit-Limit": rateLimit.limit.toString(),
-        "X-RateLimit-Remaining": rateLimit.remaining.toString(),
-        "X-RateLimit-Reset": rateLimit.reset.toString(),
-      },
-    })
+      return NextResponse.json(geminiResult, {
+        headers: {
+          "X-RateLimit-Limit": rateLimit.limit.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": rateLimit.reset.toString(),
+        },
+      })
+    } catch (geminiError) {
+      console.error("Gemini validation fallback failed", geminiError)
+      throw new Error("All AI validation providers failed. Please try again later.")
+    }
+
   } catch (error) {
     console.error("API Route Error:", error)
 
@@ -97,7 +106,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: "Internal Server Error",
-        message: "Something went wrong processing your request. Please try again later.",
+        message: error instanceof Error ? error.message : "Something went wrong processing your request. Please try again later.",
       },
       { status: 500 }
     )
