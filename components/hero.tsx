@@ -154,7 +154,7 @@ export function Hero() {
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-center text-lg text-neutral-300 sm:text-xl">
-            Stop procrastinating. Discover validated business ideas with market research, step-by-step guides, and AI insights — stop researching and start building.
+            Stop telling people you're "working on something" and actually build it. We give you the idea, the plan, and the kick in the ass you need.
           </p>
 
           {/* CTA Buttons */}
@@ -163,14 +163,14 @@ export function Hero() {
               asChild
               className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black hover:bg-blue-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(198,255,58,0.3)]"
             >
-              <Link href="/validate-idea">Validate Your Idea Free</Link>
+              <Link href="/validate-idea">Start Building</Link>
             </Button>
             <Button
               asChild
               variant="outline"
               className="rounded-full border-2 border-blue-400/50 bg-transparent px-8 py-6 text-base font-semibold text-white hover:bg-blue-400/10 hover:border-blue-400"
             >
-              <a href="#features">See How It Works</a>
+              <a href="#features">See Plans</a>
             </Button>
           </div>
 

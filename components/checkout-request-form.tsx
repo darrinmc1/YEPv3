@@ -65,12 +65,12 @@ export function CheckoutRequestForm() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<FormStatus>("idle")
   const [errorMessage, setErrorMessage] = useState("")
-  
+
   // Get product info from URL params
   const planParam = searchParams.get("plan") || searchParams.get("item") || ""
   const ideaName = searchParams.get("idea") || ""
   const ideaId = searchParams.get("id") || ""
-  
+
   const product = PRODUCTS[planParam as keyof typeof PRODUCTS] || {
     name: "Custom Product",
     price: 0,
@@ -96,7 +96,7 @@ export function CheckoutRequestForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) {
       setErrorMessage("Please fill in all required fields")
       return
@@ -132,25 +132,25 @@ export function CheckoutRequestForm() {
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-400/10 mb-6">
               <CheckCircle2 className="h-8 w-8 text-green-400" />
             </div>
-            
+
             <h2 className="text-3xl font-bold text-white mb-4">
               Request Received!
             </h2>
-            
+
             <p className="text-neutral-300 mb-6">
               Thanks for your interest in <span className="font-semibold text-white">{product.name}</span>.
             </p>
-            
+
             <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-400/20 mb-6">
               <p className="text-sm text-neutral-300">
                 We've sent a confirmation to <span className="text-blue-400 font-semibold">{formData.email}</span>
               </p>
             </div>
-            
+
             <p className="text-neutral-400 mb-8">
               We'll reach out within 24 hours to complete your purchase and deliver your materials.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild className="bg-blue-500 hover:bg-blue-400 text-white">
                 <a href="/validate-idea">Validate Another Idea</a>
@@ -174,13 +174,13 @@ export function CheckoutRequestForm() {
           <ShoppingCart className="h-4 w-4 text-blue-400" />
           <span className="text-xs uppercase tracking-wider text-blue-400">Purchase Request</span>
         </div>
-        
+
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-4">
-          Almost There!
+          Let's Make This Official
         </h1>
-        
+
         <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-          We're finalizing our payment system. Share your details and we'll reach out to complete your purchase.
+          We just need a few details before we give you the keys to the castle.
         </p>
       </div>
 
@@ -298,7 +298,7 @@ export function CheckoutRequestForm() {
               ) : (
                 <>
                   <Mail className="mr-2 h-5 w-5" />
-                  Submit Purchase Request
+                  Let's Do This
                 </>
               )}
             </Button>

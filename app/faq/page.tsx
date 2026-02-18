@@ -13,7 +13,7 @@ export default function FAQPage() {
                 <header className="space-y-4">
                   <h1 className="text-4xl font-bold tracking-tight text-blue-400">Frequently Asked Questions</h1>
                   <p className="text-neutral-400 text-lg">
-                    Everything you need to know about YourExitPlans implementation programs and how they help you build your business.
+                    What you need to know about YourExitPlans implementation programs and how they help you build your business.
                   </p>
                 </header>
 
@@ -22,7 +22,7 @@ export default function FAQPage() {
                     1. What exactly do I get with YourExitPlans?
                   </h2>
                   <p className="text-neutral-300">
-                    You get a complete 120-day step-by-step implementation plan to launch and grow your business. Each day includes specific actions, templates, frameworks, and resources tailored to your tier level. Higher tiers include strategic guidance, video tutorials, and personalized support.
+                    Think of it as a GPS for your business, but instead of "turn left in 500 feet," it says "send this email to these 10 people." You get a step-by-step roadmap—up to 120 days—that tells you exactly what to do every single morning. No more guessing, no more "researching" (aka doom-scrolling), just clear instructions to get you from idea to income.
                   </p>
                 </section>
 
@@ -32,7 +32,7 @@ export default function FAQPage() {
                     <strong>Starter ($99 one-time or $25/mo):</strong> Basic action steps, self-guided<br />
                     <strong>Silver ($198 one-time or $50/mo):</strong> Everything in Starter + templates, frameworks, weekly automated check-ins<br />
                     <strong>Gold ($297 one-time or $75/mo):</strong> Everything in Silver + motivation content, YouTube tutorials, weekly question support<br />
-                    <strong>Platinum ($999 for 6 months or $199/mo):</strong> Everything in Gold + regional customization, weekly AI-personalized guidance, pause feature
+                    <strong>Platinum - still being developed </strong> Everything in previous tiers and a "push to the finish line" help with tools, products and other needed help<br />
                   </p>
                 </section>
 
@@ -41,21 +41,21 @@ export default function FAQPage() {
                     3. How long does the program take?
                   </h2>
                   <p className="text-neutral-300">
-                    The complete Launch Phase is 120 days (about 4 months). This includes 15 weeks of action days plus 4 review weeks to catch up and assess progress. You work Monday-Friday with weekends for learning and planning.
+                    The full Launch Phase is 120 days—about 4 months, or roughly the time it takes to finally cancel that gym membership you never use. It's a Monday-Friday grind (building isn't a hobby), with weekends reserved for planning, learning, or just remembering what your family looks like.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">4. What if I fall behind or need to pause?</h2>
                   <p className="text-neutral-300">
-                    Every 30 days includes a review week specifically designed for catching up on incomplete tasks. Platinum tier customers can also pause their daily tasks if overwhelmed while still receiving support content and resources.
+                    Life happens. The dog gets sick, the boss gets demanding, Netflix releases a new season. That's why every 30 days we include a "Catch Up Week"—no new tasks, just time to breathe and clear your backlog. Platinum members can also hit the pause button anytime, because burning out is so 2015.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">5. Is this for a specific type of business?</h2>
                   <p className="text-neutral-300">
-                    No, the implementation framework works for any business type — online services, e-commerce, SaaS, local businesses, consulting, and more. The action steps are universal, while higher tiers provide guidance customized to your specific business model.
+                    Surprisingly, selling SaaS and selling soap have a lot in common: you need customers, a product, and a way to accept money. Our framework covers the universal laws of business—finding a market, validating the offer, and getting paid—whether you're building the next Uber or a local consulting firm.
                   </p>
                 </section>
 
@@ -64,14 +64,14 @@ export default function FAQPage() {
                     6. Do I need technical skills or coding knowledge?
                   </h2>
                   <p className="text-neutral-300">
-                    No. We focus on no-code and low-code tools like v0.dev, Lovable.dev, and Google Workspace. The program teaches you how to use these tools step-by-step, even if you&apos;re a complete beginner.
+                    Absolutely not. If you can order a pizza online, you have enough technical skill to survive this program. We focus entirely on "no-code" tools that let you build websites and apps by dragging and dropping blocks. Leave the coding to the people who enjoy debugging at 3 AM.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">7. What&apos;s the difference between one-time and monthly payments?</h2>
                   <p className="text-neutral-300">
-                    One-time payments give you immediate access to all templates and resources upfront. Monthly payments provide the same content but templates unlock as you progress through the days (drip-fed). Both options include the full 120-day program.
+                    One-time payments give you immediate access to all templates and resources upfront. Monthly payments provide the same content but templates unlock as you progress through the days (drip-fed).
                   </p>
                 </section>
 
@@ -80,7 +80,7 @@ export default function FAQPage() {
                     8. What happens after Day 120?
                   </h2>
                   <p className="text-neutral-300">
-                    After completing the 120-day Launch Phase, you can continue with our Growth Phase (Days 121-240) and Scale Phase (Days 241-365) programs. These focus on advanced tactics, team building, and sustainable scaling as you grow your business.
+                    After completing the 120-day Launch Phase, we are developing further assistance plans where you can continue with our Growth Phase (Days 121-240) and Scale Phase (Days 241-365) programs. These focus on advanced tactics, team building, and sustainable scaling as you grow your business.
                   </p>
                 </section>
 
@@ -105,14 +105,14 @@ export default function FAQPage() {
                     11. Do you provide one-on-one coaching or calls?
                   </h2>
                   <p className="text-neutral-300">
-                    The program is entirely automated and self-paced — no live calls required. Platinum tier includes weekly AI-powered personalized check-ins via email where you can ask questions and receive tailored guidance, but all support is asynchronous.
+                    Not yet. Right now, our robots (and plans) do the heavy lifting to keep costs down. We might add 1:1 coaching to the Platinum tier later if enough people ask nicely, but for now, think of this as a self-guided mission with really, really good maps.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">12. What tools and software do I need?</h2>
                   <p className="text-neutral-300">
-                    Most tools we recommend are free or have free tiers: Google Workspace (free), v0.dev (free tier), Lovable.dev, Canva (free), and basic project management tools. Higher tiers may recommend paid tools, but free alternatives are always provided.
+                    Most tools we recommend are free or have free tiers: Google Workspace (free), v0.dev (free tier), Canva (free), and basic project management tools. We may recommend paid tools, but free alternatives are always provided.
                   </p>
                 </section>
 
@@ -121,7 +121,7 @@ export default function FAQPage() {
                     13. How much time do I need to commit each day?
                   </h2>
                   <p className="text-neutral-300">
-                    Plan for 1-3 hours per day Monday-Friday for action tasks. Weekends require 30-60 minutes for reading and planning. The workload is designed to be manageable alongside a full-time job, especially in the early weeks.
+                    You'll need about 1-3 hours a day, Monday through Friday. Yes, that means you might have to sacrifice your evening TV time. But look at it this way: In 120 days, you could either be caught up on "The Bachelor" or have a revenue-generating business. Choose wisely.
                   </p>
                 </section>
 
@@ -142,7 +142,7 @@ export default function FAQPage() {
                     <a href="mailto:support@yourexitplans.com" className="text-blue-400 underline">
                       Contact us
                     </a>{" "}
-                    and we&apos;ll get back to you within 24 hours with answers to any questions not covered here.
+                    and we&apos;ll get back to you with answers to any questions not covered here.
                   </p>
                 </section>
               </div>

@@ -14,7 +14,9 @@
       "Bash(powershell -NonInteractive -Command \"Invoke-WebRequest -Uri ''https://n8n-production-8ab4.up.railway.app/webhook/idea-validation'' -Method POST -ContentType ''application/json'' -Body ''{\"\"email\"\":\"\"test@test.com\"\",\"\"idea\"\":\"\"test\"\"}'' -TimeoutSec 40 -UseBasicParsing | Select-Object StatusCode, Content\")",
       "Bash(curl:*)",
       "Bash(git stash:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git pull:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

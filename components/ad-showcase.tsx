@@ -34,10 +34,10 @@ export function AdShowcase() {
     <section className="container mx-auto px-4 py-16 sm:py-24">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-4">
-          Real Opportunities. <span className="text-blue-400">Real Results.</span>
+          Real Opportunities. <span className="text-blue-400">No Courses. No Gurus.</span>
         </h2>
         <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-          Every week, we deliver validated business ideas with complete market analysis and implementation roadmaps
+          Stop scrolling TikTok and start building something that pays you.
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export function AdShowcase() {
           <a href="#pricing">See All Opportunities</a>
         </Button>
         <p className="mt-4 text-sm text-neutral-400">
-          Join hundreds of aspiring entrepreneurs discovering their next big opportunity
+          Join hundreds of people who are actually doing it instead of just talking about it.
         </p>
       </div>
     </section>

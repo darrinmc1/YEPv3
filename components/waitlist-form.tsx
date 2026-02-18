@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { 
-  CheckCircle2, 
-  Loader2, 
-  Crown, 
+import {
+  CheckCircle2,
+  Loader2,
+  Crown,
   Star,
   ArrowRight
 } from "lucide-react"
@@ -18,7 +18,7 @@ import {
 export function WaitlistForm() {
   const searchParams = useSearchParams()
   const initialTier = searchParams.get("tier") || "gold"
-  
+
   const [selectedTier, setSelectedTier] = useState(initialTier)
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
@@ -70,7 +70,7 @@ export function WaitlistForm() {
           </p>
           <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-400/20">
             <p className="text-sm text-neutral-300">
-              <span className="text-blue-400 font-semibold">What&apos;s next?</span> Check your inbox for a confirmation. 
+              <span className="text-blue-400 font-semibold">What&apos;s next?</span> Check your inbox for a confirmation.
               In the meantime, explore our free ideas or grab a Starter plan to get building now.
             </p>
           </div>
@@ -92,15 +92,14 @@ export function WaitlistForm() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Tier Selection */}
         <div className="liquid-glass border border-white/20 rounded-2xl p-6 sm:p-8">
-          <h3 className="text-lg font-semibold text-white mb-4">Which tier interests you?</h3>
-          
+          <h3 className="text-lg font-semibold text-white mb-4">How fast do you want to get rich?</h3>
+
           <RadioGroup value={selectedTier} onValueChange={setSelectedTier} className="grid md:grid-cols-2 gap-4">
             {/* Gold Option */}
-            <div className={`relative rounded-xl border p-4 cursor-pointer transition-all ${
-              selectedTier === "gold" 
-                ? "border-amber-400/50 bg-amber-400/10" 
-                : "border-white/10 hover:border-white/20"
-            }`}>
+            <div className={`relative rounded-xl border p-4 cursor-pointer transition-all ${selectedTier === "gold"
+              ? "border-amber-400/50 bg-amber-400/10"
+              : "border-white/10 hover:border-white/20"
+              }`}>
               <RadioGroupItem value="gold" id="gold" className="sr-only" />
               <label htmlFor="gold" className="cursor-pointer block">
                 <div className="flex items-center gap-3 mb-3">
@@ -109,7 +108,7 @@ export function WaitlistForm() {
                   </div>
                   <div>
                     <div className="font-semibold text-white">Gold</div>
-                    <div className="text-xs text-neutral-400">Implementation focused</div>
+                    <div className="text-xs text-neutral-400">I want to build a real business</div>
                   </div>
                 </div>
                 <ul className="space-y-1 text-sm text-neutral-300">
@@ -130,11 +129,10 @@ export function WaitlistForm() {
             </div>
 
             {/* Platinum Option */}
-            <div className={`relative rounded-xl border p-4 cursor-pointer transition-all ${
-              selectedTier === "platinum" 
-                ? "border-purple-400/50 bg-purple-400/10" 
-                : "border-white/10 hover:border-white/20"
-            }`}>
+            <div className={`relative rounded-xl border p-4 cursor-pointer transition-all ${selectedTier === "platinum"
+              ? "border-purple-400/50 bg-purple-400/10"
+              : "border-white/10 hover:border-white/20"
+              }`}>
               <RadioGroupItem value="platinum" id="platinum" className="sr-only" />
               <label htmlFor="platinum" className="cursor-pointer block">
                 <div className="flex items-center gap-3 mb-3">
@@ -143,7 +141,7 @@ export function WaitlistForm() {
                   </div>
                   <div>
                     <div className="font-semibold text-white">Platinum</div>
-                    <div className="text-xs text-neutral-400">Partnership model</div>
+                    <div className="text-xs text-neutral-400">I want you to hold my hand (and maybe help build it with me)</div>
                   </div>
                 </div>
                 <ul className="space-y-1 text-sm text-neutral-300">
@@ -168,7 +166,7 @@ export function WaitlistForm() {
         {/* Contact Info */}
         <div className="liquid-glass border border-white/20 rounded-2xl p-6 sm:p-8 space-y-4">
           <h3 className="text-lg font-semibold text-white mb-4">Your Details</h3>
-          
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-neutral-300">Name</Label>
@@ -200,7 +198,7 @@ export function WaitlistForm() {
         {/* Survey Questions */}
         <div className="liquid-glass border border-white/20 rounded-2xl p-6 sm:p-8 space-y-4">
           <h3 className="text-lg font-semibold text-white mb-4">Help Us Build What You Need</h3>
-          
+
           <div className="space-y-2">
             <Label htmlFor="business" className="text-neutral-300">
               What&apos;s your current business or job? <span className="text-neutral-500">(optional)</span>
@@ -216,7 +214,7 @@ export function WaitlistForm() {
 
           <div className="space-y-2">
             <Label htmlFor="challenge" className="text-neutral-300">
-              What&apos;s your biggest challenge starting a business? <span className="text-neutral-500">(optional)</span>
+              What&apos;s stopping you? Be honest. <span className="text-neutral-500">(optional)</span>
             </Label>
             <Textarea
               id="challenge"
@@ -229,7 +227,7 @@ export function WaitlistForm() {
 
           <div className="space-y-2">
             <Label className="text-neutral-300">
-              What would you pay for {selectedTier === "platinum" ? "Platinum" : "Gold"}? <span className="text-neutral-500">(optional)</span>
+              How much is your financial freedom worth? <span className="text-neutral-500">(optional)</span>
             </Label>
             <RadioGroup value={priceWilling} onValueChange={setPriceWilling} className="flex flex-wrap gap-3">
               {selectedTier === "gold" ? (
@@ -279,11 +277,10 @@ export function WaitlistForm() {
         <Button
           type="submit"
           disabled={!email || isSubmitting}
-          className={`w-full rounded-full py-6 text-lg font-semibold transition-all ${
-            selectedTier === "platinum"
-              ? "bg-purple-500 hover:bg-purple-400"
-              : "bg-amber-500 hover:bg-amber-400"
-          } text-white disabled:opacity-50`}
+          className={`w-full rounded-full py-6 text-lg font-semibold transition-all ${selectedTier === "platinum"
+            ? "bg-purple-500 hover:bg-purple-400"
+            : "bg-amber-500 hover:bg-amber-400"
+            } text-white disabled:opacity-50`}
         >
           {isSubmitting ? (
             <>

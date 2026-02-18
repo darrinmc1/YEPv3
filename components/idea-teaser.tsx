@@ -95,10 +95,10 @@ export function IdeaTeaser() {
     <section className="py-16 sm:py-24 bg-black/20">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
-          Curious What an Idea Looks Like?
+          Want a Free Business Idea? (Yes, really)
         </h2>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-neutral-300">
-          Click the button below to generate a sample idea with AI-powered insights.
+          Don't spend 6 months building something nobody wants. Click the button to get a winner.
         </p>
 
         <div className="mt-8 min-h-[240px] flex items-center justify-center">
@@ -115,17 +115,17 @@ export function IdeaTeaser() {
                   Generating...
                 </>
               ) : (
-                "Generate a Sample Idea"
+                "Steal This Idea"
               )}
             </Button>
           )}
 
           {isLoading && (
-             <Button disabled size="lg" className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black">
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Generating...
-                </>
+            <Button disabled size="lg" className="rounded-full bg-blue-500 px-8 py-6 text-base font-semibold text-black">
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Generating...
+              </>
             </Button>
           )}
 

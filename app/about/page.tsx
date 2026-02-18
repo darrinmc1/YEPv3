@@ -15,7 +15,7 @@ export default function AboutPage() {
             About YourExitPlans
           </h1>
           <p className="text-2xl text-neutral-400">
-            Because starting a business shouldn&apos;t feel like reading a tax manual.
+            Because "hustle culture" is exhausting and buying courses is expensive. We built the thing we wished we had.
           </p>
         </div>
       </header>
@@ -51,9 +51,7 @@ export default function AboutPage() {
             because they&apos;re overwhelmed by it.
           </p>
           <p className="text-lg text-neutral-300 mb-4">
-            You can Google &quot;how to start a business&quot; and get 8 billion results. You can buy
-            courses, read books, watch YouTube videos. But at the end of the day, you&apos;re still
-            sitting there thinking: <em className="text-neutral-100">&quot;Okay... but what do I actually DO right now?&quot;</em>
+            You can Google "how to start a business" and get 8 billion results, mostly from 22-year-olds in rented Lamborghinis. You can watch 500 hours of YouTube tutorials. But eventually, you have to close the tab and actually *do* something. That's the scary part. That's the part we fix.
           </p>
           <p className="text-lg text-neutral-200 font-medium">
             That paralysis? That&apos;s what we fix.
@@ -70,9 +68,7 @@ export default function AboutPage() {
             <div className="bg-white/5 border border-white/10 p-8 rounded-xl hover:border-blue-400/30 transition-colors">
               <h3 className="text-2xl font-bold mb-4 text-white">🎯 Not Theory. Action.</h3>
               <p className="text-neutral-300">
-                We don&apos;t teach concepts—we give you a checklist. Day 1 is never &quot;Think about
-                your target market.&quot; It&apos;s &quot;List 10 real people who could buy this, with their
-                names and where to find them.&quot;
+                We don't do "theory." Theory is for textbooks. We give you orders. Day 1 isn't "Meditate on your customer avatar." It's "Find 10 real humans who might pay you money, DM them, and don't come back until you have a reply."
               </p>
             </div>
 
@@ -151,8 +147,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <h2 className="text-4xl font-bold mb-6 text-white">Standing on the Shoulders of Giants</h2>
           <p className="text-lg text-neutral-300 mb-6">
-            We didn&apos;t reinvent entrepreneurship—we just made the best advice actually usable.
-            Our system synthesizes proven frameworks from:
+            We didn't invent business. People have been trading stuff for shiny rocks for a long time. We just took the smartest frameworks from the smartest people, stripped out the boring parts, and turned them into a daily to-do list.
           </p>
 
           <div className="bg-blue-400/5 border border-blue-400/20 p-8 rounded-xl">
@@ -243,8 +238,7 @@ export default function AboutPage() {
           </p>
 
           <p className="text-lg text-neutral-300 mb-6">
-            Sure. And you&apos;ll get 4,000 words of generic advice that sounds smart but leaves you
-            exactly where you started: not knowing what to do next.
+            You could ask ChatGPT. It will happily write you a 4,000-word essay that sounds confident, uses the word "delve" six times, and tells you absolutely nothing about how to actually get your first stripe notification. We use AI to customize *proven* strategies, not to hallucinate new ones.
           </p>
 
           <p className="text-lg text-neutral-200 mb-6 font-bold">

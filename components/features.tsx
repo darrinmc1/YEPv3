@@ -11,7 +11,7 @@ export function Features() {
           Stop Researching. <span className="text-blue-400">Start Launching.</span>
         </h2>
         <p className="mt-4 text-lg text-neutral-400 max-w-2xl mx-auto">
-          We transform market signals into validated, actionable business opportunities with AI-powered analysis
+          Seriously, stop researching. We transform market signals into validated, actionable business opportunities.
         </p>
       </div>
 
@@ -26,8 +26,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              Deep market research powered by AI analyzing Reddit, Google Trends, G2 reviews, and social signals to
-              find opportunities
+              We read the entire internet so you don't have to. Our AI scans Reddit, Trends, and G2 to find what people actually want to buy.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
@@ -56,7 +55,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              Every opportunity scored on market potential, execution difficulty, pain intensity, and perfect timing
+              We score ideas like a strict university professor. If it's not a 9/10, you won't see it so don't ask.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
@@ -85,7 +84,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              Complete implementation guides with tech stacks, step-by-step plans, and 52-week execution roadmaps
+              A daily to-do list that treats you like a focused CEO, not a confused intern.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
@@ -114,7 +113,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              Catch opportunities at the perfect moment with trend analysis and market catalyst identification
+              Catch the wave before it crashes. We track trends so you don't launch a crypto exchange in 2022.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">

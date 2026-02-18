@@ -112,13 +112,11 @@ export function IdeaValidationForm() {
     setErrorMessage("")
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
-
-      if (!webhookUrl) {
-        throw new Error("Webhook URL not configured")
-      }
-
-      const response = await fetch(webhookUrl, {
+      // Use internal API route which handles:
+      // 1. Rate limiting
+      // 2. Hiding the webhook URL
+      // 3. Error handling
+      const response = await fetch("/api/validate-idea", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -144,7 +142,7 @@ export function IdeaValidationForm() {
       setStatus("success")
       toast.success("Your idea has been analyzed!")
     } catch (error) {
-      logger.error("Failed to submit idea validation form", { error })
+      console.error("Failed to submit idea validation form", { error })
       setStatus("error")
       const message = error instanceof Error
         ? error.message
@@ -269,7 +267,7 @@ export function IdeaValidationForm() {
             <Button onClick={handleSubmit} className="bg-blue-500 text-black hover:bg-blue-400 font-semibold">
               Try Again
             </Button>
-            <Button variant="outline" onClick={resetForm} className="border-white/20 text-white hover:bg-white/10">
+            <Button variant="outline" onClick={resetForm} className="bg-transparent border-white/20 text-white hover:bg-white/10">
               Start Over
             </Button>
           </div>

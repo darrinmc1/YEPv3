@@ -22,10 +22,7 @@ export function TwoPathways() {
           Two Ways to <span className="text-blue-400">Build Your Business</span>
         </h2>
         <p className="mt-4 text-lg text-neutral-400 max-w-2xl mx-auto">
-          Need a validated business idea? Or ready to launch the one you have?
-        </p>
-        <p className="text-lg text-neutral-400 max-w-2xl mx-auto mt-2">
-          Choose your pathway below.
+          Stuck at zero? We'll fix that. Whether you need a Lightbulb Moment™ or a Kick In The Pants™, pick your poison below.
         </p>
       </div>
       <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
@@ -42,7 +39,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              1000+ AI-validated business opportunities with deep market research, competitor analysis, and revenue models.
+              Brain empty? No problem. Browse 1,000+ ideas that are actually good (we checked), complete with the "how-to" manual.
             </p>
 
             {/* What You Get */}
@@ -117,7 +114,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              Get step-by-step daily action plans to launch YOUR idea, or one of ours.
+              Have an idea but stuck in "Analysis Paralysis"? Get a daily plan that tells you exactly what to do so you can stop overthinking and start cashing checks.
             </p>
 
             {/* What You Get */}

@@ -28,10 +28,10 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
       {/* Header */}
       <div className="mb-8 text-center">
         <h2 className="text-3xl font-extrabold text-white mb-3">
-          Business Ideas Pricing
+          Buy Your Next <span className="text-blue-400">Big Thing</span>
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto">
-          AI-powered business opportunity analysis with validated market research. Choose the tier that fits your ambition.
+          Don't spend 6 months building something nobody wants. Start with a winner.
         </p>
       </div>
 
@@ -55,7 +55,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-xs text-neutral-400 mb-4">Perfect for exploring opportunities</p>
+            <p className="text-xs text-neutral-400 mb-4">Look around, kick the tires, see what's possible.</p>
             <ul className="grid gap-2.5">
               {[
                 "Weekly email with idea outline",
@@ -89,7 +89,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-xs text-neutral-400 mb-4">Self-guided deep dive on one opportunity</p>
+            <p className="text-xs text-neutral-400 mb-4">One great idea, fully researched. Cheaper than lunch.</p>
             <ul className="grid gap-2.5">
               {[
                 "Full 3-5 page analysis report",
@@ -132,7 +132,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-xs text-neutral-400 mb-4">All ideas for 3 months (~12-13 ideas)</p>
+            <p className="text-xs text-neutral-400 mb-4">A semester's worth of business case studies for $99.</p>
             <ul className="grid gap-2.5">
               {[
                 "Everything in Starter for ALL ideas",

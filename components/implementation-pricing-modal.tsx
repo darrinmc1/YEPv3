@@ -30,33 +30,31 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
       {/* Header */}
       <div className="mb-8 text-center">
         <h2 className="text-3xl font-extrabold text-white mb-3">
-          Implementation Roadmap Pricing
+          Invest in Your 'Quit Day'
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto mb-6">
-          30/60/90 or 120-day plans with step-by-step business launch plans. Works with YOUR idea or one of OURS.
+          Cheaper than an MBA, faster than trial-and-error, and actually useful.
         </p>
 
         {/* Payment Toggle */}
         <div className="inline-flex items-center gap-1 rounded-full p-1 liquid-glass border border-white/20">
           <button
             onClick={() => setPaymentType("onetime")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
-              paymentType === "onetime"
+            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${paymentType === "onetime"
                 ? "bg-blue-500 text-black shadow-lg"
                 : "text-neutral-400 hover:text-white"
-            }`}
+              }`}
           >
             One-Time Payment
           </button>
           <button
             onClick={() => setPaymentType("monthly")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
-              paymentType === "monthly"
+            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${paymentType === "monthly"
                 ? "bg-blue-500 text-black shadow-lg"
                 : "text-neutral-400 hover:text-white"
-            }`}
+              }`}
           >
-            Monthly 
+            Monthly
           </button>
         </div>
         {paymentType === "monthly" && (
@@ -102,7 +100,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-xs text-neutral-400 mb-4">
-              {paymentType === "onetime" ? "30-day launch plan (immediate access)" : "30-day plan delivered month 1"}
+              Perfect for dipping your toe in without losing a foot (30-day plan).
             </p>
             <ul className="grid gap-2.5">
               {[
@@ -154,7 +152,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-xs text-neutral-400 mb-4">
-              {paymentType === "onetime" ? "90-day launch plan (immediate access)" : "90-day plan over 3 months"}
+              The "I'm actually doing this" package (90-day plan).
             </p>
             <ul className="grid gap-2.5">
               {[
@@ -204,7 +202,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-xs text-neutral-400 mb-4">
-              {paymentType === "onetime" ? "120-day complete plan (immediate access)" : "120-day plan over 4 months"}
+              The complete toolkit. No excuses left (120-day plan).
             </p>
             <ul className="grid gap-2.5">
               {[
@@ -263,7 +261,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
         </CardHeader>
         <CardContent className="pt-0">
           <p className="text-xs mb-4" style={{ color: ACCENT }}>
-            Everything in Gold + weekly strategic check-ins and hands-on guidance (6-month minimum)
+            We basically co-found the company with you. Serious builders only.
           </p>
           <div className="grid gap-2.5 md:grid-cols-2">
             <ul className="space-y-2.5">

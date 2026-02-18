@@ -142,7 +142,7 @@ export function AnalysisResultDisplay({ result, onReset }: AnalysisResultDisplay
                     <Button className="bg-blue-500 text-black hover:bg-blue-400 font-semibold">
                         View Pricing Plans
                     </Button>
-                    <Button variant="outline" onClick={onReset} className="border-white/20 text-white hover:bg-white/10">
+                    <Button variant="outline" onClick={onReset} className="bg-transparent border-white/20 text-white hover:bg-white/10">
                         Validate Another Idea
                     </Button>
                 </div>

@@ -53,16 +53,16 @@ const INDUSTRIES = [
 
 const BUDGET_LEVELS = [
   { value: "any", label: "Any Budget" },
-  { value: "bootstrap", label: "$0 - Bootstrap Only" },
-  { value: "low", label: "Under $500" },
-  { value: "medium", label: "$500 - $2,000" },
-  { value: "high", label: "$2,000 - $10,000" },
-  { value: "investor", label: "$10,000+" },
+  { value: "bootstrap", label: "I'm Broke ($0 - Bootstrap)" },
+  { value: "low", label: "I can spare a little (Under $500)" },
+  { value: "medium", label: "Serious invesment ($500 - $2,000)" },
+  { value: "high", label: "Ready to scale ($2,000 - $10,000)" },
+  { value: "investor", label: "I have 'F*** You' Money ($10,000+)" },
 ]
 
 const TIME_COMMITMENTS = [
   { value: "any", label: "Any Time Commitment" },
-  { value: "side", label: "Side Hustle (5-10 hrs/week)" },
+  { value: "side", label: "I have a boss I hate (Side Hustle)" },
   { value: "part", label: "Part Time (10-20 hrs/week)" },
   { value: "full", label: "Full Time (40+ hrs/week)" },
 ]
@@ -82,7 +82,7 @@ const SKILLS = [
   { id: "operations", label: "Operations / Systems" },
   { id: "finance", label: "Finance / Numbers" },
   { id: "people", label: "People / Management" },
-  { id: "none", label: "No Special Skills" },
+  { id: "none", label: "I have no skills (yet)" },
 ]
 
 // Enhanced mock data with more detail
@@ -299,7 +299,7 @@ export function ExploreIdeasForm() {
       <div className="liquid-glass border border-white/20 rounded-2xl p-8 max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Loader2 className="h-16 w-16 text-purple-400 animate-spin mb-6" />
-          <h3 className="text-2xl font-bold text-white mb-2">Finding Your Exit Plans...</h3>
+          <h3 className="text-2xl font-bold text-white mb-2">Hunting for your ticket out of the rat race...</h3>
           <p className="text-neutral-400 mb-4">
             Matching you with pre-researched business opportunities
           </p>
@@ -307,7 +307,7 @@ export function ExploreIdeasForm() {
             <div className="space-y-3 text-left text-sm text-neutral-400">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse"></div>
-                <span>Searching 1000+ validated ideas...</span>
+                <span>Judging 1,000+ ideas so you don't have to...</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse"></div>
@@ -337,7 +337,7 @@ export function ExploreIdeasForm() {
             <span className="text-sm font-medium text-green-400">Ideas Found</span>
           </div>
 
-          <h2 className="text-3xl font-bold text-white mb-2">Your Matched Exit Plans</h2>
+          <h2 className="text-3xl font-bold text-white mb-2">Here are your Escape Routes</h2>
           <p className="text-neutral-400">
             Found <span className="text-purple-400 font-semibold">{matchedIdeas.length} ideas</span> matching your interests
           </p>
@@ -373,8 +373,8 @@ export function ExploreIdeasForm() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </a>
                 </Button>
-                
-                <WhatsIncludedModal 
+
+                <WhatsIncludedModal
                   productType="idea-bundle"
                   trigger={
                     <Button
@@ -415,8 +415,8 @@ export function ExploreIdeasForm() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </a>
                 </Button>
-                
-                <WhatsIncludedModal 
+
+                <WhatsIncludedModal
                   productType="premium-bundle"
                   trigger={
                     <Button
@@ -490,10 +490,10 @@ export function ExploreIdeasForm() {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-5 w-5 text-purple-400" />
-              <h3 className="text-lg font-semibold text-white">What interests you?</h3>
+              <h3 className="text-lg font-semibold text-white">What are you actually interested in?</h3>
             </div>
             <p className="text-sm text-neutral-400">
-              Tell us what topics excite you. We&apos;ll match you with pre-researched opportunities.
+              We can't read your mind. Give us a hint so we don't suggest a knitting business if you hate yarn.
             </p>
 
             <div className="space-y-2">
@@ -508,7 +508,7 @@ export function ExploreIdeasForm() {
                 className="min-h-[100px] bg-black/40 border-white/20 text-white placeholder:text-neutral-500 focus:border-purple-500 focus:ring-purple-500/20"
               />
               <p className="text-xs text-neutral-500">
-                The more specific, the better matches you&apos;ll get. Or leave blank to see top-rated ideas.
+                The more specific you are, the less likely we are to give you a generic idea.
               </p>
             </div>
           </div>
@@ -868,8 +868,8 @@ function IdeaResultCard({ idea, isFirst = false }: IdeaResultCardProps) {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <WhatsIncludedModal 
-                productType="research" 
+              <WhatsIncludedModal
+                productType="research"
                 ideaName={idea.title}
                 trigger={
                   <Button
@@ -894,8 +894,8 @@ function IdeaResultCard({ idea, isFirst = false }: IdeaResultCardProps) {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <WhatsIncludedModal 
-                productType="implementation" 
+              <WhatsIncludedModal
+                productType="implementation"
                 ideaName={idea.title}
                 trigger={
                   <Button
@@ -908,7 +908,7 @@ function IdeaResultCard({ idea, isFirst = false }: IdeaResultCardProps) {
                 }
               />
             </div>
-            
+
             <p className="text-xs text-center text-neutral-500 mt-2">
               Save $9: Implementation includes research + 90-day roadmap
             </p>

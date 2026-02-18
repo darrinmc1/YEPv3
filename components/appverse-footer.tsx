@@ -41,7 +41,7 @@ export function AppverseFooter() {
         </div>
         <div className="mt-8 border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-neutral-500">
-            <p>&copy; {new Date().getFullYear()} YourExitPlans. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} YourExitPlans. Made with ❤️ and too much caffeine by builders who want you to succeed. Stop reading the footer and go launch something.</p>
             <div className="flex flex-col md:flex-row items-center gap-4 text-neutral-400">
               <a href="mailto:info@yourexitplans.com" className="hover:text-white transition-colors">
                 General: info@yourexitplans.com
