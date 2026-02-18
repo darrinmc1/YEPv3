@@ -324,6 +324,19 @@ function extractMaxBudget(budgetString: string): number {
 // ============================================
 // WAITLIST / SUBSCRIBERS OPERATIONS
 // ============================================
+//
+// Subscribers sheet column layout (matches existing sheet):
+//   A: Email
+//   B: Name
+//   C: Plan Type       ← "Waitlist" for waitlist entries
+//   D: Start Date      ← signup date
+//   E: Current Day     ← blank for waitlist
+//   F: Program Length  ← blank for waitlist
+//   G: Status          ← "waitlist" | "active" | etc.
+//   H: Last Email Sent ← blank for waitlist
+//   I: Stripe Customer ← blank for waitlist
+//   J: Purchase ID     ← blank for waitlist
+//   K: Notes           ← interest/source stored here
 
 export interface WaitlistEntry {
   timestamp: string
@@ -333,26 +346,47 @@ export interface WaitlistEntry {
   status: string     // e.g. "waitlist"
 }
 
+// Human-readable labels for each interest value
+const INTEREST_LABELS: Record<string, string> = {
+  'validate-my-idea':     'Validate my own idea',
+  'explore-ideas':        'Browse pre-researched ideas',
+  'implementation-plan':  'Step-by-step launch roadmap',
+  'just-browsing':        'Just browsing',
+}
+
 export async function saveWaitlistEntry(data: WaitlistEntry) {
   const sheets = getSheets()
-  // Uses the subscribers sheet — same sheet future paying subscribers will go into
   const sheetId = process.env.GOOGLE_SHEET_ID_SUBSCRIBERS
 
   if (!sheetId) {
     throw new Error('GOOGLE_SHEET_ID_SUBSCRIBERS environment variable is not set')
   }
 
+  const signupDate = new Date(data.timestamp).toLocaleDateString('en-AU', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+  }) // e.g. 18/02/2026
+
+  const interestLabel = INTEREST_LABELS[data.interest] ?? data.interest
+  const notes = `Interest: ${interestLabel} | Source: ${data.source}`
+
+  // Columns A–K matching the existing sheet structure
   const row = [
-    data.timestamp,
-    data.email,
-    data.interest,
-    data.source,
-    data.status,
+    data.email,        // A: Email
+    '',                // B: Name (not collected)
+    'Waitlist',        // C: Plan Type
+    signupDate,        // D: Start Date
+    '',                // E: Current Day
+    '',                // F: Program Length
+    data.status,       // G: Status  → "waitlist"
+    '',                // H: Last Email Sent
+    '',                // I: Stripe Customer
+    '',                // J: Purchase ID
+    notes,             // K: Notes
   ]
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: 'Sheet1!A:E',
+    range: 'Sheet1!A:K',
     valueInputOption: 'RAW',
     requestBody: {
       values: [row],
@@ -369,7 +403,7 @@ export async function isAlreadyOnWaitlist(email: string): Promise<boolean> {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: sheetId,
-      range: 'Sheet1!B2:B', // Email column
+      range: 'Sheet1!A2:A', // Email is column A
     })
 
     const rows = response.data.values || []

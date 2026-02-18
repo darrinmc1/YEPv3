@@ -4,8 +4,12 @@
  * Saves an email + interest to the subscribers/waitlist Google Sheet
  * and sends a confirmation email via Resend.
  *
- * Sheet: GOOGLE_SHEET_ID_SUBSCRIBERS
- * Columns: timestamp | email | interest | source | status
+ * Sheet: GOOGLE_SHEET_ID_SUBSCRIBERS = 19lVPPJHJ63MQ75aiHFQAN4bzDztVaPKZUVFPVTgYF8A
+ * Columns match existing sheet:
+ *   A: Email | B: Name (blank) | C: Plan Type = "Waitlist" | D: Start Date
+ *   E: Current Day (blank) | F: Program Length (blank) | G: Status = "waitlist"
+ *   H: Last Email Sent (blank) | I: Stripe Customer (blank) | J: Purchase ID (blank)
+ *   K: Notes (interest + source)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
