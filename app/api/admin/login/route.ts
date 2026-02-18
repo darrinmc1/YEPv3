@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { adminLoginSchema } from "@/lib/validations/schemas"
 import { verifyAdminCredentials } from "@/lib/admin-auth"
 import { generateAdminToken } from "@/lib/auth-token"
-import { checkRateLimit, getRateLimitHeaders } from "@/lib/rate-limit"
+import { checkRateLimit, getRateLimitHeaders, authLimiter } from "@/lib/rate-limit"
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,14 +12,14 @@ export async function POST(req: NextRequest) {
       'unknown'
 
     // Rate limiting: 5 attempts per 15 minutes per IP
-    const rateLimit = checkRateLimit(
-      `admin-login:${ip}`,
-      parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '5'),
-      parseInt(process.env.RATE_LIMIT_WINDOW_MS || String(15 * 60 * 1000))
+    // Rate limiting: 5 attempts per 15 minutes per IP
+    const rateLimit = await checkRateLimit(
+      authLimiter,
+      `admin-login:${ip}`
     )
 
     if (!rateLimit.success) {
-      const resetDate = new Date(rateLimit.resetTime)
+      const resetDate = new Date(rateLimit.reset)
       return NextResponse.json(
         {
           success: false,
