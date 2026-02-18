@@ -5,10 +5,10 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { searchIdeas } from '@/lib/services/google-sheets'
-import { 
-  generateResearchReport, 
+import {
+  generateResearchReport,
   generateImplementationPlan,
-  generateGenericImplementationGuide 
+  generateGenericImplementationGuide
 } from '@/lib/services/pdf-generator'
 import { savePurchase, updatePurchaseDelivery } from '@/lib/services/purchase-tracking'
 import { sendPurchaseDeliveryEmail } from '@/lib/services/email'
@@ -19,7 +19,7 @@ import { validatePDFQuality, sendValidationAlert } from '@/lib/services/pdf-vali
  */
 async function getIdeaById(ideaId: string) {
   const { google } = require('googleapis')
-  
+
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
@@ -48,10 +48,10 @@ async function getIdeaById(ideaId: string) {
   }
 
   const rows = response.data.values || []
-  
+
   // Find the row with matching ID in column A
-  const ideaRow = rows.find(row => row[0] === ideaId)
-  
+  const ideaRow = rows.find((row: any[]) => row[0] === ideaId)
+
   if (!ideaRow) {
     throw new Error(`Idea ${ideaId} not found`)
   }
@@ -74,7 +74,7 @@ async function getIdeaById(ideaId: string) {
     lockedContent: ideaRow[13] || '{}',
     costBreakdown: ideaRow[18] || '' // Column S
   }
-  
+
   return idea
 }
 
@@ -85,8 +85,8 @@ function transformIdeaForPDF(idea: any, customerEmail: string) {
   //Parse JSON fields safely
   let quickInsights = []
   try {
-    quickInsights = typeof idea.quickInsights === 'string' 
-      ? JSON.parse(idea.quickInsights) 
+    quickInsights = typeof idea.quickInsights === 'string'
+      ? JSON.parse(idea.quickInsights)
       : idea.quickInsights || []
   } catch {
     quickInsights = ['Market analysis available in full report']
@@ -172,7 +172,13 @@ function generateDefaultChecklist() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, productType, price, ideaId, ideaIds } = body
+    const { email, productType, price, ideaId, ideaIds } = body as {
+      email: string
+      productType: 'research' | 'implementation' | 'idea-bundle' | 'premium-bundle'
+      price: number
+      ideaId?: string
+      ideaIds?: string[]
+    }
 
     // Validate input
     if (!email || !productType || !price) {
@@ -224,16 +230,16 @@ export async function POST(request: NextRequest) {
         // Generate research report PDF
         console.log(`📄 Generating research report for: ${idea.title}`)
         const researchPdf = await generateResearchReport(pdfData)
-        
+
         // Validate PDF quality
         const validation = await validatePDFQuality(researchPdf, {
           productType,
           ideaTitle: idea.title,
           expectedPages: 2
         })
-        
+
         console.log(`🔍 PDF Validation: ${validation.isValid ? 'PASSED' : 'FAILED'} (Score: ${validation.score}/100)`)
-        
+
         if (!validation.isValid) {
           await sendValidationAlert(validation, {
             productType,
@@ -272,7 +278,7 @@ export async function POST(request: NextRequest) {
         // Fetch all ideas
         console.log(`📚 Fetching ${ideaIds.length} ideas for bundle...`)
         const allIdeas = []
-        
+
         for (const id of ideaIds) {
           try {
             const idea = await getIdeaById(id)
@@ -340,12 +346,12 @@ export async function POST(request: NextRequest) {
 
     } catch (pdfError) {
       console.error('❌ Error generating PDFs or sending email:', pdfError)
-      
+
       // Update purchase record as failed
       await updatePurchaseDelivery(email, timestamp, 'failed', new Date().toISOString())
 
       return NextResponse.json(
-        { 
+        {
           error: 'Failed to generate or deliver purchase',
           details: pdfError instanceof Error ? pdfError.message : 'Unknown error'
         },
@@ -356,7 +362,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Purchase processing error:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process purchase',
         details: error instanceof Error ? error.message : 'Unknown error'
       },

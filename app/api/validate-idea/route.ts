@@ -18,7 +18,7 @@ import { validateIdeaWithGemini } from "@/lib/services/gemini-validation"
  * Rate Limit: 1 request per 24 hours per IP address
  * Returns: 429 if rate limit exceeded, 200 with analysis on success
  */
-export export async function POST(request: Request) {
+export async function POST(request: Request) {
   try {
     // 1. Rate Limiting with Redis (production-ready)
     const ip = getClientIp(request)
@@ -41,7 +41,7 @@ export export async function POST(request: Request) {
 
     // 3. Try n8n webhook for AI analysis
     const webhookUrl = process.env.N8N_WEBHOOK_URL
-    
+
     if (webhookUrl) {
       try {
         console.log("Attempting n8n validation...")

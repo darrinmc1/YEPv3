@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
 
+interface Idea {
+  id: string
+  title: string
+  industry: string
+  score: string
+}
 
 export async function GET() {
   try {
@@ -13,7 +19,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       count: ideas.length,
-      ideas: ideas.map(idea => ({
+      ideas: ideas.map((idea: Idea) => ({
         id: idea.id,
         title: idea.title,
         industry: idea.industry,
@@ -30,7 +36,7 @@ export async function GET() {
   }
 }
 
-async function getIdeasFromSheet(limit: number = 50) {
+async function getIdeasFromSheet(limit: number = 50): Promise<Idea[]> {
   const { google } = require('googleapis')
 
   const auth = new google.auth.GoogleAuth({
