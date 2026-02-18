@@ -129,7 +129,7 @@ export default function FAQPage() {
                   <h2 className="text-2xl font-semibold text-white">14. How do I get started?</h2>
                   <p className="text-neutral-300">
                     Simply{" "}
-                    <a href="/pricing" className="text-blue-400 underline">
+                    <a href="/checkout" className="text-blue-400 underline">
                       choose your tier
                     </a>
                     , complete your purchase, and you&apos;ll receive immediate access to your Day 1 materials and the complete roadmap. Start building your business tomorrow!
@@ -139,7 +139,7 @@ export default function FAQPage() {
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">15. Still have questions?</h2>
                   <p className="text-neutral-300">
-                    <a href="/contact" className="text-blue-400 underline">
+                    <a href="mailto:support@yourexitplans.com" className="text-blue-400 underline">
                       Contact us
                     </a>{" "}
                     and we&apos;ll get back to you within 24 hours with answers to any questions not covered here.

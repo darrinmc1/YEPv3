@@ -1,6 +1,5 @@
 import { SiteHeader } from "@/components/site-header"
 import { AppverseFooter } from "@/components/appverse-footer"
-import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -73,11 +72,7 @@ export default function TermsPage() {
                     YourExitPlans will not be liable for any direct, indirect, or consequential loss or damage arising under
                     these Terms or in connection with our website or services. The perceived quality, style, or
                     suitability of content created by us remains subjective and cannot be used as grounds to increase
-                    scope of work. Revisions are strictly governed by our{" "}
-                    <Link href="/revisions" className="text-blue-400 underline">
-                      revision policy
-                    </Link>
-                    .
+                    scope of work. Revisions are strictly governed by our revision policy (available on request).
                   </p>
                 </section>
 
@@ -94,8 +89,8 @@ export default function TermsPage() {
                   <p className="text-neutral-300">If you have any questions about these Terms, please contact us at:</p>
                   <p className="text-neutral-300">
                     Email:{" "}
-                    <a href="mailto:hello@theYourExitPlans.com" className="text-blue-400 underline">
-                      hello@theYourExitPlans.com
+                    <a href="mailto:support@yourexitplans.com" className="text-blue-400 underline">
+                      support@yourexitplans.com
                     </a>
                   </p>
                 </section>

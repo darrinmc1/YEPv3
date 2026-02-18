@@ -14,7 +14,7 @@ export function SiteHeader() {
     { href: "/", label: "Home", icon: Home },
     { href: "#features", label: "How It Works", icon: Zap },
     { href: "/faq", label: "FAQ", icon: HelpCircle },
-    { href: "/About", label: "About", icon: BookOpen },
+    { href: "/about", label: "About", icon: BookOpen },
     { href: "/login", label: "Login", icon: LogIn },
   ]
 
