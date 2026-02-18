@@ -322,6 +322,64 @@ function extractMaxBudget(budgetString: string): number {
 }
 
 // ============================================
+// WAITLIST / SUBSCRIBERS OPERATIONS
+// ============================================
+
+export interface WaitlistEntry {
+  timestamp: string
+  email: string
+  interest: string   // e.g. "validate-my-idea" | "explore-ideas" | "implementation-plan" | "just-browsing"
+  source: string     // e.g. "coming-soon-page"
+  status: string     // e.g. "waitlist"
+}
+
+export async function saveWaitlistEntry(data: WaitlistEntry) {
+  const sheets = getSheets()
+  // Uses the subscribers sheet — same sheet future paying subscribers will go into
+  const sheetId = process.env.GOOGLE_SHEET_ID_SUBSCRIBERS
+
+  if (!sheetId) {
+    throw new Error('GOOGLE_SHEET_ID_SUBSCRIBERS environment variable is not set')
+  }
+
+  const row = [
+    data.timestamp,
+    data.email,
+    data.interest,
+    data.source,
+    data.status,
+  ]
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: 'Sheet1!A:E',
+    valueInputOption: 'RAW',
+    requestBody: {
+      values: [row],
+    },
+  })
+}
+
+export async function isAlreadyOnWaitlist(email: string): Promise<boolean> {
+  const sheets = getSheets()
+  const sheetId = process.env.GOOGLE_SHEET_ID_SUBSCRIBERS
+
+  if (!sheetId) return false
+
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: 'Sheet1!B2:B', // Email column
+    })
+
+    const rows = response.data.values || []
+    return rows.some(row => row[0]?.toLowerCase() === email.toLowerCase())
+  } catch {
+    return false
+  }
+}
+
+// ============================================
 // RATE LIMITING (Using sheets as simple counter)
 // ============================================
 

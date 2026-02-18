@@ -103,6 +103,112 @@ export async function sendExploreIdeasEmail(data: ExploreIdeasEmailData) {
 }
 
 /**
+ * Send waitlist confirmation email
+ */
+export async function sendWaitlistConfirmationEmail(email: string, interest: string) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('Resend API key not configured, skipping waitlist email')
+    return { success: false, error: 'Email service not configured' }
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const interestLabels: Record<string, string> = {
+    'validate-my-idea':     "validating your own business idea",
+    'explore-ideas':        "browsing pre-researched business ideas",
+    'implementation-plan':  "getting a step-by-step launch roadmap",
+    'just-browsing':        "exploring what's available",
+  }
+  const interestLabel = interestLabels[interest] || "learning more"
+
+  try {
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || 'YourExitPlans <ideas@yourexitplans.com>',
+      to: email,
+      replyTo: process.env.RESEND_REPLY_TO || 'support@yourexitplans.com',
+      subject: "You're on the list 🎉 — YourExitPlans",
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#0a0a0a;color:#ffffff;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:linear-gradient(to bottom,#1a1a1a,#0f0f0f);border:1px solid #2a2a2a;border-radius:16px;overflow:hidden;">
+
+          <tr>
+            <td style="padding:40px 40px 24px;text-align:center;border-bottom:1px solid #2a2a2a;">
+              <div style="font-size:48px;margin-bottom:16px;">🎉</div>
+              <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#ffffff;">You're on the list!</h1>
+              <p style="margin:0;font-size:16px;color:#a3a3a3;">We'll ping you the moment payments are live.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:28px 40px;">
+              <p style="margin:0 0 16px;font-size:15px;color:#d4d4d4;line-height:1.6;">
+                You told us you're most interested in <strong style="color:#60a5fa;">${interestLabel}</strong>.
+                We'll make sure that's front and centre when we reach out.
+              </p>
+              <p style="margin:0;font-size:15px;color:#d4d4d4;line-height:1.6;">
+                While you wait — the free tools are fully live right now:
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:0 40px 28px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding-right:8px;" width="50%">
+                    <a href="https://yourexitplans.com/validate-idea" style="display:block;padding:16px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);border-radius:12px;text-decoration:none;text-align:center;">
+                      <div style="font-size:22px;margin-bottom:6px;">💡</div>
+                      <div style="font-size:13px;font-weight:600;color:#60a5fa;margin-bottom:4px;">Validate Your Idea</div>
+                      <div style="font-size:12px;color:#a3a3a3;">Free · 60 seconds</div>
+                    </a>
+                  </td>
+                  <td style="padding-left:8px;" width="50%">
+                    <a href="https://yourexitplans.com/explore-ideas" style="display:block;padding:16px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:12px;text-decoration:none;text-align:center;">
+                      <div style="font-size:22px;margin-bottom:6px;">🔍</div>
+                      <div style="font-size:13px;font-weight:600;color:#a855f7;margin-bottom:4px;">Explore 1000+ Ideas</div>
+                      <div style="font-size:12px;color:#a3a3a3;">Free · Browse now</div>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 40px;text-align:center;border-top:1px solid #2a2a2a;">
+              <p style="margin:0;font-size:12px;color:#555;">
+                YourExitPlans · <a href="mailto:support@yourexitplans.com" style="color:#555;text-decoration:underline;">support@yourexitplans.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+      `,
+    })
+
+    console.log('✅ Waitlist confirmation email sent:', result)
+    return { success: true, id: result.data?.id }
+  } catch (error) {
+    console.error('❌ Failed to send waitlist email:', error)
+    return { success: false, error }
+  }
+}
+
+/**
  * Build HTML email for validation results
  */
 function buildValidationEmailHtml(data: ValidationEmailData): string {
