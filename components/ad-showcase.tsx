@@ -25,7 +25,7 @@ export function AdShowcase() {
     },
     {
       title: "You Don't Need More Data",
-      image: "/add_images/You_Don't_Need_More_Data__version_1.png",
+      image: "/add_images/you-dont-need-more-data.png",
       alt: "You don't need more data, you need validated opportunities",
     },
   ]
@@ -61,11 +61,10 @@ export function AdShowcase() {
           <button
             key={index}
             onClick={() => setActiveAd(index)}
-            className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 ${
-              activeAd === index
-                ? "border-blue-400 ring-2 ring-blue-400/50 scale-105"
-                : "border-white/20 hover:border-blue-400/50 hover:scale-102"
-            }`}
+            className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 ${activeAd === index
+              ? "border-blue-400 ring-2 ring-blue-400/50 scale-105"
+              : "border-white/20 hover:border-blue-400/50 hover:scale-102"
+              }`}
           >
             <Image
               src={ad.image}
