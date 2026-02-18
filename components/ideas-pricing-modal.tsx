@@ -1,5 +1,7 @@
 "use client"
 
+"use client"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CheckCircle2, Crown, X } from "lucide-react"
@@ -31,7 +33,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
           Buy Your Next <span className="text-blue-400">Big Thing</span>
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto">
-          Don't spend 6 months building something nobody wants. Start with a winner.
+          Don&apos;t spend 6 months building something nobody wants. Start with a winner.
         </p>
       </div>
 
@@ -51,17 +53,17 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
               asChild
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all bg-green-500 text-black hover:bg-green-400 font-semibold"
             >
-              <a href="/validate-idea">Validate Your Idea</a>
+              <Link href="/validate-idea">Validate Your Idea</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-xs text-neutral-400 mb-4">Look around, kick the tires, see what's possible.</p>
+            <p className="text-xs text-neutral-400 mb-4">Look around, kick the tires, see what&apos;s possible.</p>
             <ul className="grid gap-2.5">
               {[
                 "Weekly email with idea outline",
                 "Opportunity score breakdown",
                 "Market size & growth data",
-                "\"Why Now?\" timing analysis",
+                "&quot;Why Now?&quot; timing analysis",
                 "Difficulty rating",
               ].map((f, i) => (
                 <FeatureItem key={i} text={f} />
@@ -85,7 +87,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Buy Single Idea</a>
+              <Link href="#contact">Buy Single Idea</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
@@ -128,11 +130,11 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Subscribe Now</a>
+              <Link href="#contact">Subscribe Now</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-xs text-neutral-400 mb-4">A semester's worth of business case studies for $99.</p>
+            <p className="text-xs text-neutral-400 mb-4">A semester&apos;s worth of business case studies for $99.</p>
             <ul className="grid gap-2.5">
               {[
                 "Everything in Starter for ALL ideas",
@@ -172,7 +174,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Go Gold</a>
+              <Link href="#contact">Go Gold</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
@@ -222,7 +224,7 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105 shadow-lg"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Apply for Platinum</a>
+              <Link href="#contact">Apply for Platinum</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
@@ -263,9 +265,9 @@ export function IdeasPricingModal({ onClose }: IdeasPricingModalProps) {
       <div className="mt-8 text-center">
         <p className="text-neutral-400 text-sm">
           Not sure which plan? Start with{" "}
-          <a href="#signup" className="font-semibold hover:underline" style={{ color: ACCENT }}>
+          <Link href="#signup" className="font-semibold hover:underline" style={{ color: ACCENT }}>
             FREE weekly ideas
-          </a>{" "}
+          </Link>{" "}
           and upgrade anytime.
         </p>
       </div>

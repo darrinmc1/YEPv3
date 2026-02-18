@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { SiteHeader } from "@/components/site-header"
 import { AppverseFooter } from "@/components/appverse-footer"
 
@@ -41,21 +42,21 @@ export default function FAQPage() {
                     3. How long does the program take?
                   </h2>
                   <p className="text-neutral-300">
-                    The full Launch Phase is 120 days—about 4 months, or roughly the time it takes to finally cancel that gym membership you never use. It's a Monday-Friday grind (building isn't a hobby), with weekends reserved for planning, learning, or just remembering what your family looks like.
+                    The full Launch Phase is 120 days—about 4 months, or roughly the time it takes to finally cancel that gym membership you never use. It&apos;s a Monday-Friday grind (building isn&apos;t a hobby), with weekends reserved for planning, learning, or just remembering what your family looks like.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">4. What if I fall behind or need to pause?</h2>
                   <p className="text-neutral-300">
-                    Life happens. The dog gets sick, the boss gets demanding, Netflix releases a new season. That's why every 30 days we include a "Catch Up Week"—no new tasks, just time to breathe and clear your backlog. Platinum members can also hit the pause button anytime, because burning out is so 2015.
+                    Life happens. The dog gets sick, the boss gets demanding, Netflix releases a new season. That&apos;s why every 30 days we include a &quot;Catch Up Week&quot;—no new tasks, just time to breathe and clear your backlog. Platinum members can also hit the pause button anytime, because burning out is so 2015.
                   </p>
                 </section>
 
                 <section className="space-y-3">
                   <h2 className="text-2xl font-semibold text-white">5. Is this for a specific type of business?</h2>
                   <p className="text-neutral-300">
-                    Surprisingly, selling SaaS and selling soap have a lot in common: you need customers, a product, and a way to accept money. Our framework covers the universal laws of business—finding a market, validating the offer, and getting paid—whether you're building the next Uber or a local consulting firm.
+                    Surprisingly, selling SaaS and selling soap have a lot in common: you need customers, a product, and a way to accept money. Our framework covers the universal laws of business—finding a market, validating the offer, and getting paid—whether you&apos;re building the next Uber or a local consulting firm.
                   </p>
                 </section>
 
@@ -64,7 +65,7 @@ export default function FAQPage() {
                     6. Do I need technical skills or coding knowledge?
                   </h2>
                   <p className="text-neutral-300">
-                    Absolutely not. If you can order a pizza online, you have enough technical skill to survive this program. We focus entirely on "no-code" tools that let you build websites and apps by dragging and dropping blocks. Leave the coding to the people who enjoy debugging at 3 AM.
+                    Absolutely not. If you can order a pizza online, you have enough technical skill to survive this program. We focus entirely on &quot;no-code&quot; tools that let you build websites and apps by dragging and dropping blocks. Leave the coding to the people who enjoy debugging at 3 AM.
                   </p>
                 </section>
 
@@ -121,7 +122,7 @@ export default function FAQPage() {
                     13. How much time do I need to commit each day?
                   </h2>
                   <p className="text-neutral-300">
-                    You'll need about 1-3 hours a day, Monday through Friday. Yes, that means you might have to sacrifice your evening TV time. But look at it this way: In 120 days, you could either be caught up on "The Bachelor" or have a revenue-generating business. Choose wisely.
+                    You&apos;ll need about 1-3 hours a day, Monday through Friday. Yes, that means you might have to sacrifice your evening TV time. But look at it this way: In 120 days, you could either be caught up on &quot;The Bachelor&quot; or have a revenue-generating business. Choose wisely.
                   </p>
                 </section>
 
@@ -129,9 +130,9 @@ export default function FAQPage() {
                   <h2 className="text-2xl font-semibold text-white">14. How do I get started?</h2>
                   <p className="text-neutral-300">
                     Simply{" "}
-                    <a href="/checkout" className="text-blue-400 underline">
+                    <Link href="/checkout" className="text-blue-400 underline">
                       choose your tier
-                    </a>
+                    </Link>
                     , complete your purchase, and you&apos;ll receive immediate access to your Day 1 materials and the complete roadmap. Start building your business tomorrow!
                   </p>
                 </section>

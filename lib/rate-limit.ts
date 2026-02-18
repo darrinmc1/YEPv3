@@ -32,31 +32,31 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
 // Free tier: 1 request per day per IP
 export const ideaValidationLimiter = redis
   ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(1, "1 d"), // 1 request per day
-      analytics: true,
-      prefix: "ratelimit:idea-validation",
-    })
+    redis,
+    limiter: Ratelimit.slidingWindow(1, "1 d"), // 1 request per day
+    analytics: true,
+    prefix: "ratelimit:idea-validation",
+  })
   : null
 
 // API routes: 10 requests per minute per IP
 export const apiLimiter = redis
   ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
-      analytics: true,
-      prefix: "ratelimit:api",
-    })
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
+    analytics: true,
+    prefix: "ratelimit:api",
+  })
   : null
 
 // Auth routes: 5 attempts per 15 minutes per IP
 export const authLimiter = redis
   ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 attempts per 15 min
-      analytics: true,
-      prefix: "ratelimit:auth",
-    })
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 attempts per 15 min
+    analytics: true,
+    prefix: "ratelimit:auth",
+  })
   : null
 
 /**
@@ -138,6 +138,17 @@ export function createRateLimitResponse(reset: number) {
     message: "Too many requests. Please try again later.",
     resetTime: resetDate.toISOString(),
     resetIn: resetMessage,
+  }
+}
+
+/**
+ * Get standard rate limit headers
+ */
+export function getRateLimitHeaders(limit: RateLimitResult) {
+  return {
+    'X-RateLimit-Limit': limit.limit.toString(),
+    'X-RateLimit-Remaining': limit.remaining.toString(),
+    'X-RateLimit-Reset': limit.reset.toString(),
   }
 }
 

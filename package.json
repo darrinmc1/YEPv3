@@ -60,6 +60,7 @@
     "next-auth": "^4.24.13",
     "next-themes": "latest",
     "ogl": "latest",
+    "pdf-parse": "^2.4.5",
     "prisma": "^5.22.0",
     "react": "^19",
     "react-day-picker": "latest",

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { CheckCircle2, ArrowRight, X, Zap, Target, Rocket, Mail, FileText, Calendar, TrendingUp, Users, DollarSign } from "lucide-react"
@@ -104,18 +105,18 @@ export function PricingModal({ isOpen, onClose, plan, ideaName }: PricingModalPr
         {/* Guarantee */}
         <div className="mt-6 p-4 rounded-lg bg-blue-500/5 border border-blue-400/20">
           <p className="text-sm text-neutral-300 text-center">
-            <span className="font-semibold text-blue-400">30-Day Money-Back Guarantee</span> — If you're not satisfied, we'll refund you 100%. No questions asked.
+            <span className="font-semibold text-blue-400">30-Day Money-Back Guarantee</span> — If you&apos;re not satisfied, we&apos;ll refund you 100%. No questions asked.
           </p>
         </div>
 
         {/* Browse Individual Items */}
         <div className="mt-4 text-center">
-          <a 
-            href="/templates" 
+          <Link
+            href="/templates"
             className="text-sm text-blue-400 hover:text-blue-300 underline"
           >
             Or browse and buy individual templates →
-          </a>
+          </Link>
         </div>
 
         {/* CTA Buttons */}
@@ -124,10 +125,10 @@ export function PricingModal({ isOpen, onClose, plan, ideaName }: PricingModalPr
             asChild
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-6 text-lg"
           >
-            <a href={`/checkout?plan=${plan}&idea=${encodeURIComponent(ideaName)}`}>
+            <Link href={`/checkout?plan=${plan}&idea=${encodeURIComponent(ideaName)}`}>
               Get {planDetails.name} Now
               <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
+            </Link>
           </Button>
           <Button
             onClick={onClose}

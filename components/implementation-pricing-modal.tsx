@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { CheckCircle2, Crown } from "lucide-react"
@@ -30,7 +31,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
       {/* Header */}
       <div className="mb-8 text-center">
         <h2 className="text-3xl font-extrabold text-white mb-3">
-          Invest in Your 'Quit Day'
+          Invest in Your &apos;Quit Day&apos;
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto mb-6">
           Cheaper than an MBA, faster than trial-and-error, and actually useful.
@@ -41,8 +42,8 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           <button
             onClick={() => setPaymentType("onetime")}
             className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${paymentType === "onetime"
-                ? "bg-blue-500 text-black shadow-lg"
-                : "text-neutral-400 hover:text-white"
+              ? "bg-blue-500 text-black shadow-lg"
+              : "text-neutral-400 hover:text-white"
               }`}
           >
             One-Time Payment
@@ -50,8 +51,8 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
           <button
             onClick={() => setPaymentType("monthly")}
             className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${paymentType === "monthly"
-                ? "bg-blue-500 text-black shadow-lg"
-                : "text-neutral-400 hover:text-white"
+              ? "bg-blue-500 text-black shadow-lg"
+              : "text-neutral-400 hover:text-white"
               }`}
           >
             Monthly
@@ -95,7 +96,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Get Started</a>
+              <Link href="#contact">Get Started</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
@@ -147,12 +148,12 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Get Silver</a>
+              <Link href="#contact">Get Silver</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-xs text-neutral-400 mb-4">
-              The "I'm actually doing this" package (90-day plan).
+              The &quot;I&apos;m actually doing this&quot; package (90-day plan).
             </p>
             <ul className="grid gap-2.5">
               {[
@@ -197,7 +198,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
               className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105"
               style={{ backgroundColor: ACCENT, color: "#000000" }}
             >
-              <a href="#contact">Go Gold</a>
+              <Link href="#contact">Go Gold</Link>
             </Button>
           </CardHeader>
           <CardContent className="pt-0">
@@ -256,7 +257,7 @@ export function ImplementationPricingModal({ onClose }: ImplementationPricingMod
             className="w-full rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105 shadow-lg"
             style={{ backgroundColor: ACCENT, color: "#000000" }}
           >
-            <a href="#contact">Apply for Platinum</a>
+            <Link href="#contact">Apply for Platinum</Link>
           </Button>
         </CardHeader>
         <CardContent className="pt-0">

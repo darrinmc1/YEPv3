@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -76,10 +77,10 @@ export function WaitlistForm() {
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild className="bg-blue-500 hover:bg-blue-400 text-white">
-              <a href="/explore-ideas">Explore Free Ideas</a>
+              <Link href="/explore-ideas">Explore Free Ideas</Link>
             </Button>
             <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
-              <a href="/#pricing">View Current Plans</a>
+              <Link href="/#pricing">View Current Plans</Link>
             </Button>
           </div>
         </div>

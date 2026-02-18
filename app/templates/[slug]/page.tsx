@@ -73,7 +73,7 @@ export default async function TemplatePage({ params }: PageProps) {
                         <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                             <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                                 <CheckCircle2 className="h-5 w-5 text-green-400" />
-                                What's Included
+                                What&apos;s Included
                             </h2>
                             <ul className="grid sm:grid-cols-2 gap-4">
                                 {template.whatYouGet.map((item, idx) => (

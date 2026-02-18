@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { CheckCircle2, X, Sparkles } from "lucide-react"
@@ -27,7 +28,7 @@ export function WhatsIncludedModal({ productType, ideaName, trigger }: WhatsIncl
           size="sm"
           className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10"
         >
-          What's included?
+          What&apos;s included?
         </Button>
       )}
 
@@ -94,9 +95,9 @@ export function WhatsIncludedModal({ productType, ideaName, trigger }: WhatsIncl
               asChild
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-6"
             >
-              <a href={content.checkoutUrl}>
+              <Link href={content.checkoutUrl}>
                 Get {content.buttonText} — ${content.price}
-              </a>
+              </Link>
             </Button>
             <p className="text-xs text-center text-neutral-500 mt-3">
               30-day money-back guarantee

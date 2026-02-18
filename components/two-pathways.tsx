@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Lightbulb, Rocket, CheckCircle2, Crown, Zap, ArrowRight } from "lucide-react"
+import Link from "next/link"
 import { IdeasPricingModal } from "@/components/ideas-pricing-modal"
 import { ImplementationPricingModal } from "@/components/implementation-pricing-modal"
 
@@ -77,10 +78,10 @@ export function TwoPathways() {
                 asChild
                 className="w-full rounded-full bg-green-500 px-6 py-6 text-base font-semibold text-black hover:bg-green-400 hover:scale-105 transition-all shadow-[0_0_25px_rgba(34,197,94,0.3)] group"
               >
-                <a href="/validate-idea" className="flex items-center justify-center">
+                <Link href="/validate-idea" className="flex items-center justify-center">
                   <span>Try Free Validation</span>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </a>
+                </Link>
               </Button>
 
               <Dialog open={ideasOpen} onOpenChange={setIdeasOpen}>

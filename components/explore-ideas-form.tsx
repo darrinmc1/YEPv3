@@ -53,11 +53,11 @@ const INDUSTRIES = [
 
 const BUDGET_LEVELS = [
   { value: "any", label: "Any Budget" },
-  { value: "bootstrap", label: "I'm Broke ($0 - Bootstrap)" },
+  { value: "bootstrap", label: "I&apos;m Broke ($0 - Bootstrap)" },
   { value: "low", label: "I can spare a little (Under $500)" },
   { value: "medium", label: "Serious invesment ($500 - $2,000)" },
   { value: "high", label: "Ready to scale ($2,000 - $10,000)" },
-  { value: "investor", label: "I have 'F*** You' Money ($10,000+)" },
+  { value: "investor", label: "I have &apos;F*** You&apos; Money ($10,000+)" },
 ]
 
 const TIME_COMMITMENTS = [
@@ -307,7 +307,7 @@ export function ExploreIdeasForm() {
             <div className="space-y-3 text-left text-sm text-neutral-400">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse"></div>
-                <span>Judging 1,000+ ideas so you don't have to...</span>
+                <span>Judging 1,000+ ideas so you don&apos;t have to...</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse"></div>
@@ -493,7 +493,7 @@ export function ExploreIdeasForm() {
               <h3 className="text-lg font-semibold text-white">What are you actually interested in?</h3>
             </div>
             <p className="text-sm text-neutral-400">
-              We can't read your mind. Give us a hint so we don't suggest a knitting business if you hate yarn.
+              We can&apos;t read your mind. Give us a hint so we don&apos;t suggest a knitting business if you hate yarn.
             </p>
 
             <div className="space-y-2">

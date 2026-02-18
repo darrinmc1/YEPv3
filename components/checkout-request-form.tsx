@@ -176,7 +176,7 @@ export function CheckoutRequestForm() {
         </div>
 
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-4">
-          Let's Make This Official
+          Let&apos;s Make This Official
         </h1>
 
         <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
@@ -298,7 +298,7 @@ export function CheckoutRequestForm() {
               ) : (
                 <>
                   <Mail className="mr-2 h-5 w-5" />
-                  Let's Do This
+                  Let&apos;s Do This
                 </>
               )}
             </Button>
