@@ -382,7 +382,7 @@ export function ExploreIdeasForm() {
                       className="bg-transparent border-blue-400/30 text-blue-400 hover:bg-blue-400/10"
                     >
                       <Info className="mr-2 h-4 w-4" />
-                      What's Included?
+                      What&apos;s Included?
                     </Button>
                   }
                 />
@@ -424,7 +424,7 @@ export function ExploreIdeasForm() {
                       className="bg-transparent border-purple-400/30 text-purple-400 hover:bg-purple-400/10"
                     >
                       <Info className="mr-2 h-4 w-4" />
-                      What's Included?
+                      What&apos;s Included?
                     </Button>
                   }
                 />

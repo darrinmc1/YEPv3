@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
     fontSize: 10,
   },
-  
+
   // Header
   header: {
     marginBottom: 30,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     lineHeight: 1.5,
   },
-  
+
   // Page title
   pageTitle: {
     fontSize: 18,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottom: '2px solid #e5e7eb',
   },
-  
+
   // Section
   section: {
     marginBottom: 20,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     borderBottom: '1px solid #e5e7eb',
   },
-  
+
   // Text
   paragraph: {
     fontSize: 10,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'justify',
   },
-  
+
   largeParagraph: {
     fontSize: 11,
     lineHeight: 1.9,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'justify',
   },
-  
+
   // Stats box
   statsBox: {
     backgroundColor: '#f9fafb',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '50%',
   },
-  
+
   // Bullet list
   bulletList: {
     marginTop: 8,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     color: '#374151',
     flex: 1,
   },
-  
+
   // Highlight box
   highlightBox: {
     backgroundColor: '#eff6ff',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
     color: '#1e40af',
   },
-  
+
   // Success box
   successBox: {
     backgroundColor: '#f0fdf4',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
     color: '#065f46',
   },
-  
+
   // Warning box
   warningBox: {
     backgroundColor: '#fffbeb',
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
     color: '#92400e',
   },
-  
+
   // Cost item
   costItem: {
     flexDirection: 'row',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontWeight: 'bold',
   },
-  
+
   // Table
   tableHeader: {
     flexDirection: 'row',
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     color: '#4b5563',
     flex: 1,
   },
-  
+
   // Footer
   footer: {
     position: 'absolute',
@@ -287,7 +287,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
 
   return (
     <Document>
-      
+
       {/* PAGE 1: COVER & EXECUTIVE SUMMARY */}
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
@@ -298,7 +298,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
 
         <View style={styles.section}>
           <Text style={styles.pageTitle}>Executive Summary</Text>
-          
+
           <View style={styles.statsBox}>
             <View style={styles.statsRow}>
               <Text style={styles.statLabel}>Industry Sector</Text>
@@ -323,14 +323,14 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
           </View>
 
           <Text style={styles.largeParagraph}>
-            This comprehensive research report analyzes the business opportunity for {data.ideaTitle} in the {data.industry} sector. 
-            With an opportunity score of {data.score}/10, this venture presents a {data.score >= 8 ? 'strong' : data.score >= 6 ? 'moderate' : 'developing'} potential 
+            This comprehensive research report analyzes the business opportunity for {data.ideaTitle} in the {data.industry} sector.
+            With an opportunity score of {data.score}/10, this venture presents a {data.score >= 8 ? 'strong' : data.score >= 6 ? 'moderate' : 'developing'} potential
             for entrepreneurs seeking to enter this market.
           </Text>
 
           <Text style={styles.largeParagraph}>
-            The estimated startup investment ranges from {data.startupCost}, with potential for first revenue within {data.timeToFirstSale}. 
-            This report provides detailed analysis of market opportunity, competitive landscape, target customers, revenue potential, 
+            The estimated startup investment ranges from {data.startupCost}, with potential for first revenue within {data.timeToFirstSale}.
+            This report provides detailed analysis of market opportunity, competitive landscape, target customers, revenue potential,
             and implementation requirements.
           </Text>
 
@@ -362,8 +362,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
             {data.oneLiner}
           </Text>
           <Text style={styles.paragraph}>
-            This business model operates in the {data.industry} industry, leveraging current market trends and consumer demand 
-            to create a sustainable revenue stream. The concept addresses a specific market need through a focused value proposition 
+            This business model operates in the {data.industry} industry, leveraging current market trends and consumer demand
+            to create a sustainable revenue stream. The concept addresses a specific market need through a focused value proposition
             that differentiates it from existing solutions.
           </Text>
         </View>
@@ -374,7 +374,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
             Primary Industry: {data.industry}
           </Text>
           <Text style={styles.paragraph}>
-            The {data.industry} sector has demonstrated consistent growth and presents opportunities for new entrants who can 
+            The {data.industry} sector has demonstrated consistent growth and presents opportunities for new entrants who can
             execute effectively. Market dynamics favor businesses that can provide value efficiently while maintaining quality standards.
           </Text>
         </View>
@@ -385,17 +385,17 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
             Execution Difficulty: {data.difficulty}
           </Text>
           <Text style={styles.paragraph}>
-            This rating reflects the technical complexity, required expertise, regulatory considerations, and competitive intensity 
-            of launching and scaling this business. A {data.difficulty.toLowerCase()} difficulty level suggests 
-            {data.difficulty === 'Beginner' ? ' minimal barriers to entry with straightforward execution requirements.' : 
-             data.difficulty === 'Intermediate' ? ' moderate complexity requiring some specialized knowledge or resources.' :
-             ' significant expertise and capital requirements for successful execution.'}
+            This rating reflects the technical complexity, required expertise, regulatory considerations, and competitive intensity
+            of launching and scaling this business. A {data.difficulty.toLowerCase()} difficulty level suggests
+            {data.difficulty === 'Beginner' ? ' minimal barriers to entry with straightforward execution requirements.' :
+              data.difficulty === 'Intermediate' ? ' moderate complexity requiring some specialized knowledge or resources.' :
+                ' significant expertise and capital requirements for successful execution.'}
           </Text>
         </View>
 
         <View style={styles.highlightBox}>
           <Text style={styles.highlightText}>
-            Key Advantage: Estimated time to first revenue is {data.timeToFirstSale}, enabling relatively quick validation 
+            Key Advantage: Estimated time to first revenue is {data.timeToFirstSale}, enabling relatively quick validation
             of the business model and opportunity for iterative improvement based on real customer feedback.
           </Text>
         </View>
@@ -421,8 +421,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
             Market Size: {data.marketSize}
           </Text>
           <Text style={styles.paragraph}>
-            The total addressable market represents the overall revenue opportunity available for this business concept. 
-            This figure encompasses all potential customers who could benefit from this solution, regardless of current 
+            The total addressable market represents the overall revenue opportunity available for this business concept.
+            This figure encompasses all potential customers who could benefit from this solution, regardless of current
             competitive dynamics or geographic constraints.
           </Text>
         </View>
@@ -433,8 +433,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
             Annual Growth Rate: {data.growthRate}
           </Text>
           <Text style={styles.paragraph}>
-            Market growth rate indicates the year-over-year expansion of the industry, driven by factors including increased 
-            consumer adoption, technological advancement, regulatory changes, and shifting consumer preferences. Positive growth 
+            Market growth rate indicates the year-over-year expansion of the industry, driven by factors including increased
+            consumer adoption, technological advancement, regulatory changes, and shifting consumer preferences. Positive growth
             rates signal expanding opportunity and potential for new market entrants.
           </Text>
         </View>
@@ -442,23 +442,23 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Market Dynamics</Text>
           <Text style={styles.paragraph}>
-            The market for {data.ideaTitle} is characterized by evolving customer needs and increasing demand for solutions 
-            that address specific pain points. Current trends suggest sustained growth potential, with opportunities for 
+            The market for {data.ideaTitle} is characterized by evolving customer needs and increasing demand for solutions
+            that address specific pain points. Current trends suggest sustained growth potential, with opportunities for
             differentiation through superior execution, customer experience, or innovative business models.
           </Text>
           <Text style={styles.paragraph}>
-            Key market drivers include technological enablement, changing consumer behaviors, regulatory evolution, and 
+            Key market drivers include technological enablement, changing consumer behaviors, regulatory evolution, and
             competitive dynamics. Understanding these forces is critical for positioning and scaling the business effectively.
           </Text>
         </View>
 
         <View style={styles.successBox}>
           <Text style={styles.successText}>
-            Market Opportunity Rating: {data.score >= 8 ? 'Strong' : data.score >= 6 ? 'Moderate' : 'Developing'} - 
-            The combination of market size ({data.marketSize}) and growth rate ({data.growthRate}) indicates 
-            {data.score >= 8 ? ' substantial opportunity for well-executed ventures.' : 
-             data.score >= 6 ? ' reasonable potential for focused, efficient operations.' :
-             ' emerging potential that requires careful validation.'}
+            Market Opportunity Rating: {data.score >= 8 ? 'Strong' : data.score >= 6 ? 'Moderate' : 'Developing'} -
+            The combination of market size ({data.marketSize}) and growth rate ({data.growthRate}) indicates
+            {data.score >= 8 ? ' substantial opportunity for well-executed ventures.' :
+              data.score >= 6 ? ' reasonable potential for focused, efficient operations.' :
+                ' emerging potential that requires careful validation.'}
           </Text>
         </View>
 
@@ -487,13 +487,13 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Convergence of Enabling Factors</Text>
           <Text style={styles.paragraph}>
-            This opportunity exists at the intersection of multiple market forces that have created favorable conditions 
-            for new entrants. These factors include technological maturation, shifting consumer preferences, regulatory 
+            This opportunity exists at the intersection of multiple market forces that have created favorable conditions
+            for new entrants. These factors include technological maturation, shifting consumer preferences, regulatory
             changes, and competitive gaps in the current market landscape.
           </Text>
           <Text style={styles.paragraph}>
-            The timing is particularly advantageous because early movers in emerging market segments typically capture 
-            disproportionate market share and establish brand recognition before the market becomes saturated. Current 
+            The timing is particularly advantageous because early movers in emerging market segments typically capture
+            disproportionate market share and establish brand recognition before the market becomes saturated. Current
             conditions suggest a window of opportunity for entrepreneurs who can execute quickly and effectively.
           </Text>
         </View>
@@ -530,7 +530,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
 
         <View style={styles.warningBox}>
           <Text style={styles.warningText}>
-            Critical Window: Market timing advantages typically diminish as awareness spreads and competition enters. 
+            Critical Window: Market timing advantages typically diminish as awareness spreads and competition enters.
             Swift execution and rapid iteration are essential to capitalize on current market conditions.
           </Text>
         </View>
@@ -553,8 +553,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Essential Business Insights</Text>
           <Text style={styles.paragraph}>
-            Based on analysis of successful ventures in this market and competitive landscape assessment, the following 
-            insights represent critical factors for success. These are not merely suggestions but foundational principles 
+            Based on analysis of successful ventures in this market and competitive landscape assessment, the following
+            insights represent critical factors for success. These are not merely suggestions but foundational principles
             that separate thriving businesses from failed attempts.
           </Text>
         </View>
@@ -583,15 +583,15 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Implementation Priority</Text>
           <Text style={styles.paragraph}>
-            These insights should guide decision-making throughout the launch and scaling process. Prioritize actions 
-            that align with these principles, and be willing to pivot or adjust when evidence suggests deviation from 
+            These insights should guide decision-making throughout the launch and scaling process. Prioritize actions
+            that align with these principles, and be willing to pivot or adjust when evidence suggests deviation from
             these core success factors.
           </Text>
         </View>
 
         <View style={styles.highlightBox}>
           <Text style={styles.highlightText}>
-            Recommendation: Review these insights weekly during the first 90 days of operations. Use them as a framework 
+            Recommendation: Review these insights weekly during the first 90 days of operations. Use them as a framework
             for evaluating strategic decisions and maintaining focus on activities that drive measurable business outcomes.
           </Text>
         </View>
@@ -614,8 +614,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Primary Customer Segments</Text>
           <Text style={styles.paragraph}>
-            The target customer for {data.ideaTitle} represents individuals or organizations facing specific challenges 
-            that this solution addresses. Understanding customer demographics, psychographics, and behavioral patterns 
+            The target customer for {data.ideaTitle} represents individuals or organizations facing specific challenges
+            that this solution addresses. Understanding customer demographics, psychographics, and behavioral patterns
             is essential for effective marketing and product development.
           </Text>
         </View>
@@ -653,20 +653,20 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Customer Acquisition Strategy</Text>
           <Text style={styles.paragraph}>
-            Reaching target customers requires understanding where they seek information, what messaging resonates, 
-            and which channels drive conversion most effectively. In the {data.industry} sector, successful customer 
+            Reaching target customers requires understanding where they seek information, what messaging resonates,
+            and which channels drive conversion most effectively. In the {data.industry} sector, successful customer
             acquisition typically involves a mix of content marketing, targeted advertising, partnerships, and community building.
           </Text>
           <Text style={styles.paragraph}>
-            Initial customer acquisition should focus on channels with the highest conversion rates and lowest costs, 
-            even if they don't scale indefinitely. Early adopters often come through direct outreach, niche communities, 
+            Initial customer acquisition should focus on channels with the highest conversion rates and lowest costs,
+            even if they don&apos;t scale indefinitely. Early adopters often come through direct outreach, niche communities,
             and word-of-mouth referrals rather than broad advertising campaigns.
           </Text>
         </View>
 
         <View style={styles.successBox}>
           <Text style={styles.successText}>
-            Acquisition Recommendation: Start with 10-20 customers acquired through direct, manual outreach. Use these 
+            Acquisition Recommendation: Start with 10-20 customers acquired through direct, manual outreach. Use these
             relationships to validate messaging, pricing, and product-market fit before investing in scalable channels.
           </Text>
         </View>
@@ -689,8 +689,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Capital Requirements Overview</Text>
           <Text style={styles.paragraph}>
-            The estimated startup investment of {data.startupCost} represents the capital required to launch and operate 
-            this business through the first revenue milestone. This analysis breaks down costs into essential categories 
+            The estimated startup investment of {data.startupCost} represents the capital required to launch and operate
+            this business through the first revenue milestone. This analysis breaks down costs into essential categories
             and provides specific line items to guide budgeting and financial planning.
           </Text>
         </View>
@@ -774,7 +774,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
 
         <View style={styles.highlightBox}>
           <Text style={styles.highlightText}>
-            Financial Planning: Many entrepreneurs successfully launch with 50-70% of the estimated budget by prioritizing 
+            Financial Planning: Many entrepreneurs successfully launch with 50-70% of the estimated budget by prioritizing
             essential expenses and deferring optional investments until revenue validates the business model.
           </Text>
         </View>
@@ -797,13 +797,13 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Revenue Generation</Text>
           <Text style={styles.paragraph}>
-            The business model for {data.ideaTitle} generates revenue through direct sales to customers who value the 
-            solution to their specific problems. Pricing should reflect the value delivered while remaining accessible 
+            The business model for {data.ideaTitle} generates revenue through direct sales to customers who value the
+            solution to their specific problems. Pricing should reflect the value delivered while remaining accessible
             to the target customer segment.
           </Text>
           <Text style={styles.paragraph}>
-            Time to first revenue is estimated at {data.timeToFirstSale}, which allows for rapid validation and iteration 
-            based on real customer feedback. This relatively quick path to revenue reduces burn rate and enables 
+            Time to first revenue is estimated at {data.timeToFirstSale}, which allows for rapid validation and iteration
+            based on real customer feedback. This relatively quick path to revenue reduces burn rate and enables
             bootstrapped or lean operation.
           </Text>
         </View>
@@ -811,8 +811,8 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Unit Economics</Text>
           <Text style={styles.paragraph}>
-            Successful businesses in this category typically achieve positive unit economics within the first 3-6 months 
-            of operation. This means customer lifetime value exceeds customer acquisition cost by a factor of 3:1 or better, 
+            Successful businesses in this category typically achieve positive unit economics within the first 3-6 months
+            of operation. This means customer lifetime value exceeds customer acquisition cost by a factor of 3:1 or better,
             creating sustainable growth potential.
           </Text>
           <View style={styles.bulletList}>
@@ -840,15 +840,15 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pricing Strategy</Text>
           <Text style={styles.paragraph}>
-            Pricing should be validated through customer conversations before launch. Many successful entrepreneurs 
-            start with prices 2-3x higher than initially comfortable, discovering customers will pay for value delivered. 
-            It's easier to decrease prices than to raise them after market entry.
+            Pricing should be validated through customer conversations before launch. Many successful entrepreneurs
+            start with prices 2-3x higher than initially comfortable, discovering customers will pay for value delivered.
+            It&apos;s easier to decrease prices than to raise them after market entry.
           </Text>
         </View>
 
         <View style={styles.successBox}>
           <Text style={styles.successText}>
-            Revenue Milestone: Target 10-20 paying customers within first 90 days to validate product-market fit and 
+            Revenue Milestone: Target 10-20 paying customers within first 90 days to validate product-market fit and
             establish foundation for scaling customer acquisition efforts.
           </Text>
         </View>
@@ -954,7 +954,7 @@ const ResearchReportPDF = ({ data }: { data: ResearchReportData }) => {
 
         <View style={styles.warningBox}>
           <Text style={styles.warningText}>
-            Critical Success Factor: Speed of execution matters significantly in emerging markets. Aim to complete 
+            Critical Success Factor: Speed of execution matters significantly in emerging markets. Aim to complete
             validation and launch within 90 days to maximize first-mover advantages outlined in this report.
           </Text>
         </View>

@@ -26,7 +26,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              We read the entire internet so you don't have to. Our AI scans Reddit, Trends, and G2 to find what people actually want to buy.
+              We read the entire internet so you don&apos;t have to. Our AI scans Reddit, Trends, and G2 to find what people actually want to buy.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
@@ -55,7 +55,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              We score ideas like a strict university professor. If it's not a 9/10, you won't see it so don't ask.
+              We score ideas like a strict university professor. If it&apos;s not a 9/10, you won&apos;t see it so don&apos;t ask.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
@@ -113,7 +113,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              Catch the wave before it crashes. We track trends so you don't launch a crypto exchange in 2022.
+              Catch the wave before it crashes. We track trends so you don&apos;t launch a crypto exchange in 2022.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">

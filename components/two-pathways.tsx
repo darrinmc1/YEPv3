@@ -23,7 +23,7 @@ export function TwoPathways() {
           Two Ways to <span className="text-blue-400">Build Your Business</span>
         </h2>
         <p className="mt-4 text-lg text-neutral-400 max-w-2xl mx-auto">
-          Stuck at zero? We'll fix that. Whether you need a Lightbulb Moment™ or a Kick In The Pants™, pick your poison below.
+          Stuck at zero? We&apos;ll fix that. Whether you need a Lightbulb Moment™ or a Kick In The Pants™, pick your poison below.
         </p>
       </div>
       <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
@@ -40,7 +40,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              Brain empty? No problem. Browse 1,000+ ideas that are actually good (we checked), complete with the "how-to" manual.
+              Brain empty? No problem. Browse 1,000+ ideas that are actually good (we checked), complete with the &quot;how-to&quot; manual.
             </p>
 
             {/* What You Get */}
@@ -115,7 +115,7 @@ export function TwoPathways() {
               </h3>
             </div>
             <p className="text-neutral-300 mb-6">
-              Have an idea but stuck in "Analysis Paralysis"? Get a daily plan that tells you exactly what to do so you can stop overthinking and start cashing checks.
+              Have an idea but stuck in &quot;Analysis Paralysis&quot;? Get a daily plan that tells you exactly what to do so you can stop overthinking and start cashing checks.
             </p>
 
             {/* What You Get */}

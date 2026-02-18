@@ -15,7 +15,7 @@ export default function AboutPage() {
             About YourExitPlans
           </h1>
           <p className="text-2xl text-neutral-400">
-            Because "hustle culture" is exhausting and buying courses is expensive. We built the thing we wished we had.
+            Because &quot;hustle culture&quot; is exhausting and buying courses is expensive. We built the thing we wished we had.
           </p>
         </div>
       </header>

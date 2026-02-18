@@ -23,7 +23,7 @@ export default function FAQPage() {
                     1. What exactly do I get with YourExitPlans?
                   </h2>
                   <p className="text-neutral-300">
-                    Think of it as a GPS for your business, but instead of "turn left in 500 feet," it says "send this email to these 10 people." You get a step-by-step roadmap—up to 120 days—that tells you exactly what to do every single morning. No more guessing, no more "researching" (aka doom-scrolling), just clear instructions to get you from idea to income.
+                    Think of it as a GPS for your business, but instead of &quot;turn left in 500 feet,&quot; it says &quot;send this email to these 10 people.&quot; You get a step-by-step roadmap—up to 120 days—that tells you exactly what to do every single morning. No more guessing, no more &quot;researching&quot; (aka doom-scrolling), just clear instructions to get you from idea to income.
                   </p>
                 </section>
 
@@ -33,7 +33,7 @@ export default function FAQPage() {
                     <strong>Starter ($99 one-time or $25/mo):</strong> Basic action steps, self-guided<br />
                     <strong>Silver ($198 one-time or $50/mo):</strong> Everything in Starter + templates, frameworks, weekly automated check-ins<br />
                     <strong>Gold ($297 one-time or $75/mo):</strong> Everything in Silver + motivation content, YouTube tutorials, weekly question support<br />
-                    <strong>Platinum - still being developed </strong> Everything in previous tiers and a "push to the finish line" help with tools, products and other needed help<br />
+                    <strong>Platinum - still being developed </strong> Everything in previous tiers and a &quot;push to the finish line&quot; help with tools, products and other needed help<br />
                   </p>
                 </section>
 

@@ -143,12 +143,12 @@ export function CheckoutRequestForm() {
 
             <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-400/20 mb-6">
               <p className="text-sm text-neutral-300">
-                We've sent a confirmation to <span className="text-blue-400 font-semibold">{formData.email}</span>
+                We&apos;ve sent a confirmation to <span className="text-blue-400 font-semibold">{formData.email}</span>
               </p>
             </div>
 
             <p className="text-neutral-400 mb-8">
-              We'll reach out within 24 hours to complete your purchase and deliver your materials.
+              We&apos;ll reach out within 24 hours to complete your purchase and deliver your materials.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -304,7 +304,7 @@ export function CheckoutRequestForm() {
             </Button>
 
             <p className="text-xs text-center text-neutral-500">
-              We'll contact you within 24 hours to complete the purchase. No commitment until we connect!
+              We&apos;ll contact you within 24 hours to complete the purchase. No commitment until we connect!
             </p>
           </form>
         </CardContent>

@@ -154,7 +154,7 @@ export function Hero() {
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-center text-lg text-neutral-300 sm:text-xl">
-            Stop telling people you're "working on something" and actually build it. We give you the idea, the plan, and the kick in the ass you need.
+            Stop telling people you&apos;re &quot;working on something&quot; and actually build it. We give you the idea, the plan, and the kick in the ass you need.
           </p>
 
           {/* CTA Buttons */}

@@ -98,7 +98,7 @@ export function IdeaTeaser() {
           Want a Free Business Idea? (Yes, really)
         </h2>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-neutral-300">
-          Don't spend 6 months building something nobody wants. Click the button to get a winner.
+          Don&apos;t spend 6 months building something nobody wants. Click the button to get a winner.
         </p>
 
         <div className="mt-8 min-h-[240px] flex items-center justify-center">
