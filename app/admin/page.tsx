@@ -30,7 +30,6 @@ export default function AdminDashboardRefactored() {
   const [saveMessage, setSaveMessage] = useState("")
   const [activityPage, setActivityPage] = useState(0)
   const [totalUsers, setTotalUsers] = useState<number | null>(null)
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [notifications, setNotifications] = useState(initialNotifications)
 
   const { content, setContent, hasChanges, saveContent, resetContent } = useContentStorage()
