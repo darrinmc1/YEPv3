@@ -26,7 +26,7 @@ export function Features() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-neutral-300">
-              We read the entire internet so you don&apos;t have to. Our AI scans Reddit, Trends, and G2 to find what people actually want to buy.
+              We read the entire internet (well maybe not all the internet) so you don&apos;t have to. Our AI scans Reddit, Trends, and G2 to find what people actually want to buy.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-start gap-2 text-xs text-neutral-400">
