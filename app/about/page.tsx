@@ -1,3 +1,5 @@
+import { SiteHeader } from "@/components/site-header"
+import { AppverseFooter } from "@/components/appverse-footer"
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,6 +10,8 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <SiteHeader />
+
       {/* Header */}
       <header className="border-b border-white/10 py-16 text-center">
         <div className="container mx-auto px-4">
@@ -19,6 +23,8 @@ export default function AboutPage() {
           </p>
         </div>
       </header>
+
+      {/* ... existing sections ... */}
 
       {/* What We Do */}
       <section className="py-16">
@@ -364,12 +370,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-8 text-center">
-        <div className="container mx-auto px-4">
-          <p className="text-neutral-500">© 2026 YourExitPlans. Built for builders.</p>
-        </div>
-      </footer>
+      <AppverseFooter />
     </div>
   );
 }
