@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import { Resend } from "resend"
 import crypto from "crypto"
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
 
 const prisma = new PrismaClient()
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -12,6 +14,25 @@ export async function POST(req: NextRequest) {
 
         if (!email) {
             return NextResponse.json({ error: "Email is required" }, { status: 400 })
+        }
+
+        // Rate Limiting
+        if (process.env.UPSTASH_REDIS_REST_URL) {
+            const redis = new Redis({
+                url: process.env.UPSTASH_REDIS_REST_URL,
+                token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+            })
+
+            const ratelimit = new Ratelimit({
+                redis,
+                limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 emails per hour
+                analytics: true,
+            })
+
+            const { success } = await ratelimit.limit(`auth_reset_${email}`)
+            if (!success) {
+                return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 })
+            }
         }
 
         const user = await prisma.user.findUnique({

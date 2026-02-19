@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client"
 import type { NextAuthOptions } from "next-auth"
 import EmailProvider from "next-auth/providers/email"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
 
 const smtpHost = process.env.EMAIL_SERVER_HOST || "smtp.example.com"
 const smtpPort = Number(process.env.EMAIL_SERVER_PORT || 587)
@@ -32,6 +34,28 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const { email, pin } = credentials || {};
+
+        // 0. Rate Limiting (Strict)
+        // Only run if Upstash is configured to avoid breaking local dev without it
+        if (process.env.UPSTASH_REDIS_REST_URL) {
+          const redis = new Redis({
+            url: process.env.UPSTASH_REDIS_REST_URL,
+            token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+          })
+
+          const ratelimit = new Ratelimit({
+            redis,
+            limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 attempts per 15 minutes
+            analytics: true,
+          })
+
+          const identifier = `auth_login_${email}`
+          const { success } = await ratelimit.limit(identifier)
+
+          if (!success) {
+            throw new Error("Too many login attempts. Please try again in 15 minutes.")
+          }
+        }
 
         // 1. Check for Admin Override (Hardcoded)
         const adminEmail = process.env.ADMIN_EMAIL
