@@ -54,3 +54,13 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Job {
+  id        String   @id @default(cuid())
+  type      String   // "TEMPLATE", "VALIDATION", "EXPLORE"
+  status    String   @default("PENDING") // "PENDING", "COMPLETED", "FAILED"
+  result    String?  // JSON stringified result
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react"
 import { useRouter } from "next/navigation"
+import { signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -19,12 +20,22 @@ import {
   BarChart3,
   HelpCircle,
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { NotificationItem } from "../lib/constants"
 
 interface AdminLayoutProps {
   children: ReactNode
   selectedPage: string
   onPageChange: (page: string) => void
-  notifications?: number
+  notifications?: NotificationItem[]
+  onClearNotifications?: () => void
 }
 
 const sidebarItems = [
@@ -37,14 +48,19 @@ const sidebarItems = [
   { id: "help", name: "Help", icon: HelpCircle },
 ]
 
-export function AdminLayout({ children, selectedPage, onPageChange, notifications = 0 }: AdminLayoutProps) {
+export function AdminLayout({
+  children,
+  selectedPage,
+  onPageChange,
+  notifications = [],
+  onClearNotifications
+}: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
 
-  const handleLogout = () => {
-    document.cookie = "admin-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-    router.push("/admin/login")
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/admin/login" })
   }
 
   const handleSearch = () => {
@@ -58,9 +74,7 @@ export function AdminLayout({ children, selectedPage, onPageChange, notification
     }
   }
 
-  const clearNotifications = () => {
-    // Notifications cleared
-  }
+  const unreadCount = notifications.filter(n => !n.read).length
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex">
@@ -90,11 +104,10 @@ export function AdminLayout({ children, selectedPage, onPageChange, notification
                       onPageChange(item.id)
                       setSidebarOpen(false)
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-                      selectedPage === item.id
-                        ? "bg-neutral-800 text-white"
-                        : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
-                    }`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${selectedPage === item.id
+                      ? "bg-neutral-800 text-white"
+                      : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
+                      }`}
                   >
                     <item.icon className="h-5 w-5" />
                     <span>{item.name}</span>
@@ -133,11 +146,10 @@ export function AdminLayout({ children, selectedPage, onPageChange, notification
               <button
                 key={item.id}
                 onClick={() => onPageChange(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-                  selectedPage === item.id
-                    ? "bg-neutral-800 text-white"
-                    : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${selectedPage === item.id
+                  ? "bg-neutral-800 text-white"
+                  : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
+                  }`}
               >
                 <item.icon className="h-5 w-5" />
                 <span>{item.name}</span>
@@ -183,19 +195,63 @@ export function AdminLayout({ children, selectedPage, onPageChange, notification
             <Button variant="ghost" size="sm" className="lg:hidden text-neutral-400 hover:text-white">
               <Search className="h-5 w-5" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearNotifications}
-              className="text-neutral-400 hover:text-white relative"
-            >
-              <Bell className="h-5 w-5" />
-              {notifications > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
-                  {notifications}
-                </span>
-              )}
-            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-neutral-400 hover:text-white relative"
+                >
+                  <Bell className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 bg-[#1a1a1a] border-neutral-800 text-white">
+                <DropdownMenuLabel className="flex items-center justify-between font-normal">
+                  <span className="font-semibold">Notifications</span>
+                  {unreadCount > 0 && onClearNotifications && (
+                    <span
+                      className="text-xs text-blue-400 cursor-pointer hover:underline"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        onClearNotifications()
+                      }}
+                    >
+                      Mark all as read
+                    </span>
+                  )}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-neutral-800" />
+                {notifications.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-neutral-500">
+                    No notifications
+                  </div>
+                ) : (
+                  notifications.map((notification) => (
+                    <DropdownMenuItem
+                      key={notification.id}
+                      className="flex flex-col items-start gap-1 p-3 focus:bg-neutral-800 focus:text-white cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className={`font-medium text-sm ${notification.read ? "text-neutral-400" : "text-white"}`}>
+                          {notification.title}
+                        </span>
+                        <span className="text-xs text-neutral-500">{notification.time}</span>
+                      </div>
+                      <p className="text-xs text-neutral-400 line-clamp-2">
+                        {notification.message}
+                      </p>
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <div className="w-8 h-8 bg-neutral-700 rounded-full flex items-center justify-center">
               <User className="h-4 w-4" />
             </div>

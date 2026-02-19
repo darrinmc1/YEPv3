@@ -9,6 +9,8 @@ interface HomePageProps {
   onNavigateActivity: (direction: "prev" | "next") => void
   onNavigateTo: (page: string) => void
   onPreview: () => void
+  totalUsers: number | null
+  contentCount: number
 }
 
 export function HomePage({
@@ -17,6 +19,8 @@ export function HomePage({
   onNavigateActivity,
   onNavigateTo,
   onPreview,
+  totalUsers,
+  contentCount,
 }: HomePageProps) {
   const currentActivityItems = activityItems.slice(activityPage * 4, (activityPage + 1) * 4)
 
@@ -48,7 +52,7 @@ export function HomePage({
             <div className="space-y-4">
               <div>
                 <p className="text-neutral-400 text-sm">Total Content Sections</p>
-                <p className="text-2xl font-bold text-white">6</p>
+                <p className="text-2xl font-bold text-white">{contentCount}</p>
               </div>
               <Button
                 onClick={() => onNavigateTo("content")}
@@ -65,16 +69,10 @@ export function HomePage({
           <CardContent className="p-6">
             <div className="space-y-4">
               <div>
-                <p className="text-neutral-400 text-sm">Site Performance</p>
-                <p className="text-2xl font-bold text-white">98.5%</p>
+                <p className="text-neutral-400 text-sm">Total Users</p>
+                <p className="text-2xl font-bold text-white">{totalUsers !== null ? totalUsers : "-"}</p>
               </div>
-              <Button
-                onClick={() => onNavigateTo("analytics")}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                View Analytics
-              </Button>
+
             </div>
           </CardContent>
         </Card>
@@ -130,6 +128,6 @@ export function HomePage({
           ))}
         </CardContent>
       </Card>
-    </div>
+    </div >
   )
 }

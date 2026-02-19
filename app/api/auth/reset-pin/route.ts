@@ -5,7 +5,7 @@ import crypto from "crypto"
 import { Ratelimit } from "@upstash/ratelimit"
 import { Redis } from "@upstash/redis"
 
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {

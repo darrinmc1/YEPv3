@@ -31,8 +31,13 @@ interface ValidationResult {
   nextSteps: string[]
 }
 
+import { callN8nWebhook } from './n8n'
+
+// ... existing imports ...
+
 const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest'
+const N8N_VALIDATION_WEBHOOK_URL = process.env.N8N_VALIDATION_WEBHOOK_URL
 
 /**
  * Validate business idea using Gemini
@@ -40,6 +45,21 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest'
 export async function validateIdeaWithGemini(
   input: ValidationInput
 ): Promise<ValidationResult> {
+  // Try n8n first
+  if (N8N_VALIDATION_WEBHOOK_URL) {
+    try {
+      console.log('Delegating idea validation to n8n...')
+      const result = await callN8nWebhook(N8N_VALIDATION_WEBHOOK_URL, input)
+
+      // Assume result matches ValidationResult structure or needs parsing
+      if (result.marketValidation) {
+        return result as ValidationResult
+      }
+    } catch (error) {
+      console.warn('n8n validation failed, falling back to direct Gemini API', error)
+    }
+  }
+
   if (!GEMINI_API_KEY) {
     throw new Error('Google Gemini API key not configured')
   }
@@ -51,7 +71,7 @@ export async function validateIdeaWithGemini(
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
 
     const prompt = buildValidationPrompt(input)
-    
+
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
@@ -63,7 +83,7 @@ export async function validateIdeaWithGemini(
 
     const response = result.response.text()
     const analysis = parseGeminiResponse(response)
-    
+
     const processingTime = Date.now() - startTime
     console.log(`Gemini validation completed in ${processingTime}ms`)
 
@@ -207,7 +227,7 @@ function generateFallbackValidation(input: ValidationInput): ValidationResult {
   // Adjust score based on inputs
   if (input.problemSolved.length > 100) score += 10
   if (input.targetCustomer.length > 50) score += 5
-  
+
   const hotIndustries = ['technology', 'saas', 'ai', 'automation', 'software']
   if (hotIndustries.some(ind => input.industry.toLowerCase().includes(ind))) {
     score += 10
@@ -258,11 +278,11 @@ export async function checkGeminiHealthForValidation(): Promise<boolean> {
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
-    
+
     await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: 'Test' }] }],
     })
-    
+
     return true
   } catch {
     return false

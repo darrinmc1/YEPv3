@@ -71,7 +71,7 @@ export async function saveValidatedIdea(data: ValidatedIdea) {
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: 'Sheet1!A:P',
+    range: 'Validations!A:P',
     valueInputOption: 'RAW',
     requestBody: {
       values: [row],
@@ -85,11 +85,11 @@ export async function getValidatedIdeasByEmail(email: string): Promise<Validated
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'Sheet1!A2:P', // Skip header
+    range: 'Validations!A2:P', // Skip header
   })
 
   const rows = response.data.values || []
-  
+
   return rows
     .filter(row => row[1] === email) // Match email column
     .map(row => ({
@@ -234,7 +234,7 @@ export async function searchIdeas(filters: {
   })
 
   const rows = response.data.values || []
-  
+
   // Map to our new structure
   let ideas = rows.map(row => ({
     id: row[0] || '',              // A: Idea ID
@@ -260,19 +260,19 @@ export async function searchIdeas(filters: {
 
   // Apply filters
   if (filters.industry && filters.industry !== 'any') {
-    ideas = ideas.filter(idea => 
+    ideas = ideas.filter(idea =>
       idea.industry.toLowerCase().includes(filters.industry!.toLowerCase())
     )
   }
 
   if (filters.difficulty && filters.difficulty !== 'any') {
-    ideas = ideas.filter(idea => 
+    ideas = ideas.filter(idea =>
       idea.difficulty.toLowerCase() === filters.difficulty!.toLowerCase()
     )
   }
 
   if (filters.budget && filters.budget !== 'any') {
-    ideas = ideas.filter(idea => 
+    ideas = ideas.filter(idea =>
       matchesBudget(idea.startupCost, filters.budget!)
     )
   }
@@ -287,7 +287,7 @@ export async function searchIdeas(filters: {
         idea.subcategory,
         idea.fullDescription
       ].join(' ').toLowerCase()
-      
+
       // Match if ANY search term appears
       return searchTerms.some(term => searchableText.includes(term))
     })
@@ -348,10 +348,10 @@ export interface WaitlistEntry {
 
 // Human-readable labels for each interest value
 const INTEREST_LABELS: Record<string, string> = {
-  'validate-my-idea':     'Validate my own idea',
-  'explore-ideas':        'Browse pre-researched ideas',
-  'implementation-plan':  'Step-by-step launch roadmap',
-  'just-browsing':        'Just browsing',
+  'validate-my-idea': 'Validate my own idea',
+  'explore-ideas': 'Browse pre-researched ideas',
+  'implementation-plan': 'Step-by-step launch roadmap',
+  'just-browsing': 'Just browsing',
 }
 
 export async function saveWaitlistEntry(data: WaitlistEntry) {
@@ -422,17 +422,17 @@ export async function checkRateLimit(email: string, type: 'validate' | 'explore'
   remaining: number
   resetTime: string
 }> {
-  const limit = type === 'validate' 
+  const limit = type === 'validate'
     ? parseInt(process.env.FREE_VALIDATIONS_PER_DAY || '3')
     : parseInt(process.env.FREE_EXPLORATIONS_PER_DAY || '5')
 
   const sheets = getSheets()
-  const sheetId = type === 'validate' 
+  const sheetId = type === 'validate'
     ? process.env.GOOGLE_SHEET_ID_VALIDATED
     : process.env.GOOGLE_SHEET_ID_EXPLORE
 
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
-  
+
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
     range: 'Sheet1!A2:B',

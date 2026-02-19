@@ -20,7 +20,7 @@ const smtpAuth =
     }
     : undefined
 
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
         pin: { label: "4-Digit PIN", type: "password" }
       },
       async authorize(credentials) {
-        const { email, pin } = credentials || {};
+        const { email, pin, password } = credentials || {};
 
         // 0. Rate Limiting (Strict)
         // Only run if Upstash is configured to avoid breaking local dev without it
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
         const adminPassword = process.env.ADMIN_PASSWORD
         if (
           email === adminEmail &&
-          pin === adminPassword
+          (pin === adminPassword || password === adminPassword)
         ) {
           return {
             id: "admin-user",

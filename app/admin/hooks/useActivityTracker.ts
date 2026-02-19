@@ -10,9 +10,15 @@ export function useActivityTracker() {
     const savedActivity = localStorage.getItem("activity")
     if (savedActivity) {
       try {
-        setActivityItems(JSON.parse(savedActivity))
+        const parsed = JSON.parse(savedActivity)
+        if (Array.isArray(parsed)) {
+          setActivityItems(parsed)
+        } else {
+          setActivityItems([])
+        }
       } catch (error) {
         console.error("Failed to parse saved activity:", error)
+        setActivityItems([])
       }
     }
   }, [])

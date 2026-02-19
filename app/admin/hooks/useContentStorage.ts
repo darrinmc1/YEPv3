@@ -13,8 +13,20 @@ export function useContentStorage() {
     if (savedContent) {
       try {
         const parsedContent = JSON.parse(savedContent)
-        setContent(parsedContent)
-        setOriginalContent(parsedContent)
+        // Deep merge with default content to ensure new fields exist
+        const mergedContent = {
+          ...defaultContent,
+          ...parsedContent,
+          hero: { ...defaultContent.hero, ...parsedContent.hero },
+          features: { ...defaultContent.features, ...parsedContent.features },
+          footer: { ...defaultContent.footer, ...parsedContent.footer },
+          about: { ...defaultContent.about, ...parsedContent.about },
+          pricing: { ...defaultContent.pricing, ...parsedContent.pricing },
+          orderForm: { ...defaultContent.orderForm, ...parsedContent.orderForm },
+          settings: { ...defaultContent.settings, ...parsedContent.settings },
+        }
+        setContent(mergedContent)
+        setOriginalContent(mergedContent)
       } catch (error) {
         console.error("Failed to parse saved content:", error)
       }

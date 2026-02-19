@@ -2,53 +2,53 @@ import { ContentData, ActivityItem } from "../types"
 
 export const defaultContent: ContentData = {
   hero: {
-    title: "",
-    subtitle: "",
-    buttonText: "Chat With Us",
+    title: "YourExitPlans from the 9-5 to Freedom",
+    subtitle: "Stop telling people you're \"working on something\" and actually build it. We give you the idea, the plan, and the kick in the ass you need.",
+    buttonText: "Start Building",
   },
   features: {
-    title: ".",
-    subtitle: "",
+    title: "Stop Researching. Start Launching.",
+    subtitle: "Seriously, stop researching. We transform market signals into validated, actionable business opportunities.",
   },
   footer: {
-    tagline: "E",
-    copyright: "",
+    tagline: "AI-Powered Business Opportunities & Market Intelligence",
+    copyright: "© 2024 YourExitPlans. Made with ❤️ and too much caffeine by builders who want you to succeed. Stop reading the footer and go launch something.",
   },
   about: {
-    title: "",
-    description: "",
-    mission: "",
-    vision: "",
-    teamSize: "",
-    founded: "",
-    locations: "",
+    title: "About YourExitPlans",
+    description: "We help aspiring entrepreneurs validate and launch their business ideas.",
+    mission: "To eliminate the guesswork in entrepreneurship.",
+    vision: "A world where anyone with drive can build a successful business.",
+    teamSize: "10+",
+    founded: "2023",
+    locations: "Global",
   },
   pricing: {
     startup: {
-      price_usd: "",
-      price_inr: "",
-      features: ["", "s", "", "", "", ""],
+      price_usd: "29",
+      price_inr: "2400",
+      features: ["AI Market Analysis", "3 Validated Ideas", "Basic Support", "Community Access", "Weekly Updates", "Cancel Anytime"],
       videos: ["", "", "", "", "", "", "", "", ""],
     },
     pro: {
-      price_usd: "",
-      price_inr: "",
-      features: ["", "", "", "", "", ""],
+      price_usd: "49",
+      price_inr: "4000",
+      features: ["Everything in Startup", "10 Validated Ideas", "Priority Support", "Strategy Calls", "Deep Dive Reports", "Competitor Analysis"],
       videos: ["", "", "", "", "", "", "", "", ""],
     },
     premium: {
-      price_usd: "",
-      price_inr: "",
-      features: ["", "", "", "", "", ""],
+      price_usd: "99",
+      price_inr: "8200",
+      features: ["Everything in Pro", "Unlimited Ideas", "1-on-1 Mentoring", "Custom Roadmaps", "Investor Pitch Deck", "Legal Templates"],
       videos: ["", "", "", "", "", "", "", "", ""],
     },
   },
   orderForm: {
     whatsappNumber: "",
     modelingOptions: {
-      simple: { price_usd: 35, price_inr: 2900, description: "" },
-      medium: { price_usd: 60, price_inr: 5000, description: "" },
-      complex: { price_usd: 120, price_inr: 10000, description: "" },
+      simple: { price_usd: 35, price_inr: 2900, description: "Basic validation of your business idea" },
+      medium: { price_usd: 60, price_inr: 5000, description: "Detailed market analysis and report" },
+      complex: { price_usd: 120, price_inr: 10000, description: "Full implementation roadmap and strategy" },
     },
     renderOptions: {
       basic: { price_usd: 25, price_inr: 2000, quantity: 3 },
@@ -57,9 +57,9 @@ export const defaultContent: ContentData = {
     },
     formSteps: [
       { enabled: true, title: "Package Selection", description: "Choose your package" },
-      { enabled: true, title: "Question", description: "" },
-      { enabled: true, title: "Add-on", description: "" },
-      { enabled: true, title: "Upsell", description: "" },
+      { enabled: true, title: "Question", description: "Tell us about your idea" },
+      { enabled: true, title: "Add-on", description: "Select additional services" },
+      { enabled: true, title: "Upsell", description: "Exclusive offers" },
       { enabled: true, title: "Order Summary", description: "Review and confirm your order" },
     ],
   },
@@ -69,42 +69,39 @@ export const defaultContent: ContentData = {
   },
 }
 
-export const initialActivity: ActivityItem[] = [
+
+
+export const initialActivity: ActivityItem[] = []
+
+export interface NotificationItem {
+  id: string
+  title: string
+  message: string
+  time: string
+  read: boolean
+}
+
+export const initialNotifications: NotificationItem[] = [
   {
     id: "1",
-    name: "Homepage Content",
-    status: "Updated",
-    change: "+2.1%",
-    icon: "🏠",
-    time: "2 hours ago",
-    timestamp: Date.now() - 2 * 60 * 60 * 1000,
+    title: "New Order",
+    message: "New order #1234 received from John Doe",
+    time: "2 min ago",
+    read: false,
   },
   {
     id: "2",
-    name: "Pricing Plans",
-    status: "Modified",
-    change: "+1.8%",
-    icon: "💰",
-    time: "4 hours ago",
-    timestamp: Date.now() - 4 * 60 * 60 * 1000,
+    title: "System Update",
+    message: "System maintenance scheduled for tonight",
+    time: "1 hour ago",
+    read: false,
   },
   {
     id: "3",
-    name: "About Page",
-    status: "Published",
-    change: "+3.2%",
-    icon: "ℹ️",
-    time: "6 hours ago",
-    timestamp: Date.now() - 6 * 60 * 60 * 1000,
-  },
-  {
-    id: "4",
-    name: "Footer Content",
-    status: "Updated",
-    change: "+0.9%",
-    icon: "📄",
-    time: "8 hours ago",
-    timestamp: Date.now() - 8 * 60 * 60 * 1000,
+    title: "New User",
+    message: "Sarah Smith created an account",
+    time: "3 hours ago",
+    read: false,
   },
 ]
 

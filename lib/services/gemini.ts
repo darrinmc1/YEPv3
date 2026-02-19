@@ -4,6 +4,7 @@
  * FREE TIER: 15 requests per minute, 1500 per day
  */
 
+import { callN8nWebhook } from './n8n'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 interface ExploreInput {
@@ -34,6 +35,8 @@ export interface IdeaMatch {
 
 const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
+const N8N_TEMPLATE_WEBHOOK_URL = process.env.N8N_TEMPLATE_WEBHOOK_URL
+const N8N_EXPLORE_WEBHOOK_URL = process.env.N8N_EXPLORE_WEBHOOK_URL
 
 /**
  * Generate content for a specific template
@@ -43,6 +46,25 @@ export async function generateTemplateContent(
   templateDescription: string,
   businessContext?: string
 ): Promise<string> {
+  // Try n8n first
+  if (N8N_TEMPLATE_WEBHOOK_URL) {
+    try {
+      console.log('Delegating template generation to n8n...')
+      const result = await callN8nWebhook(N8N_TEMPLATE_WEBHOOK_URL, {
+        templateName,
+        templateDescription,
+        businessContext,
+      })
+
+      if (result.content) return result.content
+      if (result.text) return result.text
+      // If result structure is unknown, try to return valid string or throw
+    } catch (error) {
+      console.warn('n8n template generation failed, falling back to direct Gemini API', error)
+    }
+  }
+
+  // Fallback to direct Gemini
   if (!GEMINI_API_KEY) {
     throw new Error('Google Gemini API key not configured')
   }
@@ -86,6 +108,45 @@ export async function findIdeasWithGemini(
   input: ExploreInput,
   ideasLibrary: any[]
 ): Promise<IdeaMatch[]> {
+  // Try n8n first
+  if (N8N_EXPLORE_WEBHOOK_URL) {
+    try {
+      console.log('Delegating idea exploration to n8n...')
+      const result = await callN8nWebhook(N8N_EXPLORE_WEBHOOK_URL, {
+        input,
+        // Don't send entire library if it's large, or handle it in n8n
+        // For now, n8n might need to know about the library or use its own data source.
+        // Assuming n8n workflow handles reasoning.
+        ideasSummary: ideasLibrary.slice(0, 20).map(idea => ({
+          id: idea.ideaId,
+          title: idea.title,
+          oneLiner: idea.oneLiner,
+          industry: idea.industry,
+          difficulty: idea.difficulty,
+          startupCost: idea.startupCost
+        }))
+      })
+
+      if (Array.isArray(result.matches)) {
+        // Map n8n result back to IdeaMatch structure if needed, or use as is
+        // This assumes n8n returns valid IdeaMatch objects or we need to merge with library
+        const matches = result.matches.map((match: any) => {
+          const idea = ideasLibrary.find(i => i.ideaId === match.ideaId)
+          if (!idea) return null
+          return {
+            ...idea,
+            matchReason: match.matchReason,
+            matchScore: match.matchScore
+          }
+        }).filter(Boolean)
+
+        if (matches.length > 0) return matches
+      }
+    } catch (error) {
+      console.warn('n8n exploration failed, falling back to direct Gemini API', error)
+    }
+  }
+
   if (!GEMINI_API_KEY) {
     throw new Error('Google Gemini API key not configured')
   }

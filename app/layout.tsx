@@ -8,6 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { ScrollProgress } from "@/components/scroll-progress"
 import Plasma from "@/components/plasma"
+import { Providers } from "@/components/providers"
 
 
 
@@ -75,7 +76,9 @@ export default function RootLayout({
           <div className="fixed inset-0 z-0 bg-black">
             <Plasma color="#001d3d" speed={0.7} scale={1.8} opacity={0.8} mouseInteractive={false} />
           </div>
-          <div className="relative z-10">{children}</div>
+          <div className="relative z-10">
+            <Providers>{children}</Providers>
+          </div>
         </Suspense>
 
         {/* Vercel Speed Insights and Analytics components */}

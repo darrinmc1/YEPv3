@@ -54,10 +54,8 @@ export function PulseCheckModal() {
     setLoading(true)
 
     try {
-      // Replace with your actual n8n webhook URL
-      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "YOUR_N8N_WEBHOOK_URL"
-
-      const response = await fetch(webhookUrl, {
+      // 1. Submit Request & Get Job ID
+      const response = await fetch("/api/validate-idea", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,22 +63,62 @@ export function PulseCheckModal() {
         body: JSON.stringify(formData),
       })
 
-      const result = await response.json()
-
-      if (result.success || response.ok) {
-        setSuccess(true)
-        setTimeout(() => {
-          setOpen(false)
-          setSuccess(false)
-          resetForm()
-        }, 3000)
-      } else {
-        throw new Error(result.message || "Something went wrong")
+      if (!response.ok) {
+        const errData = await response.json()
+        throw new Error(errData.message || "Failed to start validation")
       }
+
+      const { jobId } = await response.json()
+
+      if (!jobId) {
+        throw new Error("No Job ID returned")
+      }
+
+      // 2. Poll for Results
+      const pollInterval = setInterval(async () => {
+        try {
+          const jobRes = await fetch(`/api/jobs/${jobId}`)
+          if (!jobRes.ok) return
+
+          const job = await jobRes.json()
+
+          if (job.status === "COMPLETED") {
+            clearInterval(pollInterval)
+            setSuccess(true)
+            setLoading(false)
+
+            // Optional: You can access job.result here if you need to display immediate results
+            // const result = typeof job.result === 'string' ? JSON.parse(job.result) : job.result
+
+            setTimeout(() => {
+              setOpen(false)
+              setSuccess(false)
+              resetForm()
+            }, 3000)
+          } else if (job.status === "FAILED") {
+            clearInterval(pollInterval)
+            setLoading(false)
+            setError(job.error || "Validation failed")
+          }
+          // If PENDING, continue polling
+        } catch (e) {
+          console.error("Polling error", e)
+          // Don't stop polling on transient network errors
+        }
+      }, 2000)
+
+      // Safety timeout: Stop polling after 2 minutes
+      setTimeout(() => {
+        clearInterval(pollInterval)
+        if (loading) {
+          setLoading(false)
+          setError("Request timed out. The analysis might still be sent to your email.")
+        }
+      }, 120000)
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.")
-    } finally {
       setLoading(false)
+      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.")
     }
   }
 

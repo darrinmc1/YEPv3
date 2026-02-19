@@ -68,22 +68,28 @@ export function ContentPage({
       )}
 
       <Tabs defaultValue="hero" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-neutral-900/50 border border-neutral-800">
+        <TabsList className="grid w-full grid-cols-4 bg-neutral-900/50 border border-neutral-800">
           <TabsTrigger
             value="hero"
-            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6]"
+            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6] text-neutral-400 hover:text-white transition-colors"
           >
             Hero
           </TabsTrigger>
           <TabsTrigger
             value="features"
-            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6]"
+            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6] text-neutral-400 hover:text-white transition-colors"
           >
             Features
           </TabsTrigger>
           <TabsTrigger
+            value="about"
+            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6] text-neutral-400 hover:text-white transition-colors"
+          >
+            About
+          </TabsTrigger>
+          <TabsTrigger
             value="footer"
-            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6]"
+            className="data-[state=active]:bg-[#3B82F6]/20 data-[state=active]:text-[#3B82F6] text-neutral-400 hover:text-white transition-colors"
           >
             Footer
           </TabsTrigger>
@@ -158,6 +164,66 @@ export function ContentPage({
                   onChange={(e) => onContentChange("features", "subtitle", e.target.value)}
                   className="bg-[#0f0f0f] border-neutral-700 text-white"
                 />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="about" className="space-y-6">
+          <Card className="bg-[#1a1a1a] border-neutral-800">
+            <CardHeader>
+              <CardTitle className="text-white">About Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-neutral-200">Title</Label>
+                <Input
+                  value={content.about.title}
+                  onChange={(e) => onContentChange("about", "title", e.target.value)}
+                  className="bg-[#0f0f0f] border-neutral-700 text-white"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-neutral-200">Description</Label>
+                <Textarea
+                  value={content.about.description}
+                  onChange={(e) => onContentChange("about", "description", e.target.value)}
+                  className="min-h-[80px] bg-[#0f0f0f] border-neutral-700 text-white"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-neutral-200">Mission</Label>
+                  <Input
+                    value={content.about.mission}
+                    onChange={(e) => onContentChange("about", "mission", e.target.value)}
+                    className="bg-[#0f0f0f] border-neutral-700 text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-neutral-200">Vision</Label>
+                  <Input
+                    value={content.about.vision}
+                    onChange={(e) => onContentChange("about", "vision", e.target.value)}
+                    className="bg-[#0f0f0f] border-neutral-700 text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-neutral-200">Team Size</Label>
+                  <Input
+                    value={content.about.teamSize}
+                    onChange={(e) => onContentChange("about", "teamSize", e.target.value)}
+                    className="bg-[#0f0f0f] border-neutral-700 text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-neutral-200">Founded</Label>
+                  <Input
+                    value={content.about.founded}
+                    onChange={(e) => onContentChange("about", "founded", e.target.value)}
+                    className="bg-[#0f0f0f] border-neutral-700 text-white"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

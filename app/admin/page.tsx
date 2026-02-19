@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { AdminDashboardSkeleton } from "@/components/loading-skeleton"
 import { AdminLayout } from "./components/AdminLayout"
@@ -15,38 +16,41 @@ import { SettingsPage } from "./components/SettingsPage"
 import { useContentStorage } from "./hooks/useContentStorage"
 import { useActivityTracker } from "./hooks/useActivityTracker"
 import { formatTimeAgo } from "./lib/utils"
-import { initialAnalyticsData, defaultContent } from "./lib/constants"
+import { initialAnalyticsData, defaultContent, initialNotifications } from "./lib/constants"
 import { ContentData } from "./types"
 
 export default function AdminDashboardRefactored() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  const isAuthenticated = status === "authenticated"
+  const isLoading = status === "loading"
   const [selectedPage, setSelectedPage] = useState("home")
   const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState("")
   const [activityPage, setActivityPage] = useState(0)
-  const [analyticsData] = useState(initialAnalyticsData)
-  const [notifications, setNotifications] = useState(3)
+  const [totalUsers, setTotalUsers] = useState<number | null>(null)
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const [notifications, setNotifications] = useState(initialNotifications)
 
-  const router = useRouter()
   const { content, setContent, hasChanges, saveContent, resetContent } = useContentStorage()
   const { activityItems, setActivityItems, addActivity, resetActivity } = useActivityTracker()
 
   useEffect(() => {
-    const checkAuth = () => {
-      const cookies = document.cookie.split(";")
-      const sessionCookie = cookies.find((cookie) => cookie.trim().startsWith("admin-session="))
-
-      if (sessionCookie && sessionCookie.includes("authenticated")) {
-        setIsAuthenticated(true)
-      } else {
-        router.push("/admin/login")
-      }
-      setIsLoading(false)
+    if (status === "unauthenticated") {
+      router.push("/admin/login")
+    } else if (status === "authenticated") {
+      // Fetch stats
+      fetch("/api/admin/stats")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.userCount !== undefined) {
+            setTotalUsers(data.userCount)
+          }
+        })
+        .catch((err) => console.error("Failed to fetch stats:", err))
     }
-
-    checkAuth()
-  }, [router])
+  }, [status, router])
 
   // Update activity times
   useEffect(() => {
@@ -150,6 +154,8 @@ export default function AdminDashboardRefactored() {
             onNavigateActivity={navigateActivity}
             onNavigateTo={setSelectedPage}
             onPreview={handlePreview}
+            totalUsers={totalUsers}
+            contentCount={Object.keys(content).length}
           />
         )
       case "content":
@@ -187,7 +193,7 @@ export default function AdminDashboardRefactored() {
           />
         )
       case "analytics":
-        return <AnalyticsPage analyticsData={analyticsData} />
+        return <AnalyticsPage analyticsData={initialAnalyticsData} />
       case "settings":
         return (
           <SettingsPage
@@ -210,6 +216,10 @@ export default function AdminDashboardRefactored() {
           </div>
         )
     }
+  }
+
+  const handleClearNotifications = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }
 
   if (isLoading) {
@@ -251,6 +261,7 @@ export default function AdminDashboardRefactored() {
         selectedPage={selectedPage}
         onPageChange={setSelectedPage}
         notifications={notifications}
+        onClearNotifications={handleClearNotifications}
       >
         {renderPage()}
       </AdminLayout>

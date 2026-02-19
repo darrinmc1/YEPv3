@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import { z } from "zod"
 
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 
 const resetPinSchema = z.object({
     token: z.string(),
