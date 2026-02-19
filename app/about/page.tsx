@@ -335,14 +335,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-white/5 border-l-4 border-blue-400 p-8 rounded-xl">
-            <h3 className="text-2xl font-bold mb-4 text-white">✅ Completion Rate</h3>
-            <p className="text-neutral-300">
-              <strong className="text-blue-400">82%</strong> of users complete their launch plan
-              with our daily accountability system vs. industry average of <strong className="text-white">5-10%</strong> for
-              self-guided programs.
-            </p>
-          </div>
+
         </div>
       </section>
 
