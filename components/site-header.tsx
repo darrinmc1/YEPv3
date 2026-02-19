@@ -12,7 +12,7 @@ export function SiteHeader() {
 
   const links = [
     { href: "/", label: "Home", icon: Home },
-    { href: "#features", label: "How It Works", icon: Zap },
+    { href: "/#features", label: "How It Works", icon: Zap },
     { href: "/faq", label: "FAQ", icon: HelpCircle },
     { href: "/about", label: "About", icon: BookOpen },
     { href: "/login", label: "Login", icon: LogIn },
