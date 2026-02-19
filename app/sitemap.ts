@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXTAUTH_URL || 'https://yourexitplans.com'
-  
+
   const routes = [
     '',
     '/explore-ideas',
@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/login',
     '/waitlist',
     '/faq',
+    '/about',
     '/t&c',
   ]
 
