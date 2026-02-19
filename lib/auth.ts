@@ -30,7 +30,8 @@ export const authOptions: NextAuthOptions = {
       name: "PIN Login",
       credentials: {
         email: { label: "Email", type: "email" },
-        pin: { label: "4-Digit PIN", type: "password" }
+        pin: { label: "4-Digit PIN", type: "password" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         const { email, pin, password } = credentials || {};
