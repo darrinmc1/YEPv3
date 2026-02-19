@@ -96,11 +96,12 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
         const { d, s } = JSON.parse(saved)
         setData(d); setStage(s)
       }
-    } catch {}
+    } catch { }
   }, [])
 
   useEffect(() => {
     localStorage.setItem("yep_intake_v2", JSON.stringify({ d: data, s: stage }))
+    window.scrollTo(0, 0)
   }, [data, stage])
 
   function advance() {
@@ -153,7 +154,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
         <div style={{ maxWidth: 680, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
             <span style={{ fontWeight: 800, color: "#F97316" }}>YourExitPlans</span>
-            <span style={{ fontSize: 13, color: "#888" }}>Step {stage} of 5 · {STAGES[stage-1].time}</span>
+            <span style={{ fontSize: 13, color: "#888" }}>Step {stage} of 5 · {STAGES[stage - 1].time}</span>
           </div>
           <div style={{ background: "#1E1E2E", borderRadius: 99, height: 4 }}>
             <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg,#F97316,#EF4444)", borderRadius: 99, transition: "width 0.4s" }} />
@@ -163,8 +164,8 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
 
       <div style={{ maxWidth: 680, margin: "0 auto", padding: "48px 24px 120px", opacity: animating ? 0 : 1, transform: animating ? "translateY(8px)" : "translateY(0)", transition: "all 0.28s" }}>
         <div style={{ marginBottom: 36 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", color: "#F97316", textTransform: "uppercase", marginBottom: 6 }}>Stage {stage} — {STAGES[stage-1].title}</div>
-          <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.5px", margin: 0 }}>{STAGES[stage-1].subtitle}</h1>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", color: "#F97316", textTransform: "uppercase", marginBottom: 6 }}>Stage {stage} — {STAGES[stage - 1].title}</div>
+          <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.5px", margin: 0 }}>{STAGES[stage - 1].subtitle}</h1>
         </div>
 
         {/* STAGE 1 */}
@@ -199,7 +200,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
           <div>
             <div style={{ fontWeight: 700, marginBottom: 10 }}>B2B or B2C?</div>
             <div style={{ display: "flex", gap: 10 }}>
-              {[{v:"b2b",l:"B2B — Businesses"},{v:"b2c",l:"B2C — Consumers"},{v:"both",l:"Both"}].map(o => (
+              {[{ v: "b2b", l: "B2B — Businesses" }, { v: "b2c", l: "B2C — Consumers" }, { v: "both", l: "Both" }].map(o => (
                 <button key={o.v} onClick={() => upd.c("type", o.v)} style={{ padding: "10px 18px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", border: `2px solid ${data.customer.type === o.v ? "#F97316" : "#2A2A3E"}`, background: data.customer.type === o.v ? "rgba(249,115,22,0.1)" : "transparent", color: data.customer.type === o.v ? "#F97316" : "#888" }}>{o.l}</button>
               ))}
             </div>
@@ -254,7 +255,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
           <div>
             <div style={{ fontWeight: 700, marginBottom: 10 }}>When do you want your first paying customer?</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[{v:"2_weeks",l:"In 2 weeks",s:"Aggressive. Possible if MVP is simple."},{v:"1_month",l:"Within 1 month",s:"Ambitious. Requires focused effort."},{v:"3_months",l:"Within 3 months",s:"Realistic for most people."},{v:"6_months",l:"Within 6 months",s:"Building properly."},{v:"no_rush",l:"No rush",s:"Exploring. That's fine too."}].map(o => (
+              {[{ v: "2_weeks", l: "In 2 weeks", s: "Aggressive. Possible if MVP is simple." }, { v: "1_month", l: "Within 1 month", s: "Ambitious. Requires focused effort." }, { v: "3_months", l: "Within 3 months", s: "Realistic for most people." }, { v: "6_months", l: "Within 6 months", s: "Building properly." }, { v: "no_rush", l: "No rush", s: "Exploring. That's fine too." }].map(o => (
                 <RadioRow key={o.v} selected={data.goals.first_customer_timeline === o.v} onClick={() => upd.g("first_customer_timeline", o.v)} label={o.l} sub={o.s} />
               ))}
             </div>
@@ -262,7 +263,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
           <div>
             <div style={{ fontWeight: 700, marginBottom: 10 }}>12-month revenue target?</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[{v:"1-5k",l:"$1k–$5k/month",s:"Replace a bill or two."},{v:"5-10k",l:"$5k–$10k/month",s:"Serious side hustle."},{v:"10-25k",l:"$10k–$25k/month",s:"Full salary replacement."},{v:"25k+",l:"$25k+/month",s:"Building a real business."},{v:"unsure",l:"Not sure yet",s:"Honest. We'll figure it out."}].map(o => (
+              {[{ v: "1-5k", l: "$1k–$5k/month", s: "Replace a bill or two." }, { v: "5-10k", l: "$5k–$10k/month", s: "Serious side hustle." }, { v: "10-25k", l: "$10k–$25k/month", s: "Full salary replacement." }, { v: "25k+", l: "$25k+/month", s: "Building a real business." }, { v: "unsure", l: "Not sure yet", s: "Honest. We'll figure it out." }].map(o => (
                 <RadioRow key={o.v} selected={data.goals.revenue_12_month === o.v} onClick={() => upd.g("revenue_12_month", o.v)} label={o.l} sub={o.s} />
               ))}
             </div>
@@ -290,7 +291,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
           <div>
             <div style={{ fontWeight: 700, marginBottom: 10 }}>How often should I check in?</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {[{v:"daily",l:"Daily"},{v:"every_few_days",l:"Every few days"},{v:"weekly",l:"Weekly"},{v:"on_request",l:"Only when I ask"}].map(o => (
+              {[{ v: "daily", l: "Daily" }, { v: "every_few_days", l: "Every few days" }, { v: "weekly", l: "Weekly" }, { v: "on_request", l: "Only when I ask" }].map(o => (
                 <button key={o.v} onClick={() => upd.p("nudge_frequency", o.v)} style={{ padding: "10px 18px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", border: `2px solid ${data.preferences.nudge_frequency === o.v ? "#F97316" : "#2A2A3E"}`, background: data.preferences.nudge_frequency === o.v ? "rgba(249,115,22,0.1)" : "transparent", color: data.preferences.nudge_frequency === o.v ? "#F97316" : "#888" }}>{o.l}</button>
               ))}
             </div>
