@@ -6,12 +6,12 @@
 import { useState, useMemo, useCallback } from "react"
 
 const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  action:    { label: "Action",    color: "#60A5FA", bg: "rgba(96,165,250,0.1)",  icon: "⚡" },
-  research:  { label: "Research",  color: "#A78BFA", bg: "rgba(167,139,250,0.1)", icon: "🔍" },
-  creation:  { label: "Create",    color: "#34D399", bg: "rgba(52,211,153,0.1)",  icon: "✏️" },
-  outreach:  { label: "Outreach",  color: "#F97316", bg: "rgba(249,115,22,0.1)",  icon: "📬" },
-  review:    { label: "Review",    color: "#FBBF24", bg: "rgba(251,191,36,0.1)",  icon: "📋" },
-  milestone: { label: "Milestone", color: "#EF4444", bg: "rgba(239,68,68,0.1)",   icon: "🎯" },
+  action: { label: "Action", color: "#60A5FA", bg: "rgba(96,165,250,0.1)", icon: "⚡" },
+  research: { label: "Research", color: "#A78BFA", bg: "rgba(167,139,250,0.1)", icon: "🔍" },
+  creation: { label: "Create", color: "#34D399", bg: "rgba(52,211,153,0.1)", icon: "✏️" },
+  outreach: { label: "Outreach", color: "#F97316", bg: "rgba(249,115,22,0.1)", icon: "📬" },
+  review: { label: "Review", color: "#FBBF24", bg: "rgba(251,191,36,0.1)", icon: "📋" },
+  milestone: { label: "Milestone", color: "#EF4444", bg: "rgba(239,68,68,0.1)", icon: "🎯" },
 }
 
 export interface RoadmapData {
@@ -190,7 +190,7 @@ export default function RoadmapDashboard({
             <div style={{ textAlign: "center", padding: "60px 0", color: "#555" }}>
               <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
               <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 6 }}>No tasks scheduled today</div>
-              <div style={{ fontSize: 14 }}>Rest day or you're ahead of schedule.</div>
+              <div style={{ fontSize: 14 }}>Rest day or you&apos;re ahead of schedule.</div>
               <button onClick={() => setCurrentDay(d => d + 1)} style={{ marginTop: 20, background: "#F97316", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>View tomorrow →</button>
             </div>
           ) : (

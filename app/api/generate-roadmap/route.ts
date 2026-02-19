@@ -179,11 +179,19 @@ export async function GET(req: NextRequest) {
         id: r.id,
         title: r.title,
         businessType: r.businessType,
+        industry: r.industry,
         totalWeeks: r.totalWeeks,
         firstSaleTarget: r.firstSaleTarget,
         createdAt: r.createdAt,
+        status: r.status,
         completedTasks: JSON.parse(r.completedTasks || '[]'),
         totalTasks: JSON.parse(r.roadmapData || '{}').tasks?.length ?? 0,
+        // Preferences — used by dashboard settings and email system
+        preferences: {
+          coachingStyle: r.coachingStyle,
+          nudgeFrequency: r.nudgeFrequency,
+          contentDepth: r.contentDepth,
+        }
       }))
     })
   } catch (err) {
@@ -259,10 +267,15 @@ export async function POST(req: NextRequest) {
           userId: user.id,
           title: intake.business.name || `${intake.business.type} in ${intake.customer.industry}`,
           businessType: intake.business.type,
+          industry: intake.customer.industry || '',
           hoursPerWeek: intake.resources.hours_per_week,
           totalWeeks,
           firstSaleTarget: getFirstSaleTarget(intake.resources.hours_per_week),
           coachingStyle: intake.preferences.coaching_style,
+          nudgeFrequency: intake.preferences.nudge_frequency || 'every_few_days',
+          contentDepth: intake.preferences.content_depth || 'balanced',
+          startDate: new Date(),
+          status: 'active',
           intakeData: JSON.stringify(intake),
           roadmapData: JSON.stringify(roadmap),
         },

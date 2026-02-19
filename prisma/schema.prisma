@@ -8,20 +8,19 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -67,18 +66,32 @@ model Job {
 }
 
 model Roadmap {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   title           String
   businessType    String
+  industry        String    @default("")
+
   hoursPerWeek    String
   totalWeeks      Int
   firstSaleTarget String
+
   coachingStyle   String
+  nudgeFrequency  String    @default("every_few_days")
+  contentDepth    String    @default("balanced")
+
+  startDate       DateTime  @default(now())
+  status          String    @default("active")
+
   intakeData      String
   roadmapData     String
-  completedTasks  String   @default("[]")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  completedTasks  String    @default("[]")
+
+  lastNudgeSent   DateTime?
+  lastEmailSent   DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

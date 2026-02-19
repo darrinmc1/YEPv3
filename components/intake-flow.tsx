@@ -172,7 +172,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
         {stage === 1 && <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div>
             <div style={{ fontWeight: 700, marginBottom: 4 }}>Tell me about your business idea</div>
-            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>2-3 sentences is perfect. Don't overthink it.</div>
+            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>2-3 sentences is perfect. Don&apos;t overthink it.</div>
             <textarea value={data.business.description} onChange={e => upd.b("description", e.target.value)} placeholder="e.g. I want to help freelance designers manage client contracts without needing accounting software..." style={ts} rows={4} />
             <div style={{ fontSize: 12, color: data.business.description.length > 30 ? "#22C55E" : "#888", marginTop: 4 }}>{data.business.description.length > 30 ? "✓ Good" : `${30 - data.business.description.length} more characters`}</div>
           </div>
@@ -194,7 +194,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
         {stage === 2 && <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div>
             <div style={{ fontWeight: 700, marginBottom: 4 }}>Who is your ideal customer?</div>
-            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>"Everyone" is not an answer. Job title, situation, context.</div>
+            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>&quot;Everyone&quot; is not an answer. Job title, situation, context.</div>
             <textarea value={data.customer.description} onChange={e => upd.c("description", e.target.value)} placeholder="e.g. Freelance graphic designers, 5+ years experience, $3-8k/month, struggling with scope creep..." style={ts} rows={3} />
           </div>
           <div>
@@ -210,7 +210,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
             <input type="text" value={data.customer.industry} onChange={e => upd.c("industry", e.target.value)} placeholder="e.g. Freelance Design, Legal Tech, Health & Wellness..." style={is} />
           </div>
           <div>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>What's the core problem you solve?</div>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>What&apos;s the core problem you solve?</div>
             <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>In their words, not yours. What do they complain about?</div>
             <textarea value={data.customer.problem_solved} onChange={e => upd.c("problem_solved", e.target.value)} placeholder="e.g. Clients change scope but won't pay more. I lose thousands because I'm too awkward to enforce contracts..." style={ts} rows={3} />
           </div>
@@ -245,7 +245,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
           </div>
           <div>
             <div style={{ fontWeight: 700, marginBottom: 4 }}>Your biggest skill gap or weakness?</div>
-            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>The thing that makes you nervous. We'll give you extra support there.</div>
+            <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>The thing that makes you nervous. We&apos;ll give you extra support there.</div>
             <input type="text" value={data.resources.biggest_gap} onChange={e => upd.r("biggest_gap", e.target.value)} placeholder="e.g. Sales and closing, technical development, marketing..." style={is} />
           </div>
         </div>}
@@ -308,7 +308,7 @@ export default function IntakeFlow({ onComplete }: { onComplete: (data: IntakeDa
             </div>
           </div>
           <div>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>What's holding you back? <span style={{ fontWeight: 400, color: "#888" }}>(Optional)</span></div>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>What&apos;s holding you back? <span style={{ fontWeight: 400, color: "#888" }}>(Optional)</span></div>
             <input type="text" value={data.preferences.current_challenge} onChange={e => upd.p("current_challenge", e.target.value)} placeholder="e.g. I overthink everything. I'm scared no one will pay..." style={is} />
           </div>
         </div>}
