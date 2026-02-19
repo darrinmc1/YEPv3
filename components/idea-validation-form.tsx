@@ -330,9 +330,8 @@ export function IdeaValidationForm() {
 
         {/* Progress Bar */}
         <div className="space-y-2">
-          <div className="flex justify-between text-sm text-neutral-400">
-            <span>Step {currentStep} of {totalSteps}</span>
-            <span>{Math.round(progress)}% complete</span>
+          <div className="flex justify-end text-sm text-neutral-400">
+            <span>Step {currentStep}/{totalSteps}</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>

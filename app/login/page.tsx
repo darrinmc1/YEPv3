@@ -37,8 +37,8 @@ export default function LoginPage() {
         return
       }
 
-      // Successful login
-      router.push("/")
+      // Successful login — go to dashboard
+      router.push("/dashboard")
       router.refresh()
 
     } catch (err) {

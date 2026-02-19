@@ -35,16 +35,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified     DateTime?
-  image             String?
-  pin               String?   // Hashed 4-digit PIN
-  resetToken        String?   // Token for PIN reset
-  resetTokenExpiry  DateTime? // Expiry for reset token
-  accounts          Account[]
-  sessions          Session[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  pin              String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  accounts         Account[]
+  sessions         Session[]
+  roadmaps         Roadmap[]
 }
 
 model VerificationToken {
@@ -57,10 +58,27 @@ model VerificationToken {
 
 model Job {
   id        String   @id @default(cuid())
-  type      String   // "TEMPLATE", "VALIDATION", "EXPLORE"
-  status    String   @default("PENDING") // "PENDING", "COMPLETED", "FAILED"
-  result    String?  // JSON stringified result
+  type      String
+  status    String   @default("PENDING")
+  result    String?
   error     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Roadmap {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  businessType    String
+  hoursPerWeek    String
+  totalWeeks      Int
+  firstSaleTarget String
+  coachingStyle   String
+  intakeData      String
+  roadmapData     String
+  completedTasks  String   @default("[]")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
