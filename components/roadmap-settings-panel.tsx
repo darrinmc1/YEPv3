@@ -163,7 +163,7 @@ export default function RoadmapSettingsPanel({
         {/* Start date */}
         <section>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Roadmap start date</div>
-          <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>This is what "Day 1" is calculated from. Adjust if you started late or want to reset.</div>
+          <div style={{ fontSize: 13, color: "#888", marginBottom: 10 }}>This is what &quot;Day 1&quot; is calculated from. Adjust if you started late or want to reset.</div>
           <input
             type="date"
             value={settings.startDate ? settings.startDate.split("T")[0] : ""}
