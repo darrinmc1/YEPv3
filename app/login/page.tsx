@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { signIn } from "next-auth/react"
-import { Mail, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Lock, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,41 +12,39 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { SiteHeader } from "@/components/site-header"
 
-type Status = "idle" | "loading" | "sent" | "error"
-
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
-  const [status, setStatus] = useState<Status>("idle")
-  const [message, setMessage] = useState<string>("")
+  const [pin, setPin] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string>("")
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (!email) {
-      setStatus("error")
-      setMessage("Enter the email you want us to send the magic link to.")
-      return
+    setIsLoading(true)
+    setError("")
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        pin,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError("Invalid email or PIN. Please try again.")
+        setIsLoading(false)
+        return
+      }
+
+      // Successful login
+      router.push("/")
+      router.refresh()
+
+    } catch (err) {
+      setError("An error occurred. Please try again.")
+      setIsLoading(false)
     }
-
-    setStatus("loading")
-    setMessage("")
-
-    const response = await signIn("email", {
-      email,
-      redirect: false,
-      callbackUrl: "/",
-    })
-
-    if (response?.ok) {
-      setStatus("sent")
-      setMessage("Magic link sent. Check your inbox to finish signing in.")
-      return
-    }
-
-    setStatus("error")
-    setMessage(
-      response?.error ||
-        "We could not send the magic link. Double-check SMTP env vars once you add them."
-    )
   }
 
   return (
@@ -56,65 +55,91 @@ export default function LoginPage() {
           <Card className="backdrop-blur-xl border border-white/10 bg-black/50 text-white">
             <CardHeader className="space-y-2">
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                <Mail className="h-5 w-5 text-blue-400" />
-                Sign in with email
+                <Lock className="h-5 w-5 text-blue-400" />
+                Sign In
               </CardTitle>
               <CardDescription className="text-sm text-neutral-300">
-                Passwordless login powered by magic links. We will email you a secure link that signs you in.
+                Enter your email and 4-digit PIN to access your account.
               </CardDescription>
             </CardHeader>
 
             <CardContent>
               <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-neutral-200">
-                    Work or personal email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="bg-black/60 border-white/15 text-white placeholder:text-neutral-500"
-                  />
-                  <p className="text-xs text-neutral-400">
-                    Email delivery needs SMTP env vars configured (host, user, password, from address).
-                  </p>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-neutral-200">
+                      Email Address
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-black/60 border-white/15 text-white placeholder:text-neutral-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pin" className="text-neutral-200">
+                        4-Digit PIN
+                      </Label>
+                      <Link
+                        href="/forgot-pin"
+                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                      >
+                        Forgot PIN?
+                      </Link>
+                    </div>
+                    <Input
+                      id="pin"
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={4}
+                      required
+                      placeholder="••••"
+                      value={pin}
+                      onChange={(e) => {
+                        // Only allow numbers
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                        setPin(val)
+                      }}
+                      className="bg-black/60 border-white/15 text-white placeholder:text-neutral-500 tracking-widest text-lg"
+                    />
+                  </div>
                 </div>
+
+                {error && (
+                  <Alert variant="destructive" className="border-red-500/20 bg-red-500/10 text-red-200">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
                 <Button
                   type="submit"
-                  disabled={status === "loading"}
+                  disabled={isLoading}
                   className="w-full rounded-full bg-blue-500 text-black font-semibold hover:bg-blue-400 transition-all"
                 >
-                  {status === "loading" ? (
+                  {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Sending magic link...
+                      Signing in...
                     </span>
                   ) : (
-                    "Send me a magic link"
+                    "Sign In"
                   )}
                 </Button>
               </form>
-
-              {status !== "idle" && (
-                <div className="mt-6">
-                  <Alert variant={status === "error" ? "destructive" : "default"} className="border-white/15 bg-white/5">
-                    <AlertTitle>{status === "sent" ? "Check your inbox" : "Heads up"}</AlertTitle>
-                    <AlertDescription>{message}</AlertDescription>
-                  </Alert>
-                </div>
-              )}
             </CardContent>
 
-            <div className="flex items-center justify-between px-6 pb-6 text-sm text-neutral-300">
+            <div className="flex items-center justify-center px-6 pb-6 text-sm text-neutral-300">
               <Link href="/" className="hover:text-blue-400 transition-colors">
                 ← Back to home
               </Link>
-              <span className="text-neutral-500">No password required.</span>
             </div>
           </Card>
         </div>
