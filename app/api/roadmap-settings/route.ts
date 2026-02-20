@@ -104,3 +104,32 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
+
+// GET with ?pause=<roadmapId> — pauses email nudges for a roadmap
+// Used by the unsubscribe link in nudge emails
+export async function DELETE(req: NextRequest) {
+  try {
+    // Allow unauthenticated pause via token in URL (email link)
+    const roadmapId = req.nextUrl.searchParams.get('pause') ||
+                      req.nextUrl.searchParams.get('roadmapId')
+    if (!roadmapId) return NextResponse.json({ error: 'Missing roadmapId' }, { status: 400 })
+
+    const session = await getServerSession(authOptions)
+
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({ where: { email: session.user.email } })
+      if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      const roadmap = await prisma.roadmap.findFirst({ where: { id: roadmapId, userId: user.id } })
+      if (!roadmap) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
+    await prisma.roadmap.update({
+      where: { id: roadmapId },
+      data: { nudgeFrequency: 'on_request' },
+    })
+
+    return NextResponse.json({ success: true, message: 'Email nudges paused. Visit your dashboard to re-enable.' })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
+}

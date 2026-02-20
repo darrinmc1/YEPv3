@@ -34,9 +34,9 @@ model Session {
 }
 
 model User {
-  id               String    @id @default(cuid())
+  id               String        @id @default(cuid())
   name             String?
-  email            String?   @unique
+  email            String?       @unique
   emailVerified    DateTime?
   image            String?
   pin              String?
@@ -45,6 +45,7 @@ model User {
   accounts         Account[]
   sessions         Session[]
   roadmaps         Roadmap[]
+  chatMessages     ChatMessage[]
 }
 
 model VerificationToken {
@@ -66,32 +67,47 @@ model Job {
 }
 
 model Roadmap {
-  id              String    @id @default(cuid())
+  id              String        @id @default(cuid())
   userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title           String
   businessType    String
-  industry        String    @default("")
+  industry        String        @default("")
 
   hoursPerWeek    String
   totalWeeks      Int
   firstSaleTarget String
 
   coachingStyle   String
-  nudgeFrequency  String    @default("every_few_days")
-  contentDepth    String    @default("balanced")
+  nudgeFrequency  String        @default("every_few_days")
+  contentDepth    String        @default("balanced")
 
-  startDate       DateTime  @default(now())
-  status          String    @default("active")
+  startDate       DateTime      @default(now())
+  status          String        @default("active")
 
   intakeData      String
   roadmapData     String
-  completedTasks  String    @default("[]")
+  completedTasks  String        @default("[]")
 
   lastNudgeSent   DateTime?
   lastEmailSent   DateTime?
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  chatMessages    ChatMessage[]
+}
+
+// AI Coach Chat — one row per message, linked to user + optional roadmap
+model ChatMessage {
+  id         String   @id @default(cuid())
+  userId     String
+  roadmapId  String?
+  role       String   // "user" | "assistant"
+  content    String
+  createdAt  DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roadmap Roadmap? @relation(fields: [roadmapId], references: [id], onDelete: SetNull)
 }

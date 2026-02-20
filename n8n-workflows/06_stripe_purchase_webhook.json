@@ -1,0 +1,165 @@
+{
+  "name": "YEP — 06 Stripe Purchase Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-receive",
+      "name": "Webhook — Stripe Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "stripe-webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"received\": true }",
+        "options": {}
+      },
+      "id": "respond-200",
+      "name": "Respond 200 to Stripe",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 160]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract Stripe event data\nconst body = $input.first().json.body || $input.first().json;\n\nconst eventType = body.type || '';\nconst eventData = body.data?.object || {};\n\n// We care about checkout.session.completed\nconst isCheckoutComplete = eventType === 'checkout.session.completed';\nconst isPaymentSuccess = eventType === 'payment_intent.succeeded';\n\nif (!isCheckoutComplete && !isPaymentSuccess) {\n  return [{ json: { skip: true, reason: `Ignored event: ${eventType}` } }];\n}\n\nconst email = eventData.customer_details?.email || eventData.receipt_email || '';\nconst customerName = eventData.customer_details?.name || '';\nconst amountPaid = (eventData.amount_total || eventData.amount_received || 0) / 100;\nconst currency = (eventData.currency || 'aud').toUpperCase();\nconst sessionId = eventData.id || '';\nconst metadata = eventData.metadata || {};\nconst productName = metadata.productName || metadata.product_name || 'YourExitPlans Product';\nconst planTier = metadata.planTier || metadata.plan_tier || 'starter';\nconst roadmapId = metadata.roadmapId || metadata.roadmap_id || '';\n\nif (!email) return [{ json: { skip: true, reason: 'No email in event' } }];\n\nreturn [{ json: { eventType, email, customerName, amountPaid, currency, sessionId, productName, planTier, roadmapId, metadata, skip: false } }];"
+      },
+      "id": "extract-event",
+      "name": "Extract Stripe Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "check-skip",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "should-process",
+      "name": "Should Process?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SITE_URL || 'https://yourexitplans.com' }}/api/webhooks/stripe",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-n8n-secret", "value": "={{ $env.CRON_SECRET }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "notify-app",
+      "name": "Notify App (Record Purchase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 220],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans <ideas@yourexitplans.com>\",\n  \"to\": \"{{ $json.email }}\",\n  \"reply_to\": \"support@yourexitplans.com\",\n  \"subject\": \"🎉 You're in! Welcome to {{ $json.productName }}\",\n  \"html\": \"<!DOCTYPE html><html><body style='margin:0;padding:0;background:#08080f;font-family:-apple-system,BlinkMacSystemFont,sans-serif;'><table width='100%' cellpadding='0' cellspacing='0'><tr><td align='center' style='padding:40px 20px;'><table width='560' cellpadding='0' cellspacing='0' style='background:#0f0f1e;border:1px solid #1e1e30;border-radius:16px;overflow:hidden;'><tr><td style='padding:32px;'><div style='font-weight:900;font-size:20px;color:#f97316;margin-bottom:24px;'>YourExitPlans</div><h2 style='color:#f5f5f0;font-size:22px;margin:0 0 12px;'>Payment confirmed! 🎉</h2><p style='color:#888;font-size:15px;margin:0 0 24px;line-height:1.6;'>Hey {{ $json.customerName || 'there' }}, you just unlocked <strong style='color:#f5f5f0;'>{{ $json.productName }}</strong>.</p><div style='background:#1a2e1a;border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:20px;margin-bottom:24px;'><div style='font-size:13px;color:#888;margin-bottom:4px;'>Amount paid</div><div style='font-size:24px;font-weight:800;color:#22c55e;'>{{ $json.currency }} ${{ $json.amountPaid }}</div></div><p style='color:#888;font-size:14px;margin:0 0 28px;line-height:1.6;'>Head to your dashboard to access everything. Your roadmap and all features are ready for you.</p><a href='https://yourexitplans.com/dashboard' style='display:inline-block;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;'>Go to My Dashboard →</a><p style='color:#444;font-size:12px;margin:24px 0 0;'>Questions? Reply to this email — we actually read them.</p></td></tr></table></td></tr></table></body></html>\"\n}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "send-purchase-email",
+      "name": "Send Purchase Confirmation Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 380],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans System <system@yourexitplans.com>\",\n  \"to\": \"darrinmc1@yahoo.com\",\n  \"subject\": \"💰 New Purchase: {{ $json.productName }} — {{ $json.currency }} ${{ $json.amountPaid }}\",\n  \"html\": \"<h2>New Purchase 🎉</h2><table><tr><td><strong>Customer:</strong></td><td>{{ $json.customerName }} ({{ $json.email }})</td></tr><tr><td><strong>Product:</strong></td><td>{{ $json.productName }}</td></tr><tr><td><strong>Amount:</strong></td><td>{{ $json.currency }} ${{ $json.amountPaid }}</td></tr><tr><td><strong>Session ID:</strong></td><td>{{ $json.sessionId }}</td></tr><tr><td><strong>Time:</strong></td><td>{{ new Date().toLocaleString('en-AU', {timeZone: 'Australia/Brisbane'}) }}</td></tr></table>\"\n}",
+        "options": {}
+      },
+      "id": "notify-admin",
+      "name": "Notify Admin of Sale",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 540],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Webhook — Stripe Event": {
+      "main": [
+        [
+          { "node": "Respond 200 to Stripe", "type": "main", "index": 0 },
+          { "node": "Extract Stripe Event", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Extract Stripe Event": {
+      "main": [[{ "node": "Should Process?", "type": "main", "index": 0 }]]
+    },
+    "Should Process?": {
+      "main": [
+        [
+          { "node": "Notify App (Record Purchase)", "type": "main", "index": 0 },
+          { "node": "Send Purchase Confirmation Email", "type": "main", "index": 0 },
+          { "node": "Notify Admin of Sale", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Australia/Brisbane",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 1,
+  "tags": []
+}

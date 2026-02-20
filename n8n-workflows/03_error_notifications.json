@@ -1,0 +1,74 @@
+{
+  "name": "YEP — 03 Error Notifications",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract error details from the failed workflow\nconst errorData = $input.first().json;\n\nconst workflowName = errorData.workflow?.name || 'Unknown Workflow';\nconst workflowId = errorData.workflow?.id || 'unknown';\nconst executionId = errorData.execution?.id || 'unknown';\nconst nodeName = errorData.execution?.lastNodeExecuted || 'Unknown Node';\nconst errorMessage = errorData.execution?.error?.message || 'No error message';\nconst errorStack = errorData.execution?.error?.stack || '';\n\n// Brisbane time\nconst now = new Date();\nconst brisbaneTime = new Intl.DateTimeFormat('en-AU', {\n  timeZone: 'Australia/Brisbane',\n  dateStyle: 'full',\n  timeStyle: 'medium'\n}).format(now);\n\nconst executionUrl = `https://n8n-production-8ab4.up.railway.app/workflow/${workflowId}/executions/${executionId}`;\n\nreturn [{\n  json: {\n    workflowName,\n    workflowId,\n    executionId,\n    nodeName,\n    errorMessage,\n    errorStack: errorStack.substring(0, 500),\n    brisbaneTime,\n    executionUrl\n  }\n}];"
+      },
+      "id": "extract-error",
+      "name": "Extract Error Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans System <system@yourexitplans.com>\",\n  \"to\": \"darrinmc1@yahoo.com\",\n  \"subject\": \"🚨 n8n Workflow Failed: {{ $json.workflowName }}\",\n  \"html\": \"<!DOCTYPE html><html><body style='font-family:system-ui,sans-serif;background:#0a0a0a;margin:0;padding:40px 20px;'><table width='560' style='background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:32px;margin:0 auto;'><tr><td><h2 style='color:#ef4444;margin:0 0 20px;'>🚨 Workflow Failed</h2><table style='width:100%;border-collapse:collapse;'><tr style='border-bottom:1px solid #2a2a2a;'><td style='padding:10px 0;color:#888;font-size:13px;width:160px;'>Workflow</td><td style='padding:10px 0;color:#fff;font-size:13px;font-weight:600;'>{{ $json.workflowName }}</td></tr><tr style='border-bottom:1px solid #2a2a2a;'><td style='padding:10px 0;color:#888;font-size:13px;'>Failed Node</td><td style='padding:10px 0;color:#fbbf24;font-size:13px;'>{{ $json.nodeName }}</td></tr><tr style='border-bottom:1px solid #2a2a2a;'><td style='padding:10px 0;color:#888;font-size:13px;'>Error</td><td style='padding:10px 0;color:#f87171;font-size:13px;'>{{ $json.errorMessage }}</td></tr><tr style='border-bottom:1px solid #2a2a2a;'><td style='padding:10px 0;color:#888;font-size:13px;'>Time (Brisbane)</td><td style='padding:10px 0;color:#d4d4d4;font-size:13px;'>{{ $json.brisbaneTime }}</td></tr><tr><td style='padding:10px 0;color:#888;font-size:13px;'>Execution ID</td><td style='padding:10px 0;color:#d4d4d4;font-size:13px;'>{{ $json.executionId }}</td></tr></table><div style='margin-top:24px;text-align:center;'><a href='{{ $json.executionUrl }}' style='display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;'>View Failed Execution →</a></div></td></tr></table></body></html>\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-alert-email",
+      "name": "Send Error Alert Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [{ "node": "Extract Error Details", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Error Details": {
+      "main": [
+        [{ "node": "Send Error Alert Email", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "versionId": "1",
+  "tags": []
+}

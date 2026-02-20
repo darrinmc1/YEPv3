@@ -1,0 +1,139 @@
+{
+  "name": "YEP — 04 AI Coach On-Demand Nudge",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "coach-nudge",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-receive",
+      "name": "Webhook — Receive Nudge Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "coach-nudge"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"received\": true }",
+        "options": {}
+      },
+      "id": "respond-immediately",
+      "name": "Respond 200 Immediately",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract nudge request data\nconst body = $input.first().json.body || $input.first().json;\n\nconst email = body.email || '';\nconst userName = body.userName || 'there';\nconst businessTitle = body.businessTitle || 'Your Business';\nconst roadmapId = body.roadmapId || '';\nconst currentDay = body.currentDay || 1;\nconst progressPct = body.progressPct || 0;\nconst coachingStyle = body.coachingStyle || 'direct';\nconst contentDepth = body.contentDepth || 'balanced';\nconst todaysTasks = body.todaysTasks || [];\nconst blockedReason = body.blockedReason || '';\nconst requestType = body.requestType || 'check_in'; // check_in | unblocked | motivation\n\nif (!email) throw new Error('Missing email');\n\nreturn [{ json: { email, userName, businessTitle, roadmapId, currentDay, progressPct, coachingStyle, contentDepth, todaysTasks, blockedReason, requestType } }];"
+      },
+      "id": "extract-fields",
+      "name": "Extract Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build AI prompt based on request type and coaching style\nconst d = $input.first().json;\n\nconst styleInstructions = {\n  direct: 'Be extremely concise. Lead with THE action. No fluff. Max 150 words.',\n  explain_why: 'Lead with the action, then explain the reasoning in 2-3 sentences. Show the chain: this action → this result → this goal.',\n  hand_holding: 'Warm, reassuring tone. Break it into tiny steps. Acknowledge any anxiety. End with encouragement.',\n  challenging: 'Direct, no sympathy for excuses. Call out exactly what needs to happen. Use a bit of pressure. End with a hard question they have to answer.'\n};\n\nconst taskList = (d.todaysTasks || []).slice(0, 3).map(t => `- ${t.title}: ${t.description}`).join('\\n') || 'No tasks currently scheduled';\n\nconst prompts = {\n  check_in: `The user wants a quick check-in. They're on Day ${d.currentDay} of their business roadmap (${d.progressPct}% complete) building: ${d.businessTitle}.\\n\\nToday's tasks:\\n${taskList}\\n\\nWrite them a short, punchy coaching nudge. ${styleInstructions[d.coachingStyle] || styleInstructions.direct}\\n\\nEnd with ONE specific action they should do in the next 30 minutes.`,\n  unblocked: `The user was stuck and says they're now unblocked. What they were blocked on: ${d.blockedReason || 'something'}.\\n\\nThey're building: ${d.businessTitle} (Day ${d.currentDay}, ${d.progressPct}% done).\\n\\nCelebrate the unblock briefly (1 sentence), then immediately redirect to momentum. ${styleInstructions[d.coachingStyle] || styleInstructions.direct}`,\n  motivation: `The user needs a motivational boost. They're on Day ${d.currentDay} building: ${d.businessTitle} (${d.progressPct}% done).\\n\\nDon't be generic. Reference their specific business. Give them one concrete reason their idea matters. ${styleInstructions[d.coachingStyle] || styleInstructions.direct}\\n\\nEnd with the single most important thing to do today.`\n};\n\nconst prompt = prompts[d.requestType] || prompts.check_in;\n\nreturn [{ json: { ...d, prompt } }];"
+      },
+      "id": "build-prompt",
+      "name": "Build AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"contents\": [{ \"parts\": [{ \"text\": \"{{ $json.prompt }}\" }] }], \"generationConfig\": { \"temperature\": 0.9, \"maxOutputTokens\": 400 } }",
+        "options": { "timeout": 20000 }
+      },
+      "id": "gemini-nudge",
+      "name": "Gemini — Generate Nudge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the coaching message from Gemini response\nconst geminiResult = $input.first().json;\nconst prevData = $('Build AI Prompt').first().json;\n\nlet coachMessage = '';\ntry {\n  coachMessage = geminiResult.candidates[0].content.parts[0].text.trim();\n} catch(e) {\n  // Fallback messages by style\n  const fallbacks = {\n    direct: `Day ${prevData.currentDay}. Stop thinking. Pick the top task and do it for 25 minutes right now.`,\n    explain_why: `You're ${prevData.progressPct}% through your roadmap. Every task you complete compounds — today's work makes tomorrow's easier.`,\n    hand_holding: `Hey ${prevData.userName}! 😊 You're doing great. Today, just focus on one small win. Which task feels most doable right now?`,\n    challenging: `${prevData.progressPct}% done on Day ${prevData.currentDay}. What's your excuse for not making it ${prevData.progressPct + 5}% by tonight?`\n  };\n  coachMessage = fallbacks[prevData.coachingStyle] || fallbacks.direct;\n}\n\nreturn [{ json: { ...prevData, coachMessage } }];"
+      },
+      "id": "extract-message",
+      "name": "Extract Coach Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans Coach <coach@yourexitplans.com>\",\n  \"to\": \"{{ $json.email }}\",\n  \"reply_to\": \"support@yourexitplans.com\",\n  \"subject\": \"{{ $json.requestType === 'motivation' ? '💪 ' : $json.requestType === 'unblocked' ? '🎉 ' : '👋 ' }}Your coach checked in — Day {{ $json.currentDay }}\",\n  \"html\": \"<!DOCTYPE html><html><body style='margin:0;padding:0;background:#08080f;font-family:-apple-system,BlinkMacSystemFont,sans-serif;'><table width='100%' cellpadding='0' cellspacing='0' style='background:#08080f;'><tr><td align='center' style='padding:32px 20px;'><table width='560' cellpadding='0' cellspacing='0' style='background:#0f0f1e;border:1px solid #1e1e30;border-radius:16px;overflow:hidden;'><tr><td style='padding:28px 32px 20px;border-bottom:1px solid #1e1e2e;'><div style='font-weight:900;font-size:16px;color:#f97316;'>YourExitPlans</div><div style='font-size:13px;color:#555;margin-top:4px;'>On-demand coaching · Day {{ $json.currentDay }}</div></td></tr><tr><td style='padding:32px 32px 20px;'><div style='font-size:17px;font-weight:700;color:#f5f5f0;margin-bottom:16px;'>{{ $json.userName }},</div><div style='font-size:15px;color:#d4d4d4;line-height:1.7;white-space:pre-wrap;'>{{ $json.coachMessage }}</div></td></tr><tr><td style='padding:0 32px 28px;'><div style='height:3px;background:#1a1a2e;border-radius:3px;'><div style='height:100%;width:{{ $json.progressPct }}%;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:3px;'></div></div><div style='font-size:12px;color:#555;margin-top:6px;'>{{ $json.progressPct }}% complete · {{ $json.businessTitle }}</div></td></tr><tr><td style='padding:0 32px 28px;text-align:center;'><a href='https://yourexitplans.com/dashboard' style='display:inline-block;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px;'>Open My Roadmap →</a></td></tr></table></td></tr></table></body></html>\"\n}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "send-nudge-email",
+      "name": "Send Nudge Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Webhook — Receive Nudge Request": {
+      "main": [
+        [
+          { "node": "Respond 200 Immediately", "type": "main", "index": 0 },
+          { "node": "Extract Fields", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Extract Fields": {
+      "main": [[{ "node": "Build AI Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build AI Prompt": {
+      "main": [[{ "node": "Gemini — Generate Nudge", "type": "main", "index": 0 }]]
+    },
+    "Gemini — Generate Nudge": {
+      "main": [[{ "node": "Extract Coach Message", "type": "main", "index": 0 }]]
+    },
+    "Extract Coach Message": {
+      "main": [[{ "node": "Send Nudge Email", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Australia/Brisbane",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 1,
+  "tags": []
+}

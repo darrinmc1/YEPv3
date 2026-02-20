@@ -1,0 +1,152 @@
+{
+  "name": "YEP — 02 Daily Nudge Emails",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule — 7am Daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://yourexitplans.com/api/send-daily-nudge",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-cron-secret",
+              "value": "yep-cron-secret-change-this-in-production"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"source\": \"n8n-scheduler\", \"timestamp\": \"{{ new Date().toISOString() }}\"}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "trigger-nudge-api",
+      "name": "Call /api/send-daily-nudge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log the result\nconst result = $input.first().json;\nconsole.log('Daily nudge result:', JSON.stringify(result, null, 2));\n\nconst sent = result.sent || 0;\nconst skipped = result.skipped || 0;\nconst processed = result.processed || 0;\n\nreturn [{\n  json: {\n    success: result.success,\n    sent,\n    skipped,\n    processed,\n    timestamp: new Date().toISOString(),\n    needsAlert: !result.success || (result.results || []).some(r => !r.sent && r.reason && !r.reason.includes('too_soon') && !r.reason.includes('on_request'))\n  }\n}];"
+      },
+      "id": "process-result",
+      "name": "Process Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-alert",
+              "leftValue": "={{ $json.needsAlert }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-errors",
+      "name": "Check for Errors",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer re_JhE6N1S5_HJcZVGGWPDnj5eubvmFVVQEG"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans System <system@yourexitplans.com>\",\n  \"to\": \"darrinmc1@yahoo.com\",\n  \"subject\": \"⚠️ Daily Nudge Issue — {{ $json.timestamp }}\",\n  \"html\": \"<h2>Daily Nudge Alert</h2><p>The daily nudge run had issues.</p><pre>{{ JSON.stringify($json, null, 2) }}</pre>\"\n}",
+        "options": {}
+      },
+      "id": "alert-admin",
+      "name": "Alert Admin (Error)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 200]
+    }
+  ],
+  "connections": {
+    "Schedule — 7am Daily": {
+      "main": [
+        [{ "node": "Call /api/send-daily-nudge", "type": "main", "index": 0 }]
+      ]
+    },
+    "Call /api/send-daily-nudge": {
+      "main": [
+        [{ "node": "Process Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Process Result": {
+      "main": [
+        [{ "node": "Check for Errors", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check for Errors": {
+      "main": [
+        [{ "node": "Alert Admin (Error)", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Australia/Brisbane"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 1,
+  "tags": []
+}

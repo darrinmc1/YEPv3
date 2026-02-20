@@ -1,0 +1,128 @@
+{
+  "name": "YEP — 05 Weekly Progress Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [0],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule — Sunday 8am Brisbane",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SITE_URL || 'https://yourexitplans.com' }}/api/weekly-summary",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-cron-secret", "value": "={{ $env.CRON_SECRET }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"source\": \"n8n-weekly\", \"timestamp\": \"{{ new Date().toISOString() }}\" }",
+        "options": { "timeout": 90000 }
+      },
+      "id": "call-weekly-api",
+      "name": "Call /api/weekly-summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconst sent = result.sent || 0;\nconst failed = result.failed || 0;\nreturn [{\n  json: {\n    success: result.success,\n    sent,\n    failed,\n    timestamp: new Date().toISOString(),\n    needsAlert: !result.success || failed > 0\n  }\n}];"
+      },
+      "id": "process-result",
+      "name": "Process Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "check-alert",
+              "leftValue": "={{ $json.needsAlert }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-errors",
+      "name": "Check for Errors",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans System <system@yourexitplans.com>\",\n  \"to\": \"darrinmc1@yahoo.com\",\n  \"subject\": \"⚠️ Weekly Summary Issue — {{ $json.timestamp }}\",\n  \"html\": \"<h2>Weekly Summary Alert</h2><pre>{{ JSON.stringify($json, null, 2) }}</pre>\"\n}",
+        "options": {}
+      },
+      "id": "alert-admin",
+      "name": "Alert Admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 200]
+    }
+  ],
+  "connections": {
+    "Schedule — Sunday 8am Brisbane": {
+      "main": [[{ "node": "Call /api/weekly-summary", "type": "main", "index": 0 }]]
+    },
+    "Call /api/weekly-summary": {
+      "main": [[{ "node": "Process Result", "type": "main", "index": 0 }]]
+    },
+    "Process Result": {
+      "main": [[{ "node": "Check for Errors", "type": "main", "index": 0 }]]
+    },
+    "Check for Errors": {
+      "main": [
+        [{ "node": "Alert Admin", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Australia/Brisbane"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 1,
+  "tags": []
+}

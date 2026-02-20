@@ -8,6 +8,7 @@ import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import RoadmapDashboard, { RoadmapData } from "@/components/roadmap-dashboard"
+import AiCoachChat from "@/components/ai-coach-chat"
 
 interface SavedRoadmapSummary {
   id: string
@@ -57,6 +58,12 @@ export default function DashboardPage() {
   const [settingsOpen, setSettingsOpen] = useState<string | null>(null)
   const [savingSettings, setSavingSettings] = useState(false)
   const [settingsMsg, setSettingsMsg] = useState("")
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatRoadmapId, setChatRoadmapId] = useState<string | undefined>(undefined)
+  const [chatRoadmapTitle, setChatRoadmapTitle] = useState<string | undefined>(undefined)
+  const [chatCoachingStyle, setChatCoachingStyle] = useState<string>("direct")
+  const [nudgeSending, setNudgeSending] = useState<string | null>(null)
+  const [nudgeMsg, setNudgeMsg] = useState<{ id: string; msg: string } | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login?callbackUrl=/dashboard")
@@ -83,6 +90,25 @@ export default function DashboardPage() {
       setActiveRoadmap(data.roadmap)
       setActiveCompleted(data.completedTasks || [])
     }
+  }
+
+  async function sendNudge(roadmapId: string, requestType = 'check_in') {
+    setNudgeSending(roadmapId)
+    setNudgeMsg(null)
+    try {
+      const res = await fetch('/api/coach-nudge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roadmapId, requestType }),
+      })
+      const data = await res.json()
+      setNudgeMsg({ id: roadmapId, msg: data.success ? '✓ Nudge sent to your inbox!' : '✗ Could not send nudge' })
+      setTimeout(() => setNudgeMsg(null), 4000)
+    } catch {
+      setNudgeMsg({ id: roadmapId, msg: '✗ Could not send nudge' })
+      setTimeout(() => setNudgeMsg(null), 4000)
+    }
+    setNudgeSending(null)
   }
 
   async function saveSettings(roadmapId: string, updates: {
@@ -216,14 +242,25 @@ export default function DashboardPage() {
               )}
 
               {/* Actions */}
-              <div style={{ padding: "16px 24px", display: "flex", gap: 10 }}>
+              <div style={{ padding: "16px 24px", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
                 <button
                   onClick={() => openRoadmap(r.id)}
-                  style={{ flex: 1, background: "linear-gradient(135deg,#F97316,#EF4444)", color: "#fff", border: "none", padding: "11px 0", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer" }}
+                  style={{ flex: 1, minWidth: 160, background: "linear-gradient(135deg,#F97316,#EF4444)", color: "#fff", border: "none", padding: "11px 0", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer" }}
                 >
                   Continue Roadmap →
                 </button>
-                <div style={{ fontSize: 11, color: "#444", alignSelf: "center", marginLeft: 4 }}>
+                <button
+                  onClick={() => sendNudge(r.id, 'check_in')}
+                  disabled={nudgeSending === r.id}
+                  title="Get a personalised coaching nudge emailed to you"
+                  style={{ background: "transparent", border: "1px solid rgba(249,115,22,0.3)", color: "#F97316", padding: "10px 16px", borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
+                >
+                  {nudgeSending === r.id ? "Sending..." : "⚡ Nudge me"}
+                </button>
+                {nudgeMsg?.id === r.id && (
+                  <span style={{ fontSize: 12, color: nudgeMsg.msg.startsWith('✓') ? '#22C55E' : '#F87171', fontWeight: 600 }}>{nudgeMsg.msg}</span>
+                )}
+                <div style={{ fontSize: 11, color: "#444", marginLeft: "auto" }}>
                   Started {new Date(r.createdAt).toLocaleDateString("en-AU")}
                 </div>
               </div>

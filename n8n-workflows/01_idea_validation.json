@@ -1,0 +1,250 @@
+{
+  "name": "YEP — 01 Idea Validation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "idea-validation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-receive",
+      "name": "Webhook — Receive Idea",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "idea-validation"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true, jobId: $json.body.jobId }) }}",
+        "options": {}
+      },
+      "id": "respond-immediately",
+      "name": "Respond 200 Immediately",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and validate fields from the form submission\nconst body = $input.first().json.body || $input.first().json;\n\nconst idea = body.idea || body.ideaName || '';\nconst oneLiner = body.oneLiner || body.ideaDescription || '';\nconst problem = body.problemSolved || body.problem || '';\nconst target = body.targetCustomer || body.target || '';\nconst businessType = body.businessType || body.type || '';\nconst industry = body.industry || '';\nconst priceRange = body.priceRange || body.price || '';\nconst email = body.email || '';\nconst jobId = body.jobId || '';\nconst callbackUrl = body.callbackUrl || '';\nconst geo = body.geo || 'Global';\nconst model = body.model || 'gemini';\n\nif (!idea || !email) {\n  throw new Error('Missing required fields: idea and email');\n}\n\nreturn [{\n  json: {\n    idea,\n    oneLiner,\n    problem,\n    target,\n    businessType,\n    industry,\n    priceRange,\n    email,\n    jobId,\n    callbackUrl,\n    geo,\n    model,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "extract-fields",
+      "name": "Extract & Validate Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://trends.google.com/trends/api/explore?hl=en-US&tz=-600&req={\"comparisonItem\":[{\"keyword\":\"{{ encodeURIComponent($json.idea) }}\",\"geo\":\"{{ $json.geo !== 'Global' ? $json.geo : '' }}\",\"time\":\"today 12-m\"}],\"category\":0,\"property\":\"\"}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "google-trends",
+      "name": "Google Trends Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 180],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/search.json?q={{ encodeURIComponent($json.idea + ' business') }}&sort=relevance&limit=5&t=year",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "reddit-search",
+      "name": "Reddit Market Research",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 420],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "merge-research",
+      "name": "Merge Research Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare context for AI analysis\nconst items = $input.all();\n\n// Find the main idea data (from extract-fields node)\nlet ideaData = {};\nlet trendsData = 'Not available';\nlet redditData = 'Not available';\n\nfor (const item of items) {\n  if (item.json.idea) ideaData = item.json;\n  if (item.json.default) trendsData = 'Trending data available';\n  if (item.json.data && item.json.data.children) {\n    const posts = item.json.data.children.slice(0, 3);\n    redditData = posts.map(p => `- ${p.data.title} (${p.data.score} upvotes)`).join('\\n') || 'No posts found';\n  }\n}\n\nreturn [{\n  json: {\n    ...ideaData,\n    trendsData,\n    redditData,\n    prompt: `You are a business opportunity analyst. Analyze this business idea and provide a structured assessment.\n\nBUSINESS IDEA: ${ideaData.idea}\nONE-LINER: ${ideaData.oneLiner || 'Not provided'}\nPROBLEM SOLVED: ${ideaData.problem || 'Not specified'}\nTARGET CUSTOMER: ${ideaData.target || 'Not specified'}\nBUSINESS TYPE: ${ideaData.businessType || 'Not specified'}\nINDUSTRY: ${ideaData.industry || 'Not specified'}\nPRICE RANGE: ${ideaData.priceRange || 'Not specified'}\nMARKET: ${ideaData.geo || 'Global'}\n\nMARKET SIGNALS:\n- Google Trends: ${trendsData}\n- Reddit Discussion:\\n${redditData}\n\nProvide your analysis as valid JSON only (no markdown, no code blocks):\n{\n  \"score\": 72,\n  \"verdict\": \"Strong Opportunity\",\n  \"marketSummary\": \"2-3 sentence market overview\",\n  \"topStrength\": \"The single biggest advantage of this idea\",\n  \"biggestRisk\": \"The single biggest challenge\",\n  \"whyNow\": \"Why this is a good time to start this business\",\n  \"startThisWeekend\": \"One specific action they can take in the next 48 hours\",\n  \"quickWins\": [\"3-4 quick wins to validate/start\"],\n  \"redFlags\": [\"2-3 risks or challenges to be aware of\"],\n  \"keyInsights\": [\"3-4 market insights\"],\n  \"similarBusinesses\": [\"2-3 existing companies doing something similar\"],\n  \"quickVerdict\": \"1 punchy sentence summary\",\n  \"ideaName\": \"${ideaData.idea}\",\n  \"email\": \"${ideaData.email}\"\n}\n\nScoring guide: 80-100=Exceptional, 65-79=Strong, 50-64=Worth Exploring, 35-49=Needs Work, 0-34=Pivot`\n  }\n}];"
+      },
+      "id": "prepare-ai-prompt",
+      "name": "Prepare AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\"contents\":[{\"parts\":[{\"text\":\"{{ $json.prompt }}\"}]}],\"generationConfig\":{\"temperature\":0.7,\"maxOutputTokens\":2048}}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "id": "gemini-analysis",
+      "name": "Gemini AI Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1380, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Gemini response\nconst item = $input.first().json;\n\nlet analysisText = '';\ntry {\n  analysisText = item.candidates[0].content.parts[0].text;\n} catch(e) {\n  // Fallback if structure differs\n  analysisText = JSON.stringify(item);\n}\n\n// Strip markdown code blocks if present\nconst cleaned = analysisText.replace(/```json\\n?|\\n?```/g, '').trim();\n\nlet analysis;\ntry {\n  analysis = JSON.parse(cleaned);\n} catch(e) {\n  // If JSON parse fails, return a default structure\n  analysis = {\n    score: 60,\n    verdict: 'Worth Exploring',\n    marketSummary: 'Analysis completed. Review the details below.',\n    topStrength: 'Unique market positioning',\n    biggestRisk: 'Market validation required',\n    whyNow: 'Growing demand in this space',\n    startThisWeekend: 'Talk to 3 potential customers',\n    quickWins: ['Validate with potential customers', 'Research competitors', 'Define your MVP'],\n    redFlags: ['Market size needs validation', 'Competition assessment needed'],\n    keyInsights: ['Research market demand', 'Identify target customers', 'Analyse pricing strategy'],\n    similarBusinesses: [],\n    quickVerdict: 'Worth exploring with proper validation.',\n    ideaName: $('Prepare AI Prompt').first().json.idea || 'Your idea',\n    email: $('Prepare AI Prompt').first().json.email || ''\n  };\n}\n\n// Ensure required fields exist\nanalysis.ideaName = analysis.ideaName || $('Prepare AI Prompt').first().json.idea || 'Your idea';\nanalysis.email = analysis.email || $('Prepare AI Prompt').first().json.email || '';\nanalysis.jobId = $('Prepare AI Prompt').first().json.jobId || '';\nanalysis.callbackUrl = $('Prepare AI Prompt').first().json.callbackUrl || '';\n\nreturn [{ json: analysis }];"
+      },
+      "id": "parse-response",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1600, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"YourExitPlans <ideas@yourexitplans.com>\",\n  \"to\": \"{{ $json.email }}\",\n  \"reply_to\": \"support@yourexitplans.com\",\n  \"subject\": \"Your Idea Analysis: {{ $json.ideaName }} (Score: {{ $json.score }}/100)\",\n  \"html\": \"<!DOCTYPE html><html><head><meta charset='utf-8'></head><body style='margin:0;padding:0;background:#0a0a0a;font-family:system-ui,sans-serif;'><table width='100%' cellpadding='0' cellspacing='0' style='background:#0a0a0a;'><tr><td align='center' style='padding:40px 20px;'><table width='580' cellpadding='0' cellspacing='0' style='background:linear-gradient(to bottom,#1a1a1a,#0f0f0f);border:1px solid #2a2a2a;border-radius:16px;overflow:hidden;'><tr><td style='padding:40px 40px 20px;text-align:center;border-bottom:1px solid #2a2a2a;'><h1 style='margin:0 0 8px;font-size:26px;font-weight:700;color:#fff;'>Your Idea Validation Results</h1><p style='margin:0;font-size:16px;color:#a3a3a3;'>{{ $json.ideaName }}</p></td></tr><tr><td style='padding:30px 40px;text-align:center;'><div style='font-size:72px;font-weight:900;color:{{ $json.score >= 70 ? '#4ade80' : $json.score >= 50 ? '#fbbf24' : '#f87171' }};'>{{ $json.score }}</div><div style='font-size:14px;color:#888;'>/100</div><div style='margin-top:12px;display:inline-block;padding:6px 20px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:99px;'><span style='font-size:15px;font-weight:600;color:#4ade80;'>{{ $json.verdict }}</span></div></td></tr><tr><td style='padding:0 40px 20px;'><div style='background:#1a2e1a;border-left:4px solid #4ade80;padding:20px;border-radius:8px;margin-bottom:16px;'><div style='font-size:16px;font-weight:700;color:#4ade80;margin-bottom:8px;'>💪 Top Strength</div><div style='font-size:14px;color:#d4d4d4;line-height:1.6;'>{{ $json.topStrength }}</div></div><div style='background:#2e1f1a;border-left:4px solid #fbbf24;padding:20px;border-radius:8px;margin-bottom:16px;'><div style='font-size:16px;font-weight:700;color:#fbbf24;margin-bottom:8px;'>⚠️ Biggest Risk</div><div style='font-size:14px;color:#d4d4d4;line-height:1.6;'>{{ $json.biggestRisk }}</div></div><div style='background:#1a1e2e;border-left:4px solid #60a5fa;padding:20px;border-radius:8px;margin-bottom:16px;'><div style='font-size:16px;font-weight:700;color:#60a5fa;margin-bottom:8px;'>🚀 Start This Weekend</div><div style='font-size:14px;color:#d4d4d4;line-height:1.6;'>{{ $json.startThisWeekend }}</div></div></td></tr><tr><td style='padding:0 40px 30px;text-align:center;'><a href='https://yourexitplans.com/build-roadmap' style='display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;'>Get Your Full 90-Day Roadmap →</a></td></tr><tr><td style='padding:20px 40px;text-align:center;border-top:1px solid #2a2a2a;'><p style='margin:0;font-size:12px;color:#555;'>YourExitPlans · <a href='mailto:support@yourexitplans.com' style='color:#555;'>support@yourexitplans.com</a></p></td></tr></table></td></tr></table></body></html>\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-email",
+      "name": "Send Results Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1820, 180],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jobId\": \"{{ $json.jobId }}\",\n  \"status\": \"COMPLETED\",\n  \"result\": {{ JSON.stringify($json) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "callback-website",
+      "name": "Callback to Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1820, 420],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Webhook — Receive Idea": {
+      "main": [
+        [
+          { "node": "Respond 200 Immediately", "type": "main", "index": 0 },
+          { "node": "Extract & Validate Fields", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Extract & Validate Fields": {
+      "main": [
+        [
+          { "node": "Google Trends Check", "type": "main", "index": 0 },
+          { "node": "Reddit Market Research", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Google Trends Check": {
+      "main": [
+        [{ "node": "Merge Research Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Reddit Market Research": {
+      "main": [
+        [{ "node": "Merge Research Data", "type": "main", "index": 1 }]
+      ]
+    },
+    "Merge Research Data": {
+      "main": [
+        [{ "node": "Prepare AI Prompt", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prepare AI Prompt": {
+      "main": [
+        [{ "node": "Gemini AI Analysis", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gemini AI Analysis": {
+      "main": [
+        [{ "node": "Parse AI Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          { "node": "Send Results Email", "type": "main", "index": 0 },
+          { "node": "Callback to Website", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 1,
+  "tags": []
+}
